@@ -1,7 +1,7 @@
 import cv2 
 import numpy as np
 
-img = cv2.imread('Weld-Identification\Photos\Good\sdfgh.jpg')
+img = cv2.imread('')
 
 scale_percent = 20 # percent of original size
 width = int(img.shape[1] * scale_percent / 100)
