@@ -63,13 +63,6 @@ for image in os.listdir(folderDirectory):
         # cv.imshow('img', show)
         cv.waitKey(0)
 
-
-
-
-
-
-
-
 # # Edge Cascade
 # canny = cv2.Canny(adjusted, 15, 175)
 # cv2.imshow('Canny Edges', canny)
