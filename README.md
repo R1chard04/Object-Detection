@@ -11,5 +11,5 @@
 
 The result would be a camera can detect whether the object is in the right place before we can proceed to further operations for example clamping or welding. 
 
-### Requirements
-+ `#0969DA Python 3.9 to 3.11.1` is required 
+### Requirements:
++ `@@ Python 3.9 to 3.11.1 in blue @@` is required.
