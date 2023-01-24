@@ -1,6 +1,6 @@
 # Martinrea Hydroform Solution - Parts Present Detection Project (2023)
 
-## This is a project using camera with machine learning to develop an AI system detects the presencet of objects inside a frame.
+## This is a project using camera with machine learning to develop an AI system detects the presence of objects inside a frame.
 
 ### Our process:
 + Installing two different cameras to get different perspective of the same object.
@@ -13,6 +13,8 @@ The result would be a camera can detect whether the object is in the right place
 
 ### Requirements:
 + [Python 3.9 to 3.11.1](https://www.python.org/downloads/release/python-3111/) is required.
++ [OpenCV Python (4.7.0)](https://pypi.org/project/opencv-python/) installation.
++ [DepthAI](https://docs.luxonis.com/projects/api/en/latest/install/) installation.
 
 
 [![WIN-20230124-11-46-40-Pro.jpg](https://i.postimg.cc/5tM5sxcQ/WIN-20230124-11-46-40-Pro.jpg)](https://postimg.cc/9DJqMHQc)
