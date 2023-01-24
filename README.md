@@ -12,7 +12,7 @@
 The result would be a camera can detect whether the object is in the right place before we can proceed to further operations for example clamping or welding. 
 
 ### Requirements:
-+ `[![http://google.com/]] "Google"` is required.
++ `[http://google.com/] "Google"` is required.
 
 
 [![WIN-20230124-11-46-40-Pro.jpg](https://i.postimg.cc/5tM5sxcQ/WIN-20230124-11-46-40-Pro.jpg)](https://postimg.cc/9DJqMHQc)
