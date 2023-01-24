@@ -55,7 +55,7 @@ with dai.Device(pipeline) as device:
             cv2.imshow("masked reff", output)
 
         if qStill.has():
-            fName = f"{dirName}/{int(time.time() * 1000)}.jpeg"
+            fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
             with open(fName, "wb") as f:
                 f.write(qStill.get().getData())
                 print('Image saved to', fName)
