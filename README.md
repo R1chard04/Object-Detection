@@ -12,4 +12,4 @@
 The result would be a camera can detect whether the object is in the right place before we can proceed to further operations for example clamping or welding. 
 
 ### Requirements:
-+ `<span style="color:blue;">Python 3.9 to 3.11</span>` is required.
++ `<style>Python 3.9 to 3.11{color:Blue;}</style>` is required.
