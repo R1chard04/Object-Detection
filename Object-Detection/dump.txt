@@ -1,0 +1,88 @@
+import cv2 as cv
+import numpy as np
+import os
+from os import listdir
+import sys
+import time
+import datetime
+from pathlib import Path
+import depthai as dai
+import os.path
+#-----------------------------------------Configuring Mask, MSE, Filter, Comparison, Report-----------------------------------------#
+#Mask
+maskImgG = cv.cvtColor(maskImg, cv.COLOR_BGR2GRAY)
+(maskThresh, maskImgBW) = cv.threshold(maskImgG, 128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
+thresh = 127
+maskImgBinary = cv.threshold(maskImgG, maskThresh, 255, cv.THRESH_BINARY)[1]
+
+#Filter
+alpha = 3 # Contrast control (rec 1-3)
+beta = 0 # Brightness control (rec -300 <-> 300)
+
+refImg = cv.convertScaleAbs(refImg, alpha=alpha, beta=beta)
+refImg = cv.cvtColor(refImg, cv.COLOR_BGR2GRAY)
+
+#Standard Mask
+refImgM = cv.bitwise_and(refImg,refImg, mask = maskImgBinary)
+
+#MSE
+def mse(img1, img2): #mean squared error
+    height, width = img1.shape
+    diffImg = cv.subtract(img1, img2)
+    err = np.sum(diffImg**2)
+    ans = err/(float(height*width)) #Closer to 0 is better
+    return ans, diffImg
+
+#Comparison
+def compare(testPath):
+    report.write("\n"+testPath)
+
+    # testImg = cv.convertScaleAbs(cv.imread(testPath), alpha=alpha, beta=beta)
+    # testImg = cv.cvtColor(testImg, cv.COLOR_BGR2GRAY)
+    # inputImgM = cv.bitwise_and(testImg,testImg, mask= maskImgBinary)
+    # error, diffImg = mse(refImgM, inputImgM)
+
+    # report.write(str(error))
+    # report.write(" Pass") if error < 0.1 else report.write(" Fail")  
+
+    report.write(" Here")
+    # for this mask, the set tolerance is 0.1, this seems to work best, but this is experimentally tested (which isn't awesome)
+
+#Report
+report = open("Object-Detection\Report.txt", "a")
+report.write("Report of deviations from reference image")
+
+#-----------------------------------------Configuring Camera and Pictures Directory-----------------------------------------#
+
+#Camera config
+# Create pipeline
+pipeline = dai.Pipeline()
+
+camRgb = pipeline.create(dai.node.ColorCamera)
+camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
+camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_4_K)
+
+xoutRgb = pipeline.create(dai.node.XLinkOut)
+xoutRgb.setStreamName("rgb")
+camRgb.video.link(xoutRgb.input)
+
+xin = pipeline.create(dai.node.XLinkIn)
+xin.setStreamName("control")
+xin.out.link(camRgb.inputControl)
+
+# Properties
+videoEnc = pipeline.create(dai.node.VideoEncoder)
+videoEnc.setDefaultProfilePreset(1, dai.VideoEncoderProperties.Profile.MJPEG)
+camRgb.still.link(videoEnc.input)
+
+# Linking
+xoutStill = pipeline.create(dai.node.XLinkOut)
+xoutStill.setStreamName("still")
+videoEnc.bitstream.link(xoutStill.input)
+
+#Photos directory 
+dirName = "Object-Detection\photos\Input"
+Path(dirName).mkdir(parents=True, exist_ok=True)
+
+#Pictures Name Generator
+
