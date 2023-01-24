@@ -17,5 +17,3 @@ class cameraCalibration:
 
         # return the values for undistortion process
         return ret, cameraMatrix, dist, rvecs, tvecs
-    
-    [![WIN-20230124-11-46-40-Pro.jpg](https://i.postimg.cc/5tM5sxcQ/WIN-20230124-11-46-40-Pro.jpg)](https://postimg.cc/9DJqMHQc)
