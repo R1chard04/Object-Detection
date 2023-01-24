@@ -11,16 +11,16 @@ import os.path
 
 #-----------------------------------------Importing folders and images-----------------------------------------#
 #Mask
-maskImg = cv.imread('Image-Processing\photos\Test\mask.jpg')  #No tolerance around piece, 1-4 is increasing in tolerance
+maskImg = cv.imread('Object-Detection\photos\Test\mask.jpg')  #No tolerance around piece, 1-4 is increasing in tolerance
 
 #Standard
-refImg = cv.imread('Image-Processing\photos\Test\Reference\STANDARD.jpg')
+refImg = cv.imread('Object-Detection\photos\Test\Reference\STANDARD.jpg')
 
 #References
-refDirectory = 'Image-Processing\photos\Test\Reference'
+refDirectory = 'Object-Detection\photos\Test\Reference'
 
 #Faults
-faultDirectory = 'Image-Processing\photos\Test\Fault'
+faultDirectory = 'Object-Detection\photos\Test\Fault'
 
 #Folders
 folderDirectories = [refDirectory,faultDirectory]
@@ -66,7 +66,7 @@ def compare(testPath):
     # for this mask, the set tolerance is 0.1, this seems to work best, but this is experimentally tested (which isn't awesome)
 
 #Report
-report = open("Image-Processing\Report.txt", "a")
+report = open("Object-Detection\Report.txt", "a")
 report.write("Report of deviations from reference image")
 
 # save_path = 'C:/example/'
@@ -112,7 +112,7 @@ xoutStill.setStreamName("still")
 videoEnc.bitstream.link(xoutStill.input)
 
 #Photos directory 
-dirName = "Image-Processing\photos\Input"
+dirName = "Object-Detection\photos\Input"
 Path(dirName).mkdir(parents=True, exist_ok=True)
 
 #Pictures Name Generator
