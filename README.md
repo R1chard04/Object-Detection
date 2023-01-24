@@ -1,9 +1,33 @@
-#Martinrea Hydroform Winter 2023 Co-op
+# Martinrea Hydroform Solution - Parts Present Detection Project (2023)
 
-#Contributors: 
+## This is a project using camera with machine learning to develop an AI system detects the presence of objects inside a frame.
 
-#Eren Yilmaz
-#Henrique Rodrigues
-#Jamie Yen
-#Kent Tran
-#Leo You
+### Our process:
++ Installing two different cameras to get different perspective of the same object.
++ Using algorithms to generate two images from two point of view.
++ Using openCV's calibration method to undistort all the distortions of the images.
++ Using stitching method to find the overlapped part of two images, then combine them into one image.
++ Running through several algorithms to process the images such as detecting the edges of the object or calculate for the offset. 
+
+The result would be a camera can detect whether the object is in the right place before we can proceed to further operations for example clamping or welding. 
+
+### Requirements:
++ [Python 3.9 to 3.11.1](https://www.python.org/downloads/release/python-3111/) is required.
++ [OpenCV Python (4.7.0)](https://pypi.org/project/opencv-python/) installation.
++ [DepthAI](https://docs.luxonis.com/projects/api/en/latest/install/) installation.
+
+### Local Development:
+```
+# Clone the repo
+$ git clone https://github.com/Kenttrann2302/Object-Detection/
+# Move into directories
+$ cd <directory-name>
+# Install the requirements to run the program
+$ pip install <packages-name>
+# Start the program and have fun!!!
+$ python main.py
+```
+
+## Have fun!!!
+
+[![WIN-20230124-11-46-40-Pro.jpg](https://i.postimg.cc/5tM5sxcQ/WIN-20230124-11-46-40-Pro.jpg)](https://postimg.cc/9DJqMHQc)
