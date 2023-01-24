@@ -55,7 +55,7 @@ class imageCapture:
         self.directoryName = directoryName
 
     def capture(self):
-        inRgb = self.qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
+        inRgb = self.qRgb.tryGet() 
         if inRgb is not None:
             frame = inRgb.getCvFrame()
             frame = cv.pyrDown(frame)
@@ -74,29 +74,3 @@ class imageCapture:
         print("Sent 'still' event to the camera!")
 
         return frame, fName
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#Pictures Name Generator
-def timeStamp():
-    now = str(datetime.datetime.now())
-    now = round(float(((now.replace("-","")).replace(" ","")).replace(":","")))
-    return now
