@@ -1,9 +1,1 @@
-#Martinrea Hydroform Winter 2023 Co-op
-
-#Contributors: 
-
-#Eren Yilmaz
-#Henrique Rodrigues
-#Jamie Yen
-#Kent Tran
-#Leo You
+# Martinrea Hydroform Solution - Parts Present Detection Project
