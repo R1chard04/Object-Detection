@@ -16,5 +16,16 @@ The result would be a camera can detect whether the object is in the right place
 + [OpenCV Python (4.7.0)](https://pypi.org/project/opencv-python/) installation.
 + [DepthAI](https://docs.luxonis.com/projects/api/en/latest/install/) installation.
 
+### Local Development:
+```
+# Clone the repo
+$ git clone https://github.com/Kenttrann2302/Object-Detection/
+# Move into directories
+$ cd <directory-name>
+# Install the requirements to run the program
+$ pip install <packages-name>
+# Start the program and have fun!!!
+$ python main.py
+```
 
 [![WIN-20230124-11-46-40-Pro.jpg](https://i.postimg.cc/5tM5sxcQ/WIN-20230124-11-46-40-Pro.jpg)](https://postimg.cc/9DJqMHQc)
