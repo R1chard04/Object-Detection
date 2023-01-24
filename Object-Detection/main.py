@@ -53,18 +53,36 @@ def mse(img1, img2): #mean squared error
 #Comparison
 def compare(testPath):
     report.write("\n"+testPath)
-    testImg = cv.convertScaleAbs(cv.imread(testPath), alpha=alpha, beta=beta)
-    testImg = cv.cvtColor(testImg, cv.COLOR_BGR2GRAY)
-    inputImgM = cv.bitwise_and(testImg,testImg, mask= maskImgBinary)
-    error, diffImg = mse(refImgM, inputImgM)
 
-    report.write(str(error))
-    report.write(" Pass") if error < 0.1 else report.write(" Fail")  
+    # testImg = cv.convertScaleAbs(cv.imread(testPath), alpha=alpha, beta=beta)
+    # testImg = cv.cvtColor(testImg, cv.COLOR_BGR2GRAY)
+    # inputImgM = cv.bitwise_and(testImg,testImg, mask= maskImgBinary)
+    # error, diffImg = mse(refImgM, inputImgM)
+
+    # report.write(str(error))
+    # report.write(" Pass") if error < 0.1 else report.write(" Fail")  
+
+    report.write(" Here")
     # for this mask, the set tolerance is 0.1, this seems to work best, but this is experimentally tested (which isn't awesome)
 
 #Report
-report = open("report.txt", "w")
+report = open("Image-Processing\Report.txt", "a")
 report.write("Report of deviations from reference image")
+
+# save_path = 'C:/example/'
+
+# name_of_file = raw_input("What is the name of the file: ")
+
+# completeName = os.path.join(save_path, name_of_file+".txt")         
+
+# file1 = open(completeName, "w")
+
+# toFile = raw_input("Write what you want into the field")
+
+# file1.write(toFile)
+
+# file1.close()
+
 
 #-----------------------------------------Configuring Camera and Pictures Directory-----------------------------------------#
 #Camera config
@@ -107,6 +125,8 @@ def timeStamp():
 
 with dai.Device(pipeline) as device:
 
+    #calibration
+
     # Output queue will be used to get the rgb frames from the output defined above
     qRgb = device.getOutputQueue(name="rgb", maxSize=30, blocking=False)
     qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
@@ -126,8 +146,9 @@ with dai.Device(pipeline) as device:
             with open(fName, "wb") as f:
                 f.write(qStill.get().getData())
                 print('Image saved to', fName)
-            time.sleep(3)
-            # compare(fName)
+
+            #stitching
+            compare(fName)
             os.remove(fName)
         
         key = cv.waitKey(1)
@@ -141,19 +162,6 @@ with dai.Device(pipeline) as device:
         time.sleep(3)
 
 
-# save_path = 'C:/example/'
-
-# name_of_file = raw_input("What is the name of the file: ")
-
-# completeName = os.path.join(save_path, name_of_file+".txt")         
-
-# file1 = open(completeName, "w")
-
-# toFile = raw_input("Write what you want into the field")
-
-# file1.write(toFile)
-
-# file1.close()
 
 
 
