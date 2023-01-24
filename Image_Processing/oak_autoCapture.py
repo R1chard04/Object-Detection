@@ -44,18 +44,27 @@ with dai.Device(pipeline) as device:
 
     while True:
         inRgb = qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
+        mask = cv2.imread('photos\Test\maski.jpg')
         if inRgb is not None:
             frame = inRgb.getCvFrame()
             # 4k / 4
             frame = cv2.pyrDown(frame)
             frame = cv2.pyrDown(frame)
             cv2.imshow("rgb", frame)
+            output = cv2.subtract(frame,mask)
+            cv2.imshow("masked reff", output)
 
         if qStill.has():
             fName = f"{dirName}/{int(time.time() * 1000)}.jpeg"
             with open(fName, "wb") as f:
                 f.write(qStill.get().getData())
                 print('Image saved to', fName)
+            '''
+            fName = "'" + fName + "'"
+            photo = cv2.imread(fName)
+            output = cv2.subtract(frame,mask)
+            cv2.imshow("masked reff", output)
+            '''
         
         key = cv2.waitKey(1)
         if key == ord('q'):
@@ -70,4 +79,4 @@ with dai.Device(pipeline) as device:
         ctrl.setCaptureStill(True)
         qControl.send(ctrl)
         print("Sent 'still' event to the camera!")
-        time.sleep(3)
+        time.sleep(1)
