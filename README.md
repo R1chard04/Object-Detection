@@ -1,6 +1,6 @@
 # Winter Workterm - Parts Present Detection Project (2023)
 
-Contributors = [Eren Yilmaz, Henrique Rodrigues, Jamie Yen, Kent Tran, Leo You]
+## Contributors = [Eren Yilmaz, Henrique Rodrigues, Jamie Yen, Kent Tran, Leo You]
 
 ## This is a work term project using camera with machine learning to develop an AI system detects the presence of objects inside a frame.
 
