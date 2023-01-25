@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #Load video
-video = cv2.VideoCapture('Videos_Test/traffic.mp4')
+video = cv2.VideoCapture('Videos_Test/IMG_4965.mp4')
 #Initialize background object
 #Detect shadows seperates entities from their shadows so objects with overlapping shadows do not count as 1, is not visual.
 BackgroundObject = cv2.createBackgroundSubtractorMOG2(detectShadows = True)
@@ -11,6 +11,7 @@ BackgroundObject = cv2.createBackgroundSubtractorMOG2(detectShadows = True)
 while(video.isOpened()):
     ret, frame = video.read()
     if not ret:
+        print("Error: Video not playing")
         break
     else:
         #Apply the background object on the frame to get the segmented mask.
@@ -20,12 +21,12 @@ while(video.isOpened()):
         kernel = None
 
         #Since shadows are masked as grey and objects as white. We can set threshold to ignore grey.
-        _ , fgmask = cv2.threshold(fgmask, 500, 255, cv2.THRESH_BINARY)
+        _ , fgmask = cv2.threshold(fgmask, 200, 255, cv2.THRESH_BINARY)
 
         #Dilation increases white area of figures
         #Erode increases black area of mask
         fgmask = cv2.erode(fgmask, kernel, iterations = 1)
-        fgmask = cv2.dilate(fgmask, kernel, iterations = 10000)
+        fgmask = cv2.dilate(fgmask, kernel, iterations = 2)
 
         #Define Contours
         contours, _ = cv2.findContours(fgmask, cv2. RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -36,7 +37,7 @@ while(video.isOpened()):
         for cnt in contours:
 
         #Raise threshold detection area
-            if cv2.contourArea(cnt) > 9000:
+            if cv2.contourArea(cnt) > 400:
 
                 # Retrieve the bounding box coordinates from the contour.
                 x, y, width, height = cv2.boundingRect(cnt)
@@ -57,7 +58,10 @@ while(video.isOpened()):
         cv2.imshow('Original Frame, Extracted Foreground and Detected Object', cv2.resize(stacked, None, fx=0.5, fy=0.5))
         #cv2.imshow('initial Mask', initialMask)
         #cv2.imshow('Noisy Mask', noisymask)
+
         #cv2.imshow('Clean Mask', fgmask)
+        
+        cv2.imshow('Original Frame, Extracted Foreground and Detected Object, cv2.resize(stacked')
 
         if cv2.waitKey(25) & 0xFF == ord('q'):
             break
