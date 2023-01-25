@@ -44,27 +44,34 @@ with dai.Device(pipeline) as device:
 
     while True:
         inRgb = qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
-        mask = cv2.imread('photos\Test\maski.jpg')
+        maskii = cv2.imread('rgb_data\maskDepthv2.jpg')
+        # converting maskii to black and white only
+        maskii = cv2.cvtColor(maskii, cv2.COLOR_BGR2GRAY)
+        (thresh, maskii) = cv2.threshold(maskii, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+
+        cv2.imshow("maskii", maskii)
+        # mask = cv2.bitwise_not(mask)
         if inRgb is not None:
-            frame = inRgb.getCvFrame()
-            # 4k / 4
-            frame = cv2.pyrDown(frame)
-            frame = cv2.pyrDown(frame)
-            cv2.imshow("rgb", frame)
-            output = cv2.subtract(frame,mask)
+            frame = inRgb.getCvFrame()         
+            output = cv2.bitwise_and(frame, frame, mask = maskii)
+            output = cv2.resize(output, (0,0), fx = 0.2, fy = 0.2)  
             cv2.imshow("masked reff", output)
+            # 4k / 4
+            frame = cv2.pyrDown(frame) # downsize the image
+            frame = cv2.pyrDown(frame)
 
         if qStill.has():
             fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
             with open(fName, "wb") as f:
                 f.write(qStill.get().getData())
                 print('Image saved to', fName)
-            '''
-            fName = "'" + fName + "'"
-            photo = cv2.imread(fName)
-            output = cv2.subtract(frame,mask)
-            cv2.imshow("masked reff", output)
-            '''
+        
+            #fName = "'" + fName + "'"
+            #photo = cv2.imread(fName)
+            #print(photo.shape)
+            # output = cv2.subtract(frame,mask)
+            #cv2.imshow("masked reff", output)
+
         
         key = cv2.waitKey(1)
         if key == ord('q'):
