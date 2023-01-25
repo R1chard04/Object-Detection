@@ -2,7 +2,7 @@
 
 ## Contributors = [Eren Yilmaz, Henrique Rodrigues, Jamie Yen, Kent Tran, Leo You]
 
-## This is a work term project using camera with machine learning to develop an AI system detects the presence of objects inside a frame, which is connected to machine PLC and shown on UI.
+## This is a work term project using camera with machine learning to develop an AI system detects the presence of objects inside a frame, which is connected to a PLC and shown on UI.
 
 ### Our process:
 + Installing two different cameras to get different perspective of the same object.
