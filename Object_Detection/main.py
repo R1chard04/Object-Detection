@@ -3,6 +3,7 @@ import time
 import depthai as dai
 from imageProcessingClasses import imageProcessing
 from imageCaptureClasses import initialise, imageCapture
+from imageCalibration import imageCalibration
 
 #-----------------------------------------Importing folders, images, report-----------------------------------------#
 #Mask
@@ -20,17 +21,21 @@ initialiseObject = initialise(reportPath, photosPath)
 photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill = initialiseObject.initialise()
 
 with dai.Device(pipeline) as device:
-    #calibrate
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                  device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                  device.getInputQueue(name="control"),
                                  photoDirectoryName)
-
-    initialTestImg, initialTestImgPath = imageCapture.capture()
+                                
+    initialTestImg, initialTestImgPath = captureObject.capture()
     processingObject = imageProcessing(maskImg, refImg, initialTestImg, reportPath, initialTestImgPath)
 
+    # set up and calibrate the images
+    myImageCalibration = imageCalibration(initialTestImgPath)
+    myImageCalibration.imageCalibration() # -> return void
+    
+
     while True:
-        testImg, testImgPath = imageCapture.capture()
+        testImg, testImgPath = captureObject.capture()
         processingObject.setTestImg(testImg,testImgPath)
         response = processingObject.compareImage()
         time.sleep(1)
