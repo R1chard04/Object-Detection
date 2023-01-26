@@ -7,14 +7,8 @@ from imageCalibration import imageCalibration
 from imageStitchingClasses import imageStitching
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
-#Mask
-maskImg = cv.imread('Object-Detection\photos\Test\mask.jpg')  #No tolerance around piece, 1-4 is increasing in tolerance
-
-#Standard
-refImg = cv.imread('Object-Detection\photos\Test\Reference\STANDARD.jpg')
-
 #Photos Path
-photosPath = "Object-Detection\photos\Input"
+photosPath = "Object_Detection\photos\Input"
 
 #-----------------------------------------Main Loop-----------------------------------------#
 needCalibrate = True
@@ -27,6 +21,10 @@ with dai.Device(pipeline) as device:
                                  device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                  device.getInputQueue(name="control"),
                                  photoDirectoryName)
+
+    maskImg
+    refImg
+    noObjectRefImg 
 
     # calibrate()                            
     initialTestImg, initialTestImgPath = captureObject.capture()
