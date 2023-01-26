@@ -8,16 +8,11 @@ subtractOG = cv.cvtColor(img,cv.COLOR_BGR2GRAY) - cv.cvtColor(no,cv.COLOR_BGR2GR
 
 alpha = 3 # Contrast control (rec 1-3)
 beta = -300 # Brightness control (rec -300 <-> 300)
-
 subtractOG = cv.convertScaleAbs(subtractOG, alpha=alpha, beta=beta)
-
 subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
 subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
 subtractOG = cv.bitwise_not(subtractOG)
-
-
 subtractOG[subtractOG < 10] = 0
-
 subtractOG[subtractOG != 0] = 255
 
 th, im_th = cv.threshold(subtractOG,200,255,cv.THRESH_BINARY)
@@ -34,7 +29,7 @@ scale_percent = 70 # percent of original size
 width = int(img.shape[1] * scale_percent / 100)
 height = int(img.shape[0] * scale_percent / 100)
 dim = (width, height)
-  
+
 # resize image
 resized = cv.resize(subtractOG, dim, interpolation = cv.INTER_AREA)
 cv.imshow("Resized image", resized)
