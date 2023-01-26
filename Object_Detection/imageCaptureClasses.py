@@ -7,18 +7,12 @@ from pathlib import Path
 import depthai as dai
 
 class initialise:
-    def __init__(self, reportPath, photosFolderPath) -> None:
-        self.reportPath = reportPath
+    def __init__(self, photosFolderPath) -> None:
         self.photosFolderPath = photosFolderPath
 
     def initialise(self):
-        #Report head
-        report = open(self.reportPath, "a")
-        report.write("Report of deviations from reference image")
-        report.close()
-
         #Photos directory 
-        Path(self.photosDirectoryPath).mkdir(parents=True, exist_ok=True)
+        Path(self.photosFolderPath).mkdir(parents=True, exist_ok=True)
 
         #Camera initialisation
         pipeline = dai.Pipeline()
@@ -45,32 +39,32 @@ class initialise:
         xoutStill.setStreamName("still")
         videoEnc.bitstream.link(xoutStill.input)
 
-        return self.photosDirectoryPath, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill
+        return self.photosDolderPath, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill
 
 class imageCapture:
-    def __init__(self, qRgb, qStill, qControl, directoryName) -> None:
+    def __init__(self, qRgb, qStill, qControl, photosDirectoryName) -> None:
         self.qRgb = qRgb
         self.qStill = qStill
         self.qControl = qControl
-        self.directoryName = directoryName
+        self.directoryName = photosDirectoryName
 
     def capture(self):
         inRgb = self.qRgb.tryGet() 
         if inRgb is not None:
-            frame = inRgb.getCvFrame()
-            frame = cv.pyrDown(frame)
-            frame = cv.pyrDown(frame)
+            img = inRgb.getCvimg()
+            img = cv.pyrDown(img)
+            img = cv.pyrDown(img)
 
         if self.qStill.has():
             now = round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":","")))
-            fName = f"{self.directoryName}/{now}.jpeg"
-            with open(fName, "wb") as f:
+            imgPath = f"{self.directoryName}/{now}.jpg"
+            with open(imgPath, "wb") as f:
                 f.write(self.qStill.get().getData())
-                print('Image saved to', fName)
+                print('Image saved to', imgPath)
 
         ctrl = dai.CameraControl()
         ctrl.setCaptureStill(True)
         self.qControl.send(ctrl)
         print("Sent 'still' event to the camera!")
 
-        return frame, fName
+        return img, imgPath

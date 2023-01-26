@@ -2,7 +2,7 @@
 
 ## Contributors = [Eren Yilmaz, Henrique Rodrigues, Jamie Yen, Kent Tran, Leo You]
 
-## This is a work term project using camera with machine learning to develop an AI system detects the presence of objects inside a frame.
+## This is a work term project using camera with machine learning to develop an AI system detects the presence of objects inside a frame, which is connected to a PLC and shown on UI.
 
 ### Our process:
 + Installing two different cameras to get different perspective of the same object.
@@ -11,7 +11,7 @@
 + Using stitching method to find the overlapped part of two images, then combine them into one image.
 + Running through several algorithms to process the images such as detecting the edges of the object or calculate for the offset. 
 
-The result would be a camera that can detect whether the object is in the right place from anywhere in the room before we can proceed to further operations for example clamping or welding. 
+The result would be a camera that can detect whether the object is in the right place from anywhere in the room before we can proceed to further operations like manufacturing.
 
 ### Requirements:
 + [Python 3.9 to 3.11.1](https://www.python.org/downloads/release/python-3111/) is required.
