@@ -63,7 +63,7 @@ class imageCapture:
 
         if self.qStill.has():
             now = round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":","")))
-            fName = f"{self.directoryName}/{now}.jpeg"
+            fName = f"{self.directoryName}/{now}.jpg"
             with open(fName, "wb") as f:
                 f.write(self.qStill.get().getData())
                 print('Image saved to', fName)

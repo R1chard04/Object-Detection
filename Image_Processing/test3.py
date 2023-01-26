@@ -34,3 +34,13 @@ refImgM = cv.bitwise_and(refImg,refImg, mask = maskImgBinary)
 maskii = cv2.resize(maskii, (0,0), fx = 0.2, fy = 0.2)
 cv2.imshow("refImgM", maskii)
 cv2.waitKey(0)
+
+#fill up black pixels
+import cv2
+import numpy as py
+
+img = cv2.imread('rgb_data\\bottle.jpg')
+img[img != 255] = 0 # change everything to white where pixel is not black
+cv2.imshow("hihi", img)
+cv2.waitKey(0)
+# cv2.imwrite('my_img2.jpeg', img)
