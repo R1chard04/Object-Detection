@@ -4,6 +4,7 @@ import depthai as dai
 from imageProcessingClasses import imageProcessing
 from imageCaptureClasses import initialise, imageCapture
 from imageCalibration import imageCalibration
+from imageStitchingClasses import imageStitching
 
 #-----------------------------------------Importing folders, images, report-----------------------------------------#
 #Mask
@@ -29,13 +30,15 @@ with dai.Device(pipeline) as device:
     initialTestImg, initialTestImgPath = captureObject.capture()
     processingObject = imageProcessing(maskImg, refImg, initialTestImg, reportPath, initialTestImgPath)
 
-    # set up and calibrate the images
-    myImageCalibration = imageCalibration(initialTestImgPath)
-    myImageCalibration.imageCalibration() # -> return void
-    
-
     while True:
         testImg, testImgPath = captureObject.capture()
+        # set up and calibrate the images from both cameras
+        myImageCalibration = imageCalibration(testImgPath)
+        myImageCalibration.imageCalibration() # -> return void and calibrate both images
+
+        # stitch the images together
+        myImageStitching = imageStitching(testImgPath)
+        myImageStitching.stitchImgs() # -> return void and stitch both images into 1 image
         processingObject.setTestImg(testImg,testImgPath)
         response = processingObject.compareImage()
         time.sleep(1)
