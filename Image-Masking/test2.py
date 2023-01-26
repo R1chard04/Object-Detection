@@ -12,21 +12,16 @@ beta = -300 # Brightness control (rec -300 <-> 300)
 subtractOG = cv.convertScaleAbs(subtractOG, alpha=alpha, beta=beta)
 
 subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
-# subtractOG[subtractOG < 200] = 0
+subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
 subtractOG = cv.bitwise_not(subtractOG)
 
-lap = cv.Laplacian(subtractOG, cv.CV_64F)
-lap = np.uint8(np.absolute(lap))
-cv.imshow('Laplacian', lap)
 
+subtractOG[subtractOG < 20] = 0
 
-
-
-
-
-
-
-
+for i in range(2):
+    subtractOG = cv.GaussianBlur(subtractOG,(5,5),0)
+    subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 3, 3)
+    subtractOG[subtractOG != 0] = 255
 
 scale_percent = 70 # percent of original size
 width = int(img.shape[1] * scale_percent / 100)
@@ -36,5 +31,5 @@ dim = (width, height)
 # resize image
 resized = cv.resize(subtractOG, dim, interpolation = cv.INTER_AREA)
 cv.imshow("Resized image", resized)
-
+cv.imwrite("subtractOG.jpg",subtractOG)
 cv.waitKey(0)
