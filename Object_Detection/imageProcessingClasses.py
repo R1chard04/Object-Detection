@@ -32,11 +32,10 @@ class imageFiltering:
 filteringObject = imageFiltering()
 
 class imageProcessing:
-    def __init__(self, maskImg, refImg, testImg, reportFilepath, testImgPath) -> None:
+    def __init__(self, maskImg, refImg, testImg, testImgPath) -> None:
         self.maskImg = filteringObject.filterMask(maskImg)
         self.refImg = filteringObject.filterImage(refImg, self.maskImg)
         self.testImg = filteringObject.filterImage(testImg, self.maskImg)
-        self.reportFilepath = reportFilepath
         self.testImgPath = testImgPath
 
     def setTestImg(self, img, imgPath) -> None:

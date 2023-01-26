@@ -6,19 +6,20 @@ from imageCaptureClasses import initialise, imageCapture
 from imageCalibration import imageCalibration
 from imageStitchingClasses import imageStitching
 
-#-----------------------------------------Importing folders, images, report-----------------------------------------#
+#-----------------------------------------Importing folders, images-----------------------------------------#
 #Mask
 maskImg = cv.imread('Object-Detection\photos\Test\mask.jpg')  #No tolerance around piece, 1-4 is increasing in tolerance
 
 #Standard
 refImg = cv.imread('Object-Detection\photos\Test\Reference\STANDARD.jpg')
 
-#Report and Photos Path
-reportPath = "Object-Detection\Report.txt"
+#Photos Path
 photosPath = "Object-Detection\photos\Input"
 
 #-----------------------------------------Main Loop-----------------------------------------#
-initialiseObject = initialise(reportPath, photosPath)
+needCalibrate = True
+
+initialiseObject = initialise(photosPath)
 photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill = initialiseObject.initialise()
 
 with dai.Device(pipeline) as device:
@@ -26,11 +27,12 @@ with dai.Device(pipeline) as device:
                                  device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                  device.getInputQueue(name="control"),
                                  photoDirectoryName)
-                                
-    initialTestImg, initialTestImgPath = captureObject.capture()
-    processingObject = imageProcessing(maskImg, refImg, initialTestImg, reportPath, initialTestImgPath)
 
-    while True:
+    # calibrate()                            
+    initialTestImg, initialTestImgPath = captureObject.capture()
+    processingObject = imageProcessing(maskImg, refImg, initialTestImg, initialTestImgPath)
+
+    while needCalibrate == False:
         testImg, testImgPath = captureObject.capture()
         # set up and calibrate the images from both cameras
         myImageCalibration = imageCalibration(testImgPath)
