@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-'''
+
 # object = cv2.createBackgroundSubtractorM0G2(history, varThreshold, detectShadows)
 
 
 #Load a video
-cap = cv2.VideoCapture('Photos/IMG_4965.mp4')
+cap = cv2.VideoCapture('Videos_Test/IMG_4965.mp4')
 
 # you can optionally work on the live web cam
 
@@ -18,7 +18,7 @@ backgroundobject = cv2.createBackgroundSubtractorMOG2(varThreshold = 100, histor
 
 while(cap.isOpened()):
     ret, frame = cap.read()
-    if not ret:
+    if not frame:
         break
     else:
 
@@ -42,43 +42,8 @@ while(cap.isOpened()):
     
 cap.release()
 cv2.destroyAllWindows()
+
 #____________________________________________________________________
-'''
-
-#Load video
-video = cv2.VideoCapture('Photos/IMG_4965.mp4')
-#Initialize background object
-#Detect shadows seperates entities from their shadows so objects with overlapping shadows do not count as 1, is not visual.
-BackgroundObject = cv2.createBackgroundSubtractorMOG2(detectShadows = True)
-
-while(video.isOpened()):
-    ret, frame = cap.read()
-    if not ret:
-        break
-    else:
-        #Apply the background object on the frame to get the segmented mask.
-        fgmask = BackgroundObject.apply(frame)
-
-        #Array of numerical co-efficents for pixels in an image. None is default 3x3 size.
-        kernel = None
-
-        #Since shadows are masked as grey and objects as white. We can set threshold to ignore grey.
-        _, fgmask = cv2.threshold(fgmask, 250, 255, cv2.TRESH_BINARY)
-
-        #Dilation increases white area of figures
-        #Erode increases black area of mask
-        fgmask = cv2.erode(fgmask, kernel, iterations = 1)
-        fgmask = cv2.dilate(fgmask, kernel, iterations = 2)
-
-
-
-
-
-
-
-
-        
-
 
 
 
