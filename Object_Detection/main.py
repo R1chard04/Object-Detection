@@ -43,4 +43,5 @@ with dai.Device(pipeline) as device:
         # start process the images
         processingObject.setTestImg(testImg,testImgPath)
         response = processingObject.compareImage()
+        
         time.sleep(1)
