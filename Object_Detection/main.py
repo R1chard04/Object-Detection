@@ -39,6 +39,8 @@ with dai.Device(pipeline) as device:
         # stitch the images together
         myImageStitching = imageStitching(testImgPath)
         myImageStitching.stitchImgs() # -> return void and stitch both images into 1 image
+
+        # start process the images
         processingObject.setTestImg(testImg,testImgPath)
         response = processingObject.compareImage()
         time.sleep(1)
