@@ -1,9 +1,9 @@
 import cv2 as cv
-from setup import setupImages
-from calibration import cameraCalibration
-from undistortion import undistortion
-from reprojection import reprojection
-from remapping import remapping
+from imageCalibrationFiles.setup import setupImages
+from imageCalibrationFiles.calibration import cameraCalibration
+from imageCalibrationFiles.undistortion import undistortion
+from imageCalibrationFiles.reprojection import reprojection
+from imageCalibrationFiles.remapping import remapping
 
 # initialize variables for setting up the images
 objectSize = (24,17) # use chessboard size
