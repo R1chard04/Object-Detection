@@ -39,7 +39,7 @@ class initialise:
         xoutStill.setStreamName("still")
         videoEnc.bitstream.link(xoutStill.input)
 
-        return self.photosDolderPath, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill
+        return self.photosFolderPath, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill
 
 class imageCapture:
     def __init__(self, qRgb, qStill, qControl, photosDirectoryName) -> None:

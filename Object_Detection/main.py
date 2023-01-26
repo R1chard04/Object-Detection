@@ -7,9 +7,6 @@ from imageCalibration import imageCalibration
 from imageStitchingClasses import imageStitching
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
-#Mask
-maskImg = cv.imread('Object-Detection\photos\Test\mask.jpg')  #No tolerance around piece, 1-4 is increasing in tolerance
-
 #Standard
 refImg = cv.imread('Object-Detection\photos\Test\Reference\STANDARD.jpg')
 
