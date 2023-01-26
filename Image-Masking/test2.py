@@ -16,13 +16,19 @@ subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
 subtractOG = cv.bitwise_not(subtractOG)
 
 
-subtractOG[subtractOG < 20] = 0
-cv.imshow("img", subtractOG)
-for i in range(2):
-    # subtractOG[subtractOG < 20] = 0
-    subtractOG = cv.GaussianBlur(subtractOG,(5,5),0)
-    subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 3, 3)
-    subtractOG[subtractOG != 0] = 255
+subtractOG[subtractOG < 10] = 0
+
+subtractOG[subtractOG != 0] = 255
+
+th, im_th = cv.threshold(subtractOG,200,255,cv.THRESH_BINARY)
+im_floodfill = im_th.copy()
+h,w = im_th.shape[:2]
+mask = np.zeros((h+2,w+2),np.uint8)
+cv.floodFill(im_floodfill, mask,(0,0),(255,255,255))
+
+im_floodfill = cv.bitwise_not(im_floodfill)
+cv.imshow("Floodfill", im_floodfill)
+subtractOG = subtractOG+im_floodfill
 
 scale_percent = 70 # percent of original size
 width = int(img.shape[1] * scale_percent / 100)

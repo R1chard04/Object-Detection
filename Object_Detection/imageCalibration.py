@@ -1,7 +1,8 @@
 import cv2 as cv
-from setup import setupImages
-from calibration import cameraCalibration
-from undistortion import undistortion
+import sys
+from General-Calibration/setup import setupImages
+from Object_Detection/General-Calibration/calibration.py import cameraCalibration
+from Object_Detection/General-Calibration/undistortion.py import undistortion
 from reprojection import reprojection
 from remapping import remapping
 
