@@ -1,0 +1,1 @@
+print ("Press \'s\' to capture a standard photo that has parts on \nPress \'w\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask")
