@@ -7,18 +7,12 @@ from pathlib import Path
 import depthai as dai
 
 class initialise:
-    def __init__(self, reportPath, photosFolderPath) -> None:
-        self.reportPath = reportPath
+    def __init__(self, photosFolderPath) -> None:
         self.photosFolderPath = photosFolderPath
 
     def initialise(self):
-        #Report head
-        report = open(self.reportPath, "a")
-        report.write("Report of deviations from reference image")
-        report.close()
-
         #Photos directory 
-        Path(self.photosDirectoryPath).mkdir(parents=True, exist_ok=True)
+        Path(self.photosFolderPath).mkdir(parents=True, exist_ok=True)
 
         #Camera initialisation
         pipeline = dai.Pipeline()
@@ -45,7 +39,7 @@ class initialise:
         xoutStill.setStreamName("still")
         videoEnc.bitstream.link(xoutStill.input)
 
-        return self.photosDirectoryPath, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill
+        return self.photosFolderPath, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill
 
 class imageCapture:
     def __init__(self, qRgb, qStill, qControl, directoryName) -> None:
@@ -54,8 +48,10 @@ class imageCapture:
         self.qControl = qControl
         self.directoryName = directoryName
 
-    def capture(self):
+    def capture(self) -> any:
         inRgb = self.qRgb.tryGet() 
+        global frame, fName
+        frame, fName = any
         if inRgb is not None:
             frame = inRgb.getCvFrame()
             frame = cv.pyrDown(frame)

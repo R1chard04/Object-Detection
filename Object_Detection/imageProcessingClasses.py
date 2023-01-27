@@ -32,11 +32,10 @@ class imageFiltering:
 filteringObject = imageFiltering()
 
 class imageProcessing:
-    def __init__(self, maskImg, refImg, testImg, reportFilepath, testImgPath) -> None:
+    def __init__(self, maskImg, refImg, testImg, testImgPath) -> None:
         self.maskImg = filteringObject.filterMask(maskImg)
         self.refImg = filteringObject.filterImage(refImg, self.maskImg)
         self.testImg = filteringObject.filterImage(testImg, self.maskImg)
-        self.reportFilepath = reportFilepath
         self.testImgPath = testImgPath
 
     def setTestImg(self, img, imgPath) -> None:
@@ -44,17 +43,8 @@ class imageProcessing:
         self.testImgPath = imgPath
 
     def compareImage(self):
-        report = open(self.reportFilepath, "a")
-        report.write("\n"+self.testImgPath)
 
         error, diffImg = filteringObject.mse(self.testImg, self.refImg)
-
-        # report.write(str(error))
-        # report.write(" Pass") if error < 0.1 else report.write(" Fail")  
-
-        report.write(" Here")
-        report.close()
-        # for this mask, the set tolerance is 0.1, this seems to work best, but this is experimentally tested (which isn't awesome)
         return bool(error<0.1)
 
 
