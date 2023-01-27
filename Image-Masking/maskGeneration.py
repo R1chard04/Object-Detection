@@ -46,6 +46,7 @@ with dai.Device(pipeline) as device:
     # Make sure the destination path is present before starting to store the examples
     # dirName = "rgb_data"
     # Path(dirName).mkdir(parents=True, exist_ok=True)
+    photoName = "null.jpg"
     dirName = "mask_pics"
     Path(dirName).mkdir(parents=True, exist_ok=True)
     print ("Press \'s\' to capture a standard photo that has parts on \nPress \'n\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask\nPress \'q\' to quit")
@@ -69,22 +70,22 @@ with dai.Device(pipeline) as device:
         if key == ord('q'):
             break
         elif key == ord('s'):
-            photoName = "STANDARD"
+            photoName = "STANDARD.jpg"
             # dirName = "mask_pics"
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
-        elif key == ord('w'):
-            photoName = "NONE"
+        elif key == ord('n'):
+            photoName = "NONE.jpg"
             # dirName = "mask_pics"
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
         elif key == ord('g'):
-            partImg = cv.imread('mask_pics\\STANDARD.jpg') # ?? img
-            noPartImg = cv.imread('mask_pics\\NONE.jpg')        # ?? no
+            partImg = cv.imread('Image-Masking/mask_pics/STANDARD.jpg') # ?? img
+            noPartImg = cv.imread('Image-Masking/mask_pics/NONE.jpg')        # ?? no
             #Subtracting the two images to find the part area
             subtractOG = cv.cvtColor(partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY)
 
@@ -112,7 +113,7 @@ with dai.Device(pipeline) as device:
             #Filling gaps
             subtractOG = subtractOG+fillMask
             img = cv.resize(subtractOG, (0,0), fx = 0.2, fy = 0.2)
-            cv.imwrite("mask_pics/MASK.jpg",subtractOG)
+            cv.imwrite("Image-Masking\mask_pics\MASK.jpg",subtractOG)
             cv.imshow("MASK",img)
             cv.waitKey(0)
         elif key == ord('q'):
