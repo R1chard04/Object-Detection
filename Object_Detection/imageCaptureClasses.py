@@ -51,11 +51,13 @@ class imageCapture:
     def capture(self):
         inRgb = self.qRgb.tryGet() 
         if inRgb is not None:
+            print("here2")
             img = inRgb.getCvimg()
             img = cv.pyrDown(img)
             img = cv.pyrDown(img)
 
         if self.qStill.has():
+            print("here2")
             now = round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":","")))
             imgPath = f"{self.directoryName}/{now}.jpg"
             with open(imgPath, "wb") as f:
@@ -66,5 +68,4 @@ class imageCapture:
         ctrl.setCaptureStill(True)
         self.qControl.send(ctrl)
         print("Sent 'still' event to the camera!")
-
         return img, imgPath
