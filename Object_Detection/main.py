@@ -11,10 +11,10 @@ from imageStitchingClasses import imageStitching
 photosPath = "Object_Detection\photos\Input"
 
 #-----------------------------------------Main Loop-----------------------------------------#
-needCalibrate = True
+needCalibrate = False
 
-initialiseObject = initialise(photosPath)
-photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill = initialiseObject.initialise()
+initialisationObject = initialise(photosPath)
+photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill = initialisationObject.initialise()
 
 with dai.Device(pipeline) as device:
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
@@ -22,26 +22,24 @@ with dai.Device(pipeline) as device:
                                  device.getInputQueue(name="control"),
                                  photoDirectoryName)
 
-    maskImg
-    refImg
-    noObjectRefImg 
-
     # calibrate()                            
     initialTestImg, initialTestImgPath = captureObject.capture()
-    processingObject = imageProcessing(maskImg, refImg, initialTestImg, initialTestImgPath)
+    # processingObject = imageProcessing(maskImg, refImg, initialTestImg, initialTestImgPath)
 
-    while needCalibrate == False:
-        testImg, testImgPath = captureObject.capture()
-        # set up and calibrate the images from both cameras
-        myImageCalibration = imageCalibration(testImgPath)
-        myImageCalibration.imageCalibration() # -> return void and calibrate both images
+    # while needCalibrate == False:
+    #     testImg, testImgPath = captureObject.capture()
 
-        # stitch the images together
-        myImageStitching = imageStitching(testImgPath)
-        myImageStitching.stitchImgs() # -> return void and stitch both images into 1 image
+    #     cv.imshow("test",testImg)
+    #     # set up and calibrate the images from both cameras
+    #     myImageCalibration = imageCalibration(testImgPath)
+    #     myImageCalibration.imageCalibration() # -> return void and calibrate both images
 
-        # start process the images
-        processingObject.setTestImg(testImg,testImgPath)
-        response = processingObject.compareImage()
+    #     # stitch the images together
+    #     myImageStitching = imageStitching(testImgPath)
+    #     myImageStitching.stitchImgs() # -> return void and stitch both images into 1 image
+
+    #     # start process the images
+    #     processingObject.setTestImg(testImg,testImgPath)
+    #     response = processingObject.compareImage()
         
-        time.sleep(1)
+    #     time.sleep(1)

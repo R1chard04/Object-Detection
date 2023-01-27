@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+import os
 
 class recalibrate:
     def __init__(self, noPart, part, maskPath) -> None:
@@ -34,5 +35,9 @@ class recalibrate:
         
         #Filling gaps
         subtractOG = subtractOG+fillMask
+        
+        cv.imwrite("mask.png")
+
+        return subtractOG, 
 
 
