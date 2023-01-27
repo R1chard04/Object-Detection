@@ -5,6 +5,7 @@ import os.path
 import datetime
 from pathlib import Path
 import depthai as dai
+from imageMaskGeneration import recalibrate
 
 class initialise:
     def __init__(self, photosFolderPath) -> None:
@@ -78,4 +79,54 @@ class imageCapture:
             if imgUpdated == True:
                 return img, imgPath
 
-        
+    def maskCapture(self):
+        photoName = "null.jpg"
+        dirName = "mask_pics"
+        Path(dirName).mkdir(parents=True, exist_ok=True)
+
+        print ("Press \'s\' to capture a standard photo that has parts on \nPress \'n\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask\nPress \'q\' to quit")
+        # take STANDARD
+        while True:
+            inRgb = self.qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
+            if inRgb is not None:
+                frame = inRgb.getCvFrame()
+                # 4k / 4
+                frame = cv.pyrDown(frame)
+                frame = cv.pyrDown(frame)
+                cv.imshow("rgb", frame)
+
+            if self.qStill.has():
+                fName = f"{dirName}/{photoName}.jpg"
+                with open(fName, "wb") as f:
+                    f.write(self.qStill.get().getData())
+                    print('Image saved to', fName)
+            
+            key = cv.waitKey(1)
+            if key == ord('q'):
+                break
+            elif key == ord('s'):
+                photoName = "STANDARD.jpg"
+                # dirName = "mask_pics"
+                ctrl = dai.CameraControl()
+                ctrl.setCaptureStill(True)
+                self.qControl.send(ctrl)
+                print("Sent 'still' event to the camera")
+            elif key == ord('n'):
+                photoName = "NONE.jpg"
+                # dirName = "mask_pics"
+                ctrl = dai.CameraControl()
+                ctrl.setCaptureStill(True)
+                self.qControl.send(ctrl)
+                print("Sent 'still' event to the camera")
+            elif key == ord('g'):
+                partImg = cv.imread('Image-Masking/mask_pics/STANDARD.jpg') # ?? img
+                noPartImg = cv.imread('Image-Masking/mask_pics/NONE.jpg')        # ?? no
+                maskPath = "Object_Detection\photos\mask.jpg"
+
+                maskCalibrationObject = recalibrate(noPartImg, partImg, maskPath)
+                mask = maskCalibrationObject.maskGeneration() #this might not need to return anything
+
+            elif key == ord('q'):
+                break
+
+            

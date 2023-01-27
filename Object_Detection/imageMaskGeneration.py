@@ -38,6 +38,6 @@ class recalibrate:
         
         cv.imwrite("mask.png")
 
-        return subtractOG, 
+        return subtractOG
 
 

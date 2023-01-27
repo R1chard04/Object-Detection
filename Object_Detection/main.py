@@ -24,11 +24,11 @@ with dai.Device(pipeline) as device:
    
     
     for i in range(5):                   
-        initialTestImg, initialTestImgPath = captureObject.capture()
+        initialTestImg, initialTestImgPath = captureObject.autoCapture()
         cv.imshow("test", initialTestImg)
         
         cv.waitKey(0)
-    initialTestImg, initialTestImgPath = captureObject.capture()
+    initialTestImg, initialTestImgPath = captureObject.autoCapture()
         
     # processingObject = imageProcessing(maskImg, refImg, initialTestImg, initialTestImgPath)
 
