@@ -62,16 +62,16 @@ class imageCapture:
                 print("here2")
                 img = inRgb.getCvFrame()
                 img = cv.pyrDown(img)
-                img = cv.pyrDown(img)
+                img = cv.pyrDown(img) #comment out later
                 done = True
 
-            # if self.qStill.has():
-            #     print("here2")
+            if self.qStill.has():
+                print("here2")
                 
-            #     with open(imgPath, "wb") as f:
-            #         f.write(self.qStill.get().getData())
-            #         print('Image saved to', imgPath)
-            #         done = True
+                with open(imgPath, "wb") as f:
+                    f.write(self.qStill.get().getData())
+                    print('Image saved to', imgPath)
+                    done = True
 
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
