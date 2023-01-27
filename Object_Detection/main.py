@@ -16,7 +16,12 @@ needCalibrate = False
 initialisationObject = initialise(photosPath)
 photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill = initialisationObject.initialise()
 
-with dai.Device(pipeline) as device:
+# Multiple cameras set up
+device_info = dai.DeviceInfo("1944301051766E1300")
+device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
+device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+
+with dai.Device(pipeline, device_info) as device:
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                  device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                  device.getInputQueue(name="control"),
