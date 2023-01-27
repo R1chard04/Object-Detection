@@ -75,7 +75,7 @@ with dai.Device(pipeline) as device:
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
-        elif key == ord('w'):
+        elif key == ord('n'):
             photoName = "NONE"
             # dirName = "mask_pics"
             ctrl = dai.CameraControl()
