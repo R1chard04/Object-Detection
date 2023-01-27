@@ -2,8 +2,9 @@
 
 import time
 from pathlib import Path
-import cv2
+import cv2 as cv
 import depthai as dai
+import numpy as np
 
 #-----------------------------------------OAK CAMERA SETUP-----------------------------------------#
 
@@ -43,19 +44,20 @@ with dai.Device(pipeline) as device:
     qControl = device.getInputQueue(name="control")
 
     # Make sure the destination path is present before starting to store the examples
-    dirName = "rgb_data"
+    # dirName = "rgb_data"
+    # Path(dirName).mkdir(parents=True, exist_ok=True)
+    dirName = "mask_pics"
     Path(dirName).mkdir(parents=True, exist_ok=True)
-    ans = input ("Press \'s\' to capture a standard photo that has parts on \nPress \'w\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask")
+    print ("Press \'s\' to capture a standard photo that has parts on \nPress \'n\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask\nPress \'q\' to quit")
     # take STANDARD
     while True:
         inRgb = qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
-        photoName = STANDARD
         if inRgb is not None:
             frame = inRgb.getCvFrame()
             # 4k / 4
-            frame = cv2.pyrDown(frame)
-            frame = cv2.pyrDown(frame)
-            cv2.imshow("rgb", frame)
+            frame = cv.pyrDown(frame)
+            frame = cv.pyrDown(frame)
+            cv.imshow("rgb", frame)
 
         if qStill.has():
             fName = f"{dirName}/{photoName}.jpg"
@@ -63,26 +65,28 @@ with dai.Device(pipeline) as device:
                 f.write(qStill.get().getData())
                 print('Image saved to', fName)
         
-        key = cv2.waitKey(1)
+        key = cv.waitKey(1)
         if key == ord('q'):
             break
         elif key == ord('s'):
-            photoName = STANDARD
+            photoName = "STANDARD"
+            # dirName = "mask_pics"
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
         elif key == ord('w'):
-            photoName = WITHOUT
+            photoName = "NONE"
+            # dirName = "mask_pics"
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
         elif key == ord('g'):
-            img = cv.imread('Image-Masking\\rgb_data\\STANDARD.jpg')
-            no = cv.imread('Image-Masking\\rgb_data\\WITHOUT.jpg')
+            partImg = cv.imread('mask_pics\\STANDARD.jpg') # ?? img
+            noPartImg = cv.imread('mask_pics\\NONE.jpg')        # ?? no
             #Subtracting the two images to find the part area
-            subtractOG = cv.cvtColor(self.partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(self.noPartImg,cv.COLOR_BGR2GRAY)
+            subtractOG = cv.cvtColor(partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY)
 
             #Applying filters on image
             alpha = 3 # Contrast control (rec 1-3)
@@ -107,13 +111,19 @@ with dai.Device(pipeline) as device:
             
             #Filling gaps
             subtractOG = subtractOG+fillMask
-
-        elif key == ord('c'):
-            photoName = int(time.time() * 1000)
-            ctrl = dai.CameraControl()
-            ctrl.setCaptureStill(True)
-            qControl.send(ctrl)
-            print("Sent 'still' event to the camera")
+            img = cv.resize(subtractOG, (0,0), fx = 0.2, fy = 0.2)
+            cv.imwrite("mask_pics/MASK.jpg",subtractOG)
+            cv.imshow("MASK",img)
+            cv.waitKey(0)
+        elif key == ord('q'):
+            break
+        # elif key == ord('c'):
+        #     dirName = rgb_data
+        #     photoName = int(time.time() * 1000)
+        #     ctrl = dai.CameraControl()
+        #     ctrl.setCaptureStill(True)
+        #     qControl.send(ctrl)
+        #     print("Sent 'still' event to the camera")
             
 
 
@@ -133,7 +143,7 @@ with dai.Device(pipeline) as device:
     #         f.write(qStill.get().getData())
     #         print('Image saved to', fName)
         
-    # key = cv2.waitKey(1)
+    # key = cv.waitKey(1)
     # if key == ord('q'):
     #     break
     # elif key == ord('c'):
