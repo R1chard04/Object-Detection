@@ -1,4 +1,5 @@
 import time
+
 import threading
 from functools import wraps
 # # seconds passed since epoch
@@ -13,11 +14,11 @@ from functools import wraps
 # print(time.time())
 # print(preTime)
 
-while True:
-    # preTime = time.time() +1
-    # if time.time() > preTime:
-    #     print("heyhey")
-    print(time.time()%1//0.2)
+# while True:
+#     # preTime = time.time() +1
+#     # if time.time() > preTime:
+#     #     print("heyhey")
+#     print(time.time()%1//0.2)
 
 # print(0.43243//0.1)
 
@@ -41,3 +42,18 @@ while True:
  
 # if __name__ == '__main__': 
 #     my_func('Hello', 'world') 
+
+# def takeFrame:
+#     print(time.time())
+
+
+
+# while True:
+#     schedule.run_pending()
+
+start = time.time()
+
+while True:
+    if time.time() - start > 1:
+        print(time.time())
+        start = time.time()

@@ -51,7 +51,7 @@ with dai.Device(pipeline) as device:
     Path(dirName).mkdir(parents=True, exist_ok=True)
 
     # decide if it is the time to take a picture
-    takePic = True
+    start = time.time()
 
     while True:
         inRgb = qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
@@ -60,28 +60,30 @@ with dai.Device(pipeline) as device:
         if inRgb is not None:
             frame = inRgb.getCvFrame()
             # 4k / 4
-            frame = cv2.pyrDown(frame)
-            frame = cv2.pyrDown(frame)
-            cv2.imshow("rgb", frame)
+            frame = cv.pyrDown(frame)
+            frame = cv.pyrDown(frame)
+            cv.imshow("rgb", frame)
         
         # get the current frame and save it to the file
         if qStill.has():
-            fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
+            # fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
+            fName = "FRAME.jpg"
             with open(fName, "wb") as f:
                 f.write(qStill.get().getData())
                 print('Image saved to', fName)
         
-        key = cv2.waitKey(1)
-
+        key = cv.waitKey(1)
 
         # quit
         if key == ord('q'):
             break
         # focus the camera
-        elif key == ord('c'):
+        # elif key == ord('c'):
+        elif time.time() - start > 3:
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
+            start = time.time()
             print("Sent 'still' event to the camera!")
 
 '''
@@ -151,3 +153,4 @@ for i in range(len(folderDirectories)):
         print(images)
         images = os.path.join(folderDirectories[i],images)
         compare(images)
+'''
