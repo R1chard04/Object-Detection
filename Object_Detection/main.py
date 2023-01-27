@@ -21,9 +21,15 @@ with dai.Device(pipeline) as device:
                                  device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                  device.getInputQueue(name="control"),
                                  photoDirectoryName)
-
-    # calibrate()                            
+   
+    
+    for i in range(5):                   
+        initialTestImg, initialTestImgPath = captureObject.capture()
+        cv.imshow("tes", initialTestImg)
+        
+        cv.waitKey(0)
     initialTestImg, initialTestImgPath = captureObject.capture()
+        
     # processingObject = imageProcessing(maskImg, refImg, initialTestImg, initialTestImgPath)
 
     # while needCalibrate == False:
