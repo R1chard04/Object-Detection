@@ -105,23 +105,23 @@ class imageCapture:
             if key == ord('q'):
                 break
             elif key == ord('s'):
-                photoName = "STANDARD.jpg"
+                photoName = "STANDARD"
                 # dirName = "mask_pics"
                 ctrl = dai.CameraControl()
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
                 print("Sent 'still' event to the camera")
             elif key == ord('n'):
-                photoName = "NONE.jpg"
+                photoName = "NONE"
                 # dirName = "mask_pics"
                 ctrl = dai.CameraControl()
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
                 print("Sent 'still' event to the camera")
             elif key == ord('g'):
-                partImg = cv.imread('Image-Masking/mask_pics/STANDARD.jpg') # ?? img
-                noPartImg = cv.imread('Image-Masking/mask_pics/NONE.jpg')        # ?? no
-                maskPath = "Object_Detection\photos\mask.jpg"
+                partImg = cv.imread('mask_pics/STANDARD.jpg') # ?? img
+                noPartImg = cv.imread('mask_pics/NONE.jpg')        # ?? no
+                maskPath = "Object_Detection\photos\mask.jpg" #This has to be fixed
 
                 maskCalibrationObject = recalibrate(noPartImg, partImg, maskPath)
                 mask = maskCalibrationObject.maskGeneration() #this might not need to return anything

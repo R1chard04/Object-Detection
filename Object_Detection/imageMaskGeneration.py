@@ -8,7 +8,7 @@ class recalibrate:
         self.noPartImg = noPart
         self.maskPath = maskPath
     
-    def maskGenertion(self):
+    def maskGeneration(self):
         #Subtracting the two images to find the part area
         subtractOG = cv.cvtColor(self.partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(self.noPartImg,cv.COLOR_BGR2GRAY)
 
@@ -36,7 +36,7 @@ class recalibrate:
         #Filling gaps
         subtractOG = subtractOG+fillMask
         
-        cv.imwrite("mask.png")
+        cv.imwrite("mask.jpg", subtractOG)
 
         return subtractOG
 

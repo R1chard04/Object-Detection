@@ -22,13 +22,13 @@ with dai.Device(pipeline) as device:
                                  device.getInputQueue(name="control"),
                                  photoDirectoryName)
    
-    
-    for i in range(5):                   
-        initialTestImg, initialTestImgPath = captureObject.autoCapture()
-        cv.imshow("test", initialTestImg)
+    captureObject.maskCapture()    
+    # for i in range(5):                   
+    #     initialTestImg, initialTestImgPath = captureObject.autoCapture()
+    #     cv.imshow("test", initialTestImg)
         
-        cv.waitKey(0)
-    initialTestImg, initialTestImgPath = captureObject.autoCapture()
+    #     cv.waitKey(0)
+    # initialTestImg, initialTestImgPath = captureObject.autoCapture()
         
     # processingObject = imageProcessing(maskImg, refImg, initialTestImg, initialTestImgPath)
 
