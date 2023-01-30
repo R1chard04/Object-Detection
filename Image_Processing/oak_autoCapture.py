@@ -42,6 +42,9 @@ with dai.Device(pipeline) as device:
     dirName = "rgb_data"
     Path(dirName).mkdir(parents=True, exist_ok=True)
 
+    # decide if it is the time
+    takePic = True
+
     while True:
         inRgb = qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
         
@@ -68,6 +71,7 @@ with dai.Device(pipeline) as device:
             with open(fName, "wb") as f:
                 f.write(qStill.get().getData())
                 print('Image saved to', fName)
+            time.sleep(3)
         
             #fName = "'" + fName + "'"
             #photo = cv2.imread(fName)

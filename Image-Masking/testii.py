@@ -1,43 +1,44 @@
 import time
-import threading
-from functools import wraps
-# # seconds passed since epoch
-# seconds = 1672215379.5045543
+from pathlib import Path
+import cv2 as cv
+import depthai as dai
+import numpy as np
 
-# # convert the time in seconds since the epoch to a readable format
-# local_time = time.ctime(seconds)
 
-# print("Local time:", local_time)
+partImg = cv.imread('mask_pics\\STANDARD1.jpg') # ?? img
+noPartImg = cv.imread('mask_pics\\NONE1.jpg')        # ?? no
+#Subtracting the two images to find the part area
+# subtractOG = cv.cvtColor(partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY)
+subtractOG = partImg - noPartImg
+# subtractOG = cv.cvtColor(subtractOG,cv.COLOR_BGR2GRAY)
 
-# preTime = time.time() +1
-# print(time.time())
-# print(preTime)
 
-while True:
-    # preTime = time.time() +1
-    # if time.time() > preTime:
-    #     print("heyhey")
-    print(time.time()%1//0.2)
+#Applying filters on image
+alpha = 3 # Contrast control (rec 1-3)
+beta = -300 # Brightness control (rec -300 <-> 300)
+subtractOG = cv.convertScaleAbs(subtractOG, alpha=alpha, beta=beta)
+subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
+subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
 
-# print(0.43243//0.1)
+#Black and white configuration
+subtractOG = cv.bitwise_not(subtractOG)
+subtractOG[subtractOG < 10] = 0
+subtractOG[subtractOG != 0] = 255
 
-# def delay(delay=0.): 
-#     """ 
-#     Decorator delaying the execution of a function for a while. 
-#     """ 
-#     def wrap(f): 
-#         @wraps(f) 
-#         def delayed(*args, **kwargs): 
-#             timer = threading.Timer(delay, f, args=args, kwargs=kwargs) 
-#             timer.start() 
-#         return delayed 
-#     return wrap 
+#Filling gaps
+thresh, imgThresh = cv.threshold(subtractOG,200,255,cv.THRESH_BINARY)
+fillMask = imgThresh.copy()
+height, width = imgThresh.shape[:2]
+mask = np.zeros((height+2,width+2),np.uint8)
+cv.floodFill(fillMask, mask,(0,0),(255,255,255))
 
-# from utils import delay 
- 
-# @delay(3.0) 
-# def my_func(arg1, arg2): 
-#     print arg1, arg2 
- 
-# if __name__ == '__main__': 
-#     my_func('Hello', 'world') 
+fillMask = cv.bitwise_not(fillMask)
+
+#Filling gaps
+subtractOG = subtractOG+fillMask
+
+
+img = cv.resize(subtractOG, (0,0), fx = 0.2, fy = 0.2)
+# cv.imwrite("mask_pics/MASK.jpg",subtractOG)
+cv.imshow("MASK",img)
+cv.waitKey(0)

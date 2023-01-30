@@ -8,12 +8,21 @@ import numpy as np
 
 #-----------------------------------------OAK CAMERA SETUP-----------------------------------------#
 
+# fixed focus setup
+# camFocalLenth = 115
+lensPos = 150
+LENS_STEP = 3
+def clamp(num, v0, v1):
+    return max(v0, min(num, v1))
+
+
 # Create pipeline
 pipeline = dai.Pipeline()
 
 camRgb = pipeline.create(dai.node.ColorCamera)
 camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
 camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_4_K)
+# camRgb.initialControl.setManualFocus(camFocalLenth) # set manual fixed-focus focal length
 
 xoutRgb = pipeline.create(dai.node.XLinkOut)
 xoutRgb.setStreamName("rgb")
@@ -38,6 +47,8 @@ videoEnc.bitstream.link(xoutStill.input)
 # Connect to device and start pipeline
 with dai.Device(pipeline) as device:
 
+    controlQueue = device.getInputQueue('control')
+    
     # Output queue will be used to get the rgb frames from the output defined above
     qRgb = device.getOutputQueue(name="rgb", maxSize=30, blocking=False)
     qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
@@ -53,6 +64,7 @@ with dai.Device(pipeline) as device:
     # take STANDARD
     while True:
         inRgb = qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
+
         if inRgb is not None:
             frame = inRgb.getCvFrame()
             # 4k / 4
@@ -67,54 +79,73 @@ with dai.Device(pipeline) as device:
                 print('Image saved to', fName)
         
         key = cv.waitKey(1)
-        if key == ord('q'):
+        if key in [ord(','), ord('.')]:
+            if key == ord(','): lensPos -= LENS_STEP
+            if key == ord('.'): lensPos += LENS_STEP
+            lensPos = clamp(lensPos, 0, 255)
+            print("Setting manual focus, lens position: ", lensPos)
+            ctrl = dai.CameraControl()
+            ctrl.setManualFocus(lensPos)
+            controlQueue.send(ctrl)
+        elif key == ord('t'):
+            print("Autofocus trigger (and disable continuous)")
+            ctrl = dai.CameraControl()
+            ctrl.setAutoFocusMode(dai.CameraControl.AutoFocusMode.AUTO)
+            ctrl.setAutoFocusTrigger()
+            controlQueue.send(ctrl)
+        elif key == ord('q'):
             break
         elif key == ord('s'):
             photoName = "STANDARD.jpg"
             # dirName = "mask_pics"
             ctrl = dai.CameraControl()
+
+            # autofocus contro
+            # ctrl.setAutoFocusMode(dai.CameraControl.AutoFocusMode.AUTO)
+            # ctrl.setAutoFocusTrigger()
+
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
         elif key == ord('n'):
-            photoName = "NONE.jpg"
+            photoName = "NONE"
             # dirName = "mask_pics"
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
         elif key == ord('g'):
-            partImg = cv.imread('Image-Masking/mask_pics/STANDARD.jpg') # ?? img
-            noPartImg = cv.imread('Image-Masking/mask_pics/NONE.jpg')        # ?? no
+            partImg = cv.imread('mask_pics\\STANDARD.jpg') 
+            noPartImg = cv.imread('mask_pics\\NONE.jpg')
             #Subtracting the two images to find the part area
-            subtractOG = cv.cvtColor(partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY)
+            subtractOG = cv.cvtColor(partImg) - cv.cvtColor(noPartImg)
 
-            #Applying filters on image
-            alpha = 3 # Contrast control (rec 1-3)
-            beta = -300 # Brightness control (rec -300 <-> 300)
-            subtractOG = cv.convertScaleAbs(subtractOG, alpha=alpha, beta=beta)
-            subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
-            subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
+            # #Applying filters on image
+            # alpha = 3 # Contrast control (rec 1-3)
+            # beta = -300 # Brightness control (rec -300 <-> 300)
+            # subtractOG = cv.convertScaleAbs(subtractOG, alpha=alpha, beta=beta)
+            # subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
+            # subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
 
-            #Black and white configuration
-            subtractOG = cv.bitwise_not(subtractOG)
-            subtractOG[subtractOG < 10] = 0
-            subtractOG[subtractOG != 0] = 255
+            # #Black and white configuration
+            # subtractOG = cv.bitwise_not(subtractOG)
+            # subtractOG[subtractOG < 10] = 0
+            # subtractOG[subtractOG != 0] = 255
 
-            #Filling gaps
-            thresh, imgThresh = cv.threshold(subtractOG,200,255,cv.THRESH_BINARY)
-            fillMask = imgThresh.copy()
-            height, width = imgThresh.shape[:2]
-            mask = np.zeros((height+2,width+2),np.uint8)
-            cv.floodFill(fillMask, mask,(0,0),(255,255,255))
+            # #Filling gaps
+            # thresh, imgThresh = cv.threshold(subtractOG,200,255,cv.THRESH_BINARY)
+            # fillMask = imgThresh.copy()
+            # height, width = imgThresh.shape[:2]
+            # mask = np.zeros((height+2,width+2),np.uint8)
+            # cv.floodFill(fillMask, mask,(0,0),(255,255,255))
 
-            fillMask = cv.bitwise_not(fillMask)
+            # fillMask = cv.bitwise_not(fillMask)
             
-            #Filling gaps
-            subtractOG = subtractOG+fillMask
-            img = cv.resize(subtractOG, (0,0), fx = 0.2, fy = 0.2)
-            cv.imwrite("Image-Masking\mask_pics\MASK.jpg",subtractOG)
-            cv.imshow("MASK",img)
+            # #Filling gaps
+            # subtractOG = subtractOG+fillMask
+            # img = cv.resize(subtractOG, (0,0), fx = 0.2, fy = 0.2)
+            cv.imwrite("mask_pics/MASK.jpg",subtractOG)
+            cv.imshow("MASK",subtractOG)
             cv.waitKey(0)
         elif key == ord('q'):
             break
