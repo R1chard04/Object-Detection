@@ -8,12 +8,21 @@ import numpy as np
 
 #-----------------------------------------OAK CAMERA SETUP-----------------------------------------#
 
+# fixed focus setup
+# camFocalLenth = 115
+lensPos = 150
+LENS_STEP = 3
+def clamp(num, v0, v1):
+    return max(v0, min(num, v1))
+
+
 # Create pipeline
 pipeline = dai.Pipeline()
 
 camRgb = pipeline.create(dai.node.ColorCamera)
 camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
 camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_4_K)
+# camRgb.initialControl.setManualFocus(camFocalLenth) # set manual fixed-focus focal length
 
 xoutRgb = pipeline.create(dai.node.XLinkOut)
 xoutRgb.setStreamName("rgb")
@@ -38,6 +47,8 @@ videoEnc.bitstream.link(xoutStill.input)
 # Connect to device and start pipeline
 with dai.Device(pipeline) as device:
 
+    controlQueue = device.getInputQueue('control')
+    
     # Output queue will be used to get the rgb frames from the output defined above
     qRgb = device.getOutputQueue(name="rgb", maxSize=30, blocking=False)
     qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
@@ -52,6 +63,7 @@ with dai.Device(pipeline) as device:
     # take STANDARD
     while True:
         inRgb = qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
+
         if inRgb is not None:
             frame = inRgb.getCvFrame()
             # 4k / 4
@@ -66,7 +78,15 @@ with dai.Device(pipeline) as device:
                 print('Image saved to', fName)
         
         key = cv.waitKey(1)
-        if key == ord('q'):
+        if key in [ord(','), ord('.')]:
+            if key == ord(','): lensPos -= LENS_STEP
+            if key == ord('.'): lensPos += LENS_STEP
+            lensPos = clamp(lensPos, 0, 255)
+            print("Setting manual focus, lens position: ", lensPos)
+            ctrl = dai.CameraControl()
+            ctrl.setManualFocus(lensPos)
+            controlQueue.send(ctrl)
+        elif key == ord('q'):
             break
         elif key == ord('s'):
             photoName = "STANDARD"
