@@ -16,7 +16,10 @@ class initialise:
 
         #Camera initialisation
         pipeline = dai.Pipeline()
-
+        
+        rgbCam = pipeline.create(dai.node.ColorCamera)
+        rgbCam.initialControl.setManualFocus(100)
+        
         camRgb = pipeline.create(dai.node.ColorCamera)
         camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
         camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_4_K)
