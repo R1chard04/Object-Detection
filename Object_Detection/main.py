@@ -14,9 +14,21 @@ photosPath = "Object_Detection\photos\Input"
 needCalibrate = False
 
 initialisationObject = initialise(photosPath)
-photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill = initialisationObject.initialise()
+photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill, pipeline_1 = initialisationObject.initialise()
 
-with dai.Device(pipeline) as device:
+for device in dai.Device.getAllAvailableDevices():
+    print(f"{device.getMxId()} {device.state}")
+
+#device_info = dai.DeviceBootloader(dai.DeviceInfo("1944301051766E1300"), allowFlashingBootloader = True)
+device_info = dai.DeviceInfo("1944301051766E1300")
+device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
+device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+
+device_info_1 = dai.DeviceInfo("19443010613C6E1300")
+device_info_1.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
+device_info_1.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+
+with dai.Device(pipeline, device_info) as device:
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                  device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                  device.getInputQueue(name="control"),
@@ -49,3 +61,17 @@ with dai.Device(pipeline) as device:
     #     response = processingObject.compareImage()
         
     #     time.sleep(1)
+
+with dai.Device(pipeline_1, device_info_1) as device1:
+    captureObject1 = imageCapture(device1.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
+                                 device1.getOutputQueue(name="still", maxSize=30, blocking=True), 
+                                 device1.getInputQueue(name="control"),
+                                 photoDirectoryName)
+   
+    
+    for i in range(5):                   
+        initialTestImg1, initialTestImgPath1 = captureObject1.capture()
+        cv.imshow("test", initialTestImg1)
+        
+        cv.waitKey(0)
+    initialTestImg1, initialTestImgPath1 = captureObject1.capture()
