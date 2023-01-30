@@ -5,10 +5,12 @@ import depthai as dai
 import numpy as np
 
 
-partImg = cv.imread('mask_pics\\STANDARD.jpg') # ?? img
-noPartImg = cv.imread('mask_pics\\NONE.jpg')        # ?? no
+partImg = cv.imread('mask_pics\\STANDARD1.jpg') # ?? img
+noPartImg = cv.imread('mask_pics\\NONE1.jpg')        # ?? no
 #Subtracting the two images to find the part area
-subtractOG = cv.cvtColor(partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY)
+# subtractOG = cv.cvtColor(partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY)
+subtractOG = partImg - noPartImg
+# subtractOG = cv.cvtColor(subtractOG,cv.COLOR_BGR2GRAY)
 
 
 #Applying filters on image
@@ -34,6 +36,7 @@ fillMask = cv.bitwise_not(fillMask)
 
 #Filling gaps
 subtractOG = subtractOG+fillMask
+
 
 img = cv.resize(subtractOG, (0,0), fx = 0.2, fy = 0.2)
 # cv.imwrite("mask_pics/MASK.jpg",subtractOG)

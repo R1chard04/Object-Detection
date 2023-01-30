@@ -86,12 +86,23 @@ with dai.Device(pipeline) as device:
             ctrl = dai.CameraControl()
             ctrl.setManualFocus(lensPos)
             controlQueue.send(ctrl)
+        elif key == ord('t'):
+            print("Autofocus trigger (and disable continuous)")
+            ctrl = dai.CameraControl()
+            ctrl.setAutoFocusMode(dai.CameraControl.AutoFocusMode.AUTO)
+            ctrl.setAutoFocusTrigger()
+            controlQueue.send(ctrl)
         elif key == ord('q'):
             break
         elif key == ord('s'):
             photoName = "STANDARD"
             # dirName = "mask_pics"
             ctrl = dai.CameraControl()
+
+            # autofocus contro
+            # ctrl.setAutoFocusMode(dai.CameraControl.AutoFocusMode.AUTO)
+            # ctrl.setAutoFocusTrigger()
+
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
@@ -103,37 +114,37 @@ with dai.Device(pipeline) as device:
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
         elif key == ord('g'):
-            partImg = cv.imread('mask_pics\\STANDARD.jpg') # ?? img
-            noPartImg = cv.imread('mask_pics\\NONE.jpg')        # ?? no
+            partImg = cv.imread('mask_pics\\STANDARD.jpg') 
+            noPartImg = cv.imread('mask_pics\\NONE.jpg')
             #Subtracting the two images to find the part area
-            subtractOG = cv.cvtColor(partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY)
+            subtractOG = cv.cvtColor(partImg) - cv.cvtColor(noPartImg)
 
-            #Applying filters on image
-            alpha = 3 # Contrast control (rec 1-3)
-            beta = -300 # Brightness control (rec -300 <-> 300)
-            subtractOG = cv.convertScaleAbs(subtractOG, alpha=alpha, beta=beta)
-            subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
-            subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
+            # #Applying filters on image
+            # alpha = 3 # Contrast control (rec 1-3)
+            # beta = -300 # Brightness control (rec -300 <-> 300)
+            # subtractOG = cv.convertScaleAbs(subtractOG, alpha=alpha, beta=beta)
+            # subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
+            # subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
 
-            #Black and white configuration
-            subtractOG = cv.bitwise_not(subtractOG)
-            subtractOG[subtractOG < 10] = 0
-            subtractOG[subtractOG != 0] = 255
+            # #Black and white configuration
+            # subtractOG = cv.bitwise_not(subtractOG)
+            # subtractOG[subtractOG < 10] = 0
+            # subtractOG[subtractOG != 0] = 255
 
-            #Filling gaps
-            thresh, imgThresh = cv.threshold(subtractOG,200,255,cv.THRESH_BINARY)
-            fillMask = imgThresh.copy()
-            height, width = imgThresh.shape[:2]
-            mask = np.zeros((height+2,width+2),np.uint8)
-            cv.floodFill(fillMask, mask,(0,0),(255,255,255))
+            # #Filling gaps
+            # thresh, imgThresh = cv.threshold(subtractOG,200,255,cv.THRESH_BINARY)
+            # fillMask = imgThresh.copy()
+            # height, width = imgThresh.shape[:2]
+            # mask = np.zeros((height+2,width+2),np.uint8)
+            # cv.floodFill(fillMask, mask,(0,0),(255,255,255))
 
-            fillMask = cv.bitwise_not(fillMask)
+            # fillMask = cv.bitwise_not(fillMask)
             
-            #Filling gaps
-            subtractOG = subtractOG+fillMask
-            img = cv.resize(subtractOG, (0,0), fx = 0.2, fy = 0.2)
+            # #Filling gaps
+            # subtractOG = subtractOG+fillMask
+            # img = cv.resize(subtractOG, (0,0), fx = 0.2, fy = 0.2)
             cv.imwrite("mask_pics/MASK.jpg",subtractOG)
-            cv.imshow("MASK",img)
+            cv.imshow("MASK",subtractOG)
             cv.waitKey(0)
         elif key == ord('q'):
             break
