@@ -1,8 +1,8 @@
 import cv2 as cv
 import numpy as np
 
-partImg = cv.imread('Image-Masking\STANDARD1.jpg') # ?? img
-noPartImg = cv.imread('Image-Masking/NONE.jpg')        # ?? no
+partImg = cv.imread('mask_pics\\STANDARD.jpg') # ?? img
+noPartImg = cv.imread('mask_pics\\NONE.jpg')        # ?? no
 #Subtracting the two images to find the part area
 subtractOG = cv.subtract(cv.cvtColor(partImg,cv.COLOR_BGR2GRAY),cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY))
 # subtractOG = cv.cvtColor(partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY)
