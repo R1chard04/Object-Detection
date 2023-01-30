@@ -79,7 +79,7 @@ with dai.Device(pipeline) as device:
             break
         # focus the camera
         # elif key == ord('c'):
-        elif time.time() - start > 3:
+        elif time.time() - start > 1:
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
