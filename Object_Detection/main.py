@@ -30,7 +30,7 @@ with dai.Device(pipeline, device_info) as device:
     
     for i in range(5):                   
         initialTestImg, initialTestImgPath = captureObject.capture()
-        cv.imshow("tes", initialTestImg)
+        cv.imshow("test", initialTestImg)
         
         cv.waitKey(0)
     initialTestImg, initialTestImgPath = captureObject.capture()
