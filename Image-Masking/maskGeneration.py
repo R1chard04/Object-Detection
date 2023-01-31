@@ -15,7 +15,6 @@ LENS_STEP = 3
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
 
-
 # Create pipeline
 pipeline = dai.Pipeline()
 
@@ -87,12 +86,6 @@ with dai.Device(pipeline) as device:
             ctrl = dai.CameraControl()
             ctrl.setManualFocus(lensPos)
             controlQueue.send(ctrl)
-        elif key == ord('t'):
-            print("Autofocus trigger (and disable continuous)")
-            ctrl = dai.CameraControl()
-            ctrl.setAutoFocusMode(dai.CameraControl.AutoFocusMode.AUTO)
-            ctrl.setAutoFocusTrigger()
-            controlQueue.send(ctrl)
         elif key == ord('q'):
             break
         elif key == ord('s'):
@@ -159,6 +152,13 @@ with dai.Device(pipeline) as device:
 
         elif key == ord('q'):
             break
+        
+        # elif key == ord('t'):
+        #     print("Autofocus trigger (and disable continuous)")
+        #     ctrl = dai.CameraControl()
+        #     ctrl.setAutoFocusMode(dai.CameraControl.AutoFocusMode.AUTO)
+        #     ctrl.setAutoFocusTrigger()
+        #     controlQueue.send(ctrl)
         # elif key == ord('c'):
         #     dirName = rgb_data
         #     photoName = int(time.time() * 1000)
