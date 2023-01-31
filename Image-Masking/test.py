@@ -4,37 +4,46 @@ import numpy as np
 partImg = cv.imread('Image-Masking\mask_pics\STANDARD.jpg')
 noPartImg = cv.imread('Image-Masking\mask_pics/NONE.jpg')
 
-def mse(img1, img2):
-        height, width = img1.shape
-        diffImg = cv.subtract(img1, img2)
-        err = np.sum(diffImg**2)
-        ans = err/(float(height*width)) #Closer to 0 is better
-        return ans, diffImg
+BGR = cv.subtract(partImg,noPartImg)
+BGR = cv.GaussianBlur(BGR,(3,3),0)
+# BGR = cv.cvtColor(BGR, cv.COLOR_BGR2GRAY)
+ 
 
-err, subtractOG = mse()
-#Subtracting the two images to find the part area
-# subtractOG = cv.subtract(cv.cvtColor(partImg,cv.COLOR_BGR2GRAY),cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY))
+gray = cv.cvtColor(BGR, cv.COLOR_BGR2GRAY)
+thresh = cv.threshold(gray, 130, 255, cv.THRESH_BINARY)[1]
+thresh = cv.fastNlMeansDenoising(thresh, None, 40, 7, 15)
+# HSV = cv.cvtColor(thresh,cv.COLOR_BGR2HSV)
+
+# add = cv.add(gray, thresh)
+# add = cv.medianBlur(add, 15, 15)
+# add = cv.threshold(add, 254, 255, cv.THRESH_BINARY)[1]
+
+
+
+# # detect the contours on the binary image using cv2.CHAIN_APPROX_NONE
+# contours, hierarchy = cv.findContours(image = add, mode=cv.RETR_TREE, method=cv.CHAIN_APPROX_NONE)
+
+      
+
+# # draw contours on the original image
+# image_copy = partImg.copy()
+# cv.drawContours(image=image_copy, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=1, lineType=cv.LINE_AA)
 
 # #Applying filters on image
 # alpha = 3 # Contrast control (rec 1-3)
 # beta = -300 # Brightness control (rec -300 <-> 300)
-# subtractOG = cv.convertScaleAbs(subtractOG, alpha=alpha, beta=beta)
-# subtractOG = cv.bitwise_not(subtractOG) #inverts
+# subtract = cv.convertScaleAbs(subtract, alpha=alpha, beta=beta)
+# subtract = cv.bitwise_not(subtract) #inverts
 
-# subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
-# subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
+# 
+# subtract = cv.fastNlMeansDenoising(subtract, None, 40, 7, 15)
 
 # # #Black and white configuration
 
-# subtractOG[subtractOG < 10] = 0
-# subtractOG[subtractOG != 0] = 255
-
-# # kernel = np.ones((230,230), np.uint8)  # note this is a horizontal kernel
-# # subtractOG = cv.dilate(subtractOG, kernel, iterations=1)
 
 
 # #Filling gaps
-# thresh, imgThresh = cv.threshold(subtractOG,200,255,cv.THRESH_BINARY)
+# thresh, imgThresh = cv.threshold(subtract,200,255,cv.THRESH_BINARY)
 # fillMask = imgThresh.copy()
 # height, width = imgThresh.shape[:2]
 # mask = np.zeros((height+2,width+2),np.uint8)
@@ -43,14 +52,14 @@ err, subtractOG = mse()
 # fillMask = cv.bitwise_not(fillMask)
 
 # #Filling gaps
-# subtractOG = subtractOG+fillMask
-# # subtractOG = cv.erode(subtractOG, kernel, iterations=1) 
+# subtract = subtract+fillMask
+
 
 
 
 
 #Resize and show
-img = cv.resize(subtractOG, (0,0), fx = 0.2, fy = 0.2)
-cv.imwrite("Image-Masking\mask_pics\MASK.jpg",subtractOG)
+img = cv.resize(thresh, (0,0), fx = 0.35, fy = 0.35)
+cv.imwrite("Image-Masking\mask_pics\MASK.jpg",thresh)
 cv.imshow("MASK",img)
 cv.waitKey(0)
