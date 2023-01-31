@@ -24,6 +24,7 @@ class initialise:
         camRgb = pipeline.create(dai.node.ColorCamera)
         camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
         camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_4_K)
+        camRgb.initialControl.setManualFocus(100)  ##autofocus... should be changed to dynamic
 
         # pipeline 1
         camRgb1 = pipeline_1.create(dai.node.ColorCamera)

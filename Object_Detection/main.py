@@ -1,3 +1,5 @@
+#main.py#
+
 import cv2 as cv
 import time
 import depthai as dai
