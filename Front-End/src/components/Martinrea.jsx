@@ -9,7 +9,7 @@ class Martinrea extends Component {
     imgLogo: "https://camsc.ca/wp-content/uploads/2021/06/Martinrea-logo.png",
     imgPicture: "STANDARD", // Put camera pic here
 
-    goodOrNot: 1, //This decides if position is good or bad
+    goodOrNot: 1, //This decides if position is good or bad (1 is pass)
   };
 
   goodOrBad = () => {
