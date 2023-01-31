@@ -129,8 +129,8 @@ with dai.Device(pipeline) as device:
             subtractOG[subtractOG < 10] = 0
             subtractOG[subtractOG != 0] = 255
 
-            kernel = np.ones((230,230), np.uint8)  # note this is a horizontal kernel
-            subtractOG = cv.dilate(subtractOG, kernel, iterations=1)
+            # kernel = np.ones((230,230), np.uint8)  # note this is a horizontal kernel
+            # subtractOG = cv.dilate(subtractOG, kernel, iterations=1)
 
 
             #Filling gaps
@@ -144,7 +144,7 @@ with dai.Device(pipeline) as device:
 
             #Filling gaps
             subtractOG = subtractOG+fillMask
-            subtractOG = cv.erode(subtractOG, kernel, iterations=1) 
+            # subtractOG = cv.erode(subtractOG, kernel, iterations=1) 
             img = cv.resize(subtractOG, (0,0), fx = 0.2, fy = 0.2)
             cv.imwrite("Image-Masking\mask_pics\MASK.jpg",subtractOG)
             cv.imshow("MASK",img)
