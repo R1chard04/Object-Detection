@@ -11,6 +11,8 @@ import numpy as np
 # fixed focus setup
 # camFocalLenth = 115
 lensPos = 150
+brightness = 0
+BRIGHT_STEP = 1
 LENS_STEP = 3
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
@@ -59,7 +61,7 @@ with dai.Device(pipeline) as device:
     photoName = "null.jpg"
     dirName = "mask_pics"
     Path(dirName).mkdir(parents=True, exist_ok=True)
-    print ("Press \'s\' to capture a standard photo that has parts on \nPress \'n\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask\nPress \'q\' to quit")
+    print ("Press \'s\' to capture a standard photo that has parts on \nPress \'n\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask\nPress \'q\' to quit\nPress ,/. to adjest focal length\nPress k/l to adjest brightness")
     # take STANDARD
     while True:
         inRgb = qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
@@ -85,6 +87,14 @@ with dai.Device(pipeline) as device:
             print("Setting manual focus, lens position: ", lensPos)
             ctrl = dai.CameraControl()
             ctrl.setManualFocus(lensPos)
+            controlQueue.send(ctrl)
+        if key in [ord('k'), ord('l')]:
+            if key == ord('k'): brightness -= BRIGHT_STEP
+            if key == ord('l'): brightness += BRIGHT_STEP
+            brightness = clamp(brightness, -10, 10)
+            print("Brightness:", brightness)
+            ctrl = dai.CameraControl()
+            ctrl.setBrightness(brightness)
             controlQueue.send(ctrl)
         elif key == ord('q'):
             break
