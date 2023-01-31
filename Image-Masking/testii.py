@@ -5,8 +5,8 @@ import depthai as dai
 import numpy as np
 
 
-partImg = cv.imread('mask_pics\\STANDARD1.jpg') # ?? img
-noPartImg = cv.imread('mask_pics\\NONE1.jpg')        # ?? no
+partImg = cv.imread('mask_pics\\STANDARD.jpg') # ?? img
+noPartImg = cv.imread('mask_pics\\NONE.jpg')        # ?? no
 #Subtracting the two images to find the part area
 # subtractOG = cv.cvtColor(partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY)
 subtractOG = partImg - noPartImg
