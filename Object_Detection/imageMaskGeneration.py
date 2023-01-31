@@ -1,15 +1,43 @@
 import cv2 as cv
 import numpy as np
+import os
 
 class recalibrate:
     def __init__(self, noPart, part, maskPath) -> None:
         self.partImg = part
         self.noPartImg = noPart
         self.maskPath = maskPath
+
+    def setSTANDARD:
+        # Overwrite the standard picture
+        photoName = "STANDARD"
+        # dirName = "mask_pics"
+        ctrl = dai.CameraControl()
+        ctrl.setCaptureStill(True)
+        qControl.send(ctrl)
+        print("Sent 'still' event to the camera")
+
+    def setNONE:
+        # Overwrite the none part picture
+        photoName = "NONE"
+        # dirName = "mask_pics"
+        ctrl = dai.CameraControl()
+        ctrl.setCaptureStill(True)
+        qControl.send(ctrl)
+        print("Sent 'still' event to the camera")
     
-    def maskGenertion(self):
+    def maskGeneration(self):
         #Subtracting the two images to find the part area
         subtractOG = cv.cvtColor(self.partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(self.noPartImg,cv.COLOR_BGR2GRAY)
+
+        '''
+        partImg = cv.imread('mask_pics\\STANDARD.jpg') # ?? img
+        noPartImg = cv.imread('mask_pics\\NONE.jpg')        # ?? no
+        #Subtracting the two images to find the part area
+        subtractOG = cv.cvtColor(partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY)
+
+        '''
+
 
         #Applying filters on image
         alpha = 3 # Contrast control (rec 1-3)
@@ -34,5 +62,13 @@ class recalibrate:
         
         #Filling gaps
         subtractOG = subtractOG+fillMask
+        
+<<<<<<< HEAD
+        cv.imwrite("mask.jpg", subtractOG)
+=======
+        cv.imwrite("mask.jpg")
+>>>>>>> 7764fff435161ee07cd95ec0013f9baade199511
+
+        return subtractOG
 
 

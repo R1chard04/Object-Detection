@@ -5,8 +5,8 @@ from os import listdir
 import sys
 
 # load the input images
-off1 = cv2.imread('Image-Processing\photos\Test\Fault\WIN_20230123_10_47_49_Pro.jpg')
-standard = cv2.imread('Image-Processing\photos\Test\Reference\WIN_20230123_10_46_27_Pro.jpg')
+off1 = cv2.imread('photos\Test\Reference\WIN_20230123_10_46_36_Pro.jpg')
+standard = cv2.imread('photos\Test\Reference\STANDARD.jpg')
 
 
 alpha = 3 # Contrast control (1.0-3.0)
@@ -27,7 +27,7 @@ def mse(img1, img2):
     return ans, diff
 
 #Masking
-maskImg = cv2.imread('Image-Processing\photos\Test\mask2.jpg')
+maskImg = cv2.imread('photos\Test\subtractOG.jpg')
 grayMask = cv2.cvtColor(maskImg, cv2.COLOR_BGR2GRAY)
 (thresh, maskBW) = cv2.threshold(grayMask, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 thresh = 127
