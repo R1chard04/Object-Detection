@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import STANDARD from "../STANDARD.jpg";
+import "./style.css";
 
 class Martinrea extends Component {
   state = {
@@ -10,33 +11,39 @@ class Martinrea extends Component {
 
     goodOrNot: 1, //This decides if position is good or bad
   };
-  add = () => {
-    this.setState({ count: this.state.count + 1 });
-  };
+
   goodOrBad = () => {
     if (this.state.goodOrNot === 1)
-      return <h1 className="text-success">GOOD</h1>;
-    return <h1 className="text-danger">FAILURE</h1>;
+      return (
+        <h1 class="goodOrBad" id="good">
+          PASS
+        </h1>
+      );
+    return (
+      <h1 class="goodOrBad" id="bad">
+        FAIL
+      </h1>
+    );
   };
 
   render() {
     return (
-      <div class="bg-primary position-relative">
-        <div>
-          <img src={this.state.imgLogo} alt="image" height="100" width="100" />
+      <div class="page">
+        <div class="header">
+          <img class="logo" src={this.state.imgLogo} alt="image" />
+          <h1 class="text" id="title">
+            BT1XX Testing
+          </h1>
         </div>
-        <div>
-          <img src={STANDARD} alt="image-main" height="576" width="720" />
-
-          <div className="position-absolute top-50 start-50">
-            {this.goodOrBad()}
-            <button onClick={this.add} className="btn btn-secondary brn-sm">
-              Calibration
-            </button>
-          </div>
-        </div>
-        <div class="text-dark position-absolute top-0 start-50">
-          <h1>BT1XX Testing</h1>
+        <h1 class="text" id="result">
+          RESULT:
+        </h1>
+        <img class="main" src={STANDARD} alt="image-main" />
+        <div>{this.goodOrBad()}</div>
+        <div class="calibration">
+          <button onClick={this.add} className="btn btn-secondary brn-sm">
+            Calibration
+          </button>
         </div>
       </div>
     );

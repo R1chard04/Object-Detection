@@ -1,0 +1,61 @@
+div.header {
+  position: fixed;
+  background-color: #171942;
+  top: 0;
+  width: 100%;
+  height: 15%;
+}
+div.page {
+  background-color: #e2e2e2;
+}
+h1.text {
+  position: fixed;
+}
+h1#result {
+  font-size: 3em;
+  color: gray;
+  top: 80%;
+  left: 44%;
+}
+h1.goodOrBad {
+  position: fixed;
+  font-size: 9em;
+  top: 77%;
+  left: 65%;
+}
+h1#good {
+  color: lime;
+}
+h1#bad {
+  color: red;
+}
+
+h1#title {
+  font-size: 3.5em;
+  color: white;
+  top: 3%;
+  width: auto;
+  left: 37%;
+}
+img.logo {
+  position: fixed;
+  top: 1%;
+  left: 1%;
+  width: 100px;
+  height: 100px;
+}
+img.main {
+  position: fixed;
+  width: 55%;
+  height: auto;
+  top: 17%;
+  left: 44%;
+  border-color: black;
+  border-width: 3px;
+  border-style: solid;
+}
+div.calibration {
+  position: fixed;
+  top: 6%;
+  left: 92%;
+}
