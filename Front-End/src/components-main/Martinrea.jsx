@@ -2,8 +2,12 @@ import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import STANDARD from "../STANDARD.jpg";
 import "./style.css";
+import Button1 from './Station1Button.jsx';
 
 class Martinrea extends Component {
+  handleWebsiteChange = async (event) => {
+    
+  }
   state = {
     count: 0,
     imgLogo: "https://camsc.ca/wp-content/uploads/2021/06/Martinrea-logo.png",
@@ -28,27 +32,27 @@ class Martinrea extends Component {
 
   render() {
     return (
-      <div class="page">
-        <a class="S1" href="../components-main/Martinrea.jsx">
-          Station 1
-        </a>
-        <div class="header">
-          <img class="logo" src={this.state.imgLogo} alt="image" />
-          <h1 class="text" id="title">
-            BT1XX Testing
+      <React.Fragment>
+        <div class="page">
+          <Button1 onClick={this.handleWebsiteChange} />
+          <div class="header">
+            <img class="logo" src={this.state.imgLogo} alt="image" />
+            <h1 class="text" id="title">
+              BT1XX Testing
+            </h1>
+          </div>
+          <h1 class="text" id="result">
+            RESULT:
           </h1>
+          <img class="main" src={STANDARD} alt="image-main" />
+          <div>{this.goodOrBad()}</div>
+          <div class="calibration">
+            <button onClick={this.add} className="btn btn-secondary brn-sm">
+              Calibration
+            </button>
+          </div>
         </div>
-        <h1 class="text" id="result">
-          RESULT:
-        </h1>
-        <img class="main" src={STANDARD} alt="image-main" />
-        <div>{this.goodOrBad()}</div>
-        <div class="calibration">
-          <button onClick={this.add} className="btn btn-secondary brn-sm">
-            Calibration
-          </button>
-        </div>
-      </div>
+      </React.Fragment>
     );
   }
 }
