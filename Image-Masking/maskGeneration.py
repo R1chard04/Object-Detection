@@ -118,45 +118,85 @@ with dai.Device(pipeline) as device:
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
         elif key == ord('g'):
-            partImg = cv.imread('mask_pics\\STANDARD.jpg')
-            noPartImg = cv.imread('mask_pics\\NONE.jpg')
+            partImg = cv.imread('Image-Masking\mask_pics\STANDARD.jpg')
+            noPartImg = cv.imread('Image-Masking\mask_pics\\NONE.jpg')
+
+            # Convert image to HSV color space
+            partImgHSV = cv.cvtColor(partImg, cv.COLOR_BGR2HSV)
+            noPartImgHSV = cv.cvtColor(noPartImg, cv.COLOR_BGR2HSV)
+
+            # Define lower and upper color bounds for orange
+            lower_orange = np.array([0, 1, 1])
+            upper_orange = np.array([150, 255, 255])
+
+            # Threshold the HSV image to get only orange colors
+            maskPart = cv.inRange(partImgHSV, lower_orange, upper_orange)
+            maskNoPart = cv.inRange(noPartImgHSV, lower_orange, upper_orange)
+
+            # Change all orange pixels to black
+            partImg[maskPart > 0] = [0, 0, 0]
+            noPartImg[maskNoPart > 0] = [0, 0, 0]
 
             #Subtracting the two images to find the part area
-            subtractOG = cv.subtract(cv.cvtColor(partImg,cv.COLOR_BGR2GRAY),cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY))
-            # subtractOG = cv.cvtColor(partImg,cv.COLOR_BGR2GRAY) - cv.cvtColor(noPartImg,cv.COLOR_BGR2GRAY)
+            subtractBGR = cv.subtract(partImg,noPartImg)
+            subtractGray = cv.cvtColor(subtractBGR, cv.COLOR_BGR2GRAY)
 
-            #Applying filters on image
-            alpha = 3 # Contrast control (rec 1-3)
-            beta = -300 # Brightness control (rec -300 <-> 300)
-            subtractOG = cv.convertScaleAbs(subtractOG, alpha=alpha, beta=beta)
-            subtractOG = cv.bitwise_not(subtractOG) #inverts
+            feed = subtractGray
 
-            subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
-            subtractOG = cv.fastNlMeansDenoising(subtractOG, None, 40, 7, 15)
+            denoise = cv.bilateralFilter(feed, 15, 100, 100)
+            denoise = cv.GaussianBlur(denoise, (5,5), 15, 15)
+            denoise = cv.bilateralFilter(denoise, 15, 100, 100)
+            denoise = cv.fastNlMeansDenoising(denoise, None, 400, 7, 15)
+            denoise = cv.fastNlMeansDenoising(denoise, None, 400, 7, 15)
+            denoise[denoise < 10] = 0
 
-            # #Black and white configuration
+            feed = denoise
+            
+            threshold_type = cv.ADAPTIVE_THRESH_GAUSSIAN_C
+            block_size = 75
+            C = 5
+            thresholded = cv.adaptiveThreshold(feed, 255, threshold_type, cv.THRESH_BINARY, block_size, C)
+            thresholded  = cv.bitwise_not(thresholded)
+            _, thresholded = cv.threshold(thresholded, 128, 255, cv.THRESH_BINARY)
 
-            subtractOG[subtractOG < 10] = 0
-            subtractOG[subtractOG != 0] = 255
+            feed = thresholded
 
-            # kernel = np.ones((230,230), np.uint8)  # note this is a horizontal kernel
-            # subtractOG = cv.dilate(subtractOG, kernel, iterations=1)
+            # kernel = np.ones((5,10), np.uint8)  # note this is a horizontal kernel
+            # denoise = cv.dilate(feed, kernel, iterations=1)
 
+            # kernel = np.ones((10,1), np.uint8)  # note this is a horizontal kernel
+            # denoise = cv.erode(denoise, kernel, iterations=3)
+
+            # feed = denoise
+            
+            
+
+            feed = feed
+
+            # Find contours in the binary image
+            contours, _ = cv.findContours(feed, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+            # Sort contours by area and keep only the largest contour
+            contours = sorted(contours, key=cv.contourArea, reverse=True)
+            largest_contour = contours[0]
+            # Draw the largest contour on an empty image to create a binary mask
+            mask = np.zeros_like(thresholded)
+            cv.drawContours(mask, [largest_contour], -1, 255, -1)
+
+            feed = mask
 
             #Filling gaps
-            thresh, imgThresh = cv.threshold(subtractOG,200,255,cv.THRESH_BINARY)
+            thresh, imgThresh = cv.threshold(feed,50,255,cv.THRESH_BINARY)
             fillMask = imgThresh.copy()
             height, width = imgThresh.shape[:2]
             mask = np.zeros((height+2,width+2),np.uint8)
             cv.floodFill(fillMask, mask,(0,0),(255,255,255))
-
             fillMask = cv.bitwise_not(fillMask)
+            
+            final = feed+fillMask
 
-            #Filling gaps
-            subtractOG = subtractOG+fillMask
-            # subtractOG = cv.erode(subtractOG, kernel, iterations=1) 
-            img = cv.resize(subtractOG, (0,0), fx = 0.2, fy = 0.2)
-            cv.imwrite("Image-Masking\mask_pics\MASK.jpg",subtractOG)
+            input = denoise
+            img = cv.resize(input, (0,0), fx = 0.2, fy = 0.2)
+            cv.imwrite("mask_pics\MASK.jpg",final)
             cv.imshow("MASK",img)
             cv.waitKey(0)
 

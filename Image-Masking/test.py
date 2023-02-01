@@ -4,46 +4,46 @@ import numpy as np
 partImg = cv.imread('Image-Masking\mask_pics\STANDARD.jpg')
 noPartImg = cv.imread('Image-Masking\mask_pics/NONE.jpg')
 
-BGR = cv.subtract(partImg,noPartImg)
-BGR = cv.GaussianBlur(BGR,(3,3),0)
-# BGR = cv.cvtColor(BGR, cv.COLOR_BGR2GRAY)
- 
 
-gray = cv.cvtColor(BGR, cv.COLOR_BGR2GRAY)
-thresh = cv.threshold(gray, 130, 255, cv.THRESH_BINARY)[1]
-thresh = cv.fastNlMeansDenoising(thresh, None, 40, 7, 15)
-# HSV = cv.cvtColor(thresh,cv.COLOR_BGR2HSV)
+# Convert to grayscale
 
-# add = cv.add(gray, thresh)
-# add = cv.medianBlur(add, 15, 15)
-# add = cv.threshold(add, 254, 255, cv.THRESH_BINARY)[1]
+normalizedPartImg = np.zeros((800, 800))
+normalizedPartImg = cv.normalize(partImg,  normalizedPartImg, 0, 255, cv.NORM_MINMAX)
 
+normalizedNoPartImg = np.zeros((800, 800))
+normalizedNoPartImg = cv.normalize(noPartImg,  normalizedNoPartImg, 0, 255, cv.NORM_MINMAX)
 
+partImg = cv.cvtColor(partImg, cv.COLOR_BGR2GRAY)
+noPartImg = cv.cvtColor(noPartImg, cv.COLOR_BGR2GRAY)
 
-# # detect the contours on the binary image using cv2.CHAIN_APPROX_NONE
-# contours, hierarchy = cv.findContours(image = add, mode=cv.RETR_TREE, method=cv.CHAIN_APPROX_NONE)
+# # Remove glare from images
+# clahefilter = cv.createCLAHE(clipLimit=2.0, tileGridSize=(16,16))
+# reference_gray = clahefilter.apply(partImg)
+# target_gray = clahefilter.apply(noPartImg)
 
-      
+# Perform background subtraction
+diff = cv.subtract(partImg, noPartImg)
 
-# # draw contours on the original image
-# image_copy = partImg.copy()
-# cv.drawContours(image=image_copy, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=1, lineType=cv.LINE_AA)
+# Apply threshold to remove low intensity differences
+_, mask = cv.threshold(diff, 100, 255, cv.THRESH_BINARY)
 
-# #Applying filters on image
-# alpha = 3 # Contrast control (rec 1-3)
-# beta = -300 # Brightness control (rec -300 <-> 300)
-# subtract = cv.convertScaleAbs(subtract, alpha=alpha, beta=beta)
-# subtract = cv.bitwise_not(subtract) #inverts
+# Apply morphological operations to fill in small holes
+kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+maskPart = cv.morphologyEx(mask, cv.MORPH_CLOSE, kernel)
 
-# 
-# subtract = cv.fastNlMeansDenoising(subtract, None, 40, 7, 15)
+# Find contours in the mask
+contours, _ = cv.findContours(maskPart, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
-# # #Black and white configuration
+# Draw contours on the target image
+contour_image = np.zeros(partImg.shape, dtype=np.uint8)
+cv.drawContours(contour_image, contours, -1, (255, 255, 255), 2)
 
+# Save the result
+cv.imwrite("contour_image.jpg", contour_image)
 
 
 # #Filling gaps
-# thresh, imgThresh = cv.threshold(subtract,200,255,cv.THRESH_BINARY)
+# thresh, imgThresh = cv.threshold(maskPart,200,255,cv.THRESH_BINARY)
 # fillMask = imgThresh.copy()
 # height, width = imgThresh.shape[:2]
 # mask = np.zeros((height+2,width+2),np.uint8)
@@ -52,14 +52,10 @@ thresh = cv.fastNlMeansDenoising(thresh, None, 40, 7, 15)
 # fillMask = cv.bitwise_not(fillMask)
 
 # #Filling gaps
-# subtract = subtract+fillMask
-
-
-
-
+# subtract = maskPart+fillMask
 
 #Resize and show
-img = cv.resize(thresh, (0,0), fx = 0.35, fy = 0.35)
-cv.imwrite("Image-Masking\mask_pics\MASK.jpg",thresh)
+img = cv.resize(mask, (0,0), fx = 0.25, fy = 0.25)
+cv.imwrite("Image-Masking\mask_pics\MASK.jpg",mask)
 cv.imshow("MASK",img)
 cv.waitKey(0)
