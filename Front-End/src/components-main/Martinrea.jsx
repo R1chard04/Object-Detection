@@ -29,6 +29,9 @@ class Martinrea extends Component {
   render() {
     return (
       <div class="page">
+        <a class="S1" href="../components-main/Martinrea.jsx">
+          Station 1
+        </a>
         <div class="header">
           <img class="logo" src={this.state.imgLogo} alt="image" />
           <h1 class="text" id="title">

@@ -61,3 +61,8 @@ div.calibration {
   top: 6%;
   left: 92%;
 }
+a.S1 {
+  position: fixed;
+  top: 50%;
+  left: 30%;
+}
