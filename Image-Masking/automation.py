@@ -10,6 +10,17 @@ import datetime
 from pathlib import Path
 import depthai as dai
 import os.path
+from skimage.metrics import structural_similarity
+
+#-------------------------Camera Settings-------------------------#
+# fixed focus setup
+# camFocalLenth = 115
+lensPos = 150
+brightness = 0
+BRIGHT_STEP = 1
+LENS_STEP = 3
+def clamp(num, v0, v1):
+    return max(v0, min(num, v1))
 
 # Create pipeline
 pipeline = dai.Pipeline()
@@ -35,6 +46,17 @@ camRgb.still.link(videoEnc.input)
 xoutStill = pipeline.create(dai.node.XLinkOut)
 xoutStill.setStreamName("still")
 videoEnc.bitstream.link(xoutStill.input)
+
+def compare()->None:
+    # Convert images to grayscale
+    before = cv.imread('')
+    after = cv.imread('FRAME.jpg')    
+    before_gray = cv.cvtColor(before, cv.COLOR_BGR2GRAY)
+    after_gray = cv.cvtColor(after, cv.COLOR_BGR2GRAY)
+
+    # Compute SSIM between the two images
+    (score, diff) = structural_similarity(before_gray, after_gray, full=True)
+    print("Image Similarity: {:.4f}%".format(score * 100))
 
 #---------------camera setup-----------------#
 
@@ -67,24 +89,54 @@ with dai.Device(pipeline) as device:
         # get the current frame and save it to the file
         if qStill.has():
             # fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
-            fName = "FRAME.jpg"
-            with open(fName, "wb") as f:
+            with open(photoName, "wb") as f:
                 f.write(qStill.get().getData())
-                print('Image saved to', fName)
+                print('Image saved to', photoName)
+            compare()
         
+        cv.waitKey(1)
+        # focal length adjestment
+        if key in [ord(','), ord('.')]:
+            if key == ord(','): lensPos -= LENS_STEP
+            if key == ord('.'): lensPos += LENS_STEP
+            lensPos = clamp(lensPos, 0, 255)
+            print("Setting manual focus, lens position: ", lensPos)
+            ctrl = dai.CameraControl()
+            ctrl.setManualFocus(lensPos)
+            qControl.send(ctrl)
+            
+        # brightness adjestment
+        if key in [ord('k'), ord('l')]:
+            if key == ord('k'): brightness -= BRIGHT_STEP
+            if key == ord('l'): brightness += BRIGHT_STEP
+            brightness = clamp(brightness, -10, 10)
+            print("Brightness:", brightness)
+            ctrl = dai.CameraControl()
+            ctrl.setBrightness(brightness)
+            qControl.send(ctrl)
+ 
         key = cv.waitKey(1)
-
-        # quit
+            
         if key == ord('q'):
             break
-        # focus the camera
-        # elif key == ord('c'):
+        elif key == ord('s'):
+            photoName = "STANDARD"
+            # dirName = "mask_pics"
+            ctrl = dai.CameraControl()
+            # autofocus contro
+            # ctrl.setAutoFocusMode(dai.CameraControl.AutoFocusMode.AUTO)
+            # ctrl.setAutoFocusTrigger()
+            ctrl.setCaptureStill(True)
+            qControl.send(ctrl)
+            print("Set reference image!")
         elif time.time() - start > 1:
+            photoName = "FRAME"
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             start = time.time()
             print("Sent 'still' event to the camera!")
+
 
 '''
 

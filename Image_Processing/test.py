@@ -10,7 +10,7 @@ standard = cv2.imread('photos\Test\Reference\STANDARD.jpg')
 
 
 alpha = 3 # Contrast control (1.0-3.0)
-beta = 0 # Brightness control (0-100)
+beta = 0 # Brightness conatrol (0-100)
 off1 = cv2.convertScaleAbs(off1, alpha=alpha, beta=beta)
 standard = cv2.convertScaleAbs(standard, alpha=alpha, beta=beta)
 # convert the images to grayscale
