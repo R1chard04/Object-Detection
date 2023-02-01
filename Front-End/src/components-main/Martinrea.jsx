@@ -2,12 +2,10 @@ import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import STANDARD from "../STANDARD.jpg";
 import "./style.css";
-import Button1 from './Station1Button.jsx';
+import Button1 from "./Station1Button.jsx";
 
 class Martinrea extends Component {
-  handleWebsiteChange = async (event) => {
-    
-  }
+  handleWebsiteChange = async (event) => {};
   state = {
     count: 0,
     imgLogo: "https://camsc.ca/wp-content/uploads/2021/06/Martinrea-logo.png",
@@ -36,7 +34,7 @@ class Martinrea extends Component {
         <div class="page">
           <Button1 onClick={this.handleWebsiteChange} />
           <div class="header">
-            <img class="logo" src={this.state.imgLogo} alt="image" />
+            <img class="logo" src={this.state.imgLogo} alt="Logo" />
             <h1 class="text" id="title">
               BT1XX Testing
             </h1>
@@ -44,7 +42,7 @@ class Martinrea extends Component {
           <h1 class="text" id="result">
             RESULT:
           </h1>
-          <img class="main" src={STANDARD} alt="image-main" />
+          <img class="main" src={STANDARD} alt="main" />
           <div>{this.goodOrBad()}</div>
           <div class="calibration">
             <button onClick={this.add} className="btn btn-secondary brn-sm">

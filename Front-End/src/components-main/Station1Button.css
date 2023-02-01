@@ -2,25 +2,27 @@
   display: inline-flex;
   justify-content: center;
   position: fixed;
-  top: 50%;
-  width: 101px;
-  height: 31.98px;
+  top: 35%;
+  left: 10%;
+  width: 10%;
+  height: 5%;
   background: #2f80ed;
   border-radius: 8px;
 
   font-family: "Noto Sans";
   font-style: normal;
   font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 1em;
+  line-height: 35px;
   text-align: center;
-  letter-spacing: -0.0.35rem;
+  letter-spacing: -0.035rem;
 
   color: #fff;
   cursor: pointer;
 }
 
-.Station1Button.hover{
+.Station1Button.hover {
   opacity: 0.5;
   transform: scale(0.5);
+  color: aqua;
 }
