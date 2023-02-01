@@ -19,8 +19,8 @@ h1#result {
 }
 h1.goodOrBad {
   position: fixed;
-  font-size: 9em;
-  top: 77%;
+  font-size: 12em;
+  top: 73%;
   left: 65%;
   -webkit-text-stroke: 3px;
   color: black;
@@ -66,15 +66,127 @@ a.S1 {
   top: 50%;
   left: 30%;
 }
-div.stations {
-  position: fixed;
-  top: 30%;
-  left: 10%;
-}
+
 h1.stati {
   position: fixed;
   top: 15%;
   left: 25%;
   font-size: 4em;
   color: black;
+}
+button.s1 {
+  position: fixed;
+  top: 25%;
+  left: 7%;
+  background-color: #3769c8; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 7px;
+  border: 3px solid black;
+  transition-duration: 0.4s;
+}
+button.s2 {
+  position: fixed;
+  top: 35%;
+  left: 7%;
+  background-color: #3769c8; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 7px;
+  border: 3px solid black;
+  transition-duration: 0.4s;
+}
+button.s3 {
+  position: fixed;
+  top: 45%;
+  left: 7%;
+  background-color: #3769c8; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 7px;
+  border: 3px solid black;
+  transition-duration: 0.4s;
+}
+button.s4 {
+  position: fixed;
+  top: 55%;
+  left: 7%;
+  background-color: #3769c8; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 7px;
+  border: 3px solid black;
+  transition-duration: 0.4s;
+}
+
+button.s5 {
+  position: fixed;
+  top: 65%;
+  left: 7%;
+  background-color: #3769c8; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 7px;
+  border: 3px solid black;
+  transition-duration: 0.4s;
+}
+.s5:hover {
+  background-color: #72a1f9; /* Green */
+  color: white;
+}
+.s4:hover {
+  background-color: #72a1f9; /* Green */
+  color: white;
+}
+.s3:hover {
+  background-color: #72a1f9; /* Green */
+  color: white;
+}
+.s2:hover {
+  background-color: #72a1f9; /* Green */
+  color: white;
+}
+.s1:hover {
+  background-color: #72a1f9; /* Green */
+  color: white;
+}
+
+p.names {
+  position: fixed;
+  color: gray;
+  bottom: 0%;
+  left: 1%;
+  font-size: 0.7em;
+}
+p.credits {
+  position: fixed;
+  color: gray;
+  bottom: 2.2%;
+  left: 1%;
+  font-size: 0.7em;
 }

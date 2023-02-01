@@ -23,13 +23,10 @@ class Martinrea extends Component {
 
   update = (staa) => {
     this.changeStation(staa);
-    this.updateImg(staa);
   };
   changeStation = (sta) => {
     this.setState({ station: sta });
   };
-
-  updateImg = (sta) => {};
 
   goodOrBad = () => {
     if (this.state.goodOrNot === 1)
@@ -47,76 +44,67 @@ class Martinrea extends Component {
 
   render() {
     return (
-      <React.Fragment>
-        <div class="page">
-          <div class="stations">
-            <button
-              onClick={() => this.update(1)}
-              className="btn btn-secondary brn-sm"
-            >
-              Station 1
-            </button>
-            <button
-              onClick={() => this.update(2)}
-              className="btn btn-secondary brn-sm"
-            >
-              Station 2
-            </button>
-            <button
-              onClick={() => this.update(3)}
-              className="btn btn-secondary brn-sm"
-            >
-              Station 3
-            </button>
-            <button
-              onClick={() => this.update(4)}
-              className="btn btn-secondary brn-sm"
-            >
-              Station 4
-            </button>
-            <button
-              onClick={() => this.update(5)}
-              className="btn btn-secondary brn-sm"
-            >
-              Station 5
-            </button>
-          </div>
-
-          <div class="header">
-            <img class="logo" src={this.state.imgLogo} alt="Logo" />
-            <h1 class="text" id="title">
-              BT1XX Testing
-            </h1>
-          </div>
-          <h1 class="text" id="result">
-            RESULT:
-          </h1>
-          <h1 class="stati">
-            Station:
-            {this.state.station}
-          </h1>
-          {this.state.station === 0 ? (
-            <img class="main" src={STANDARD} alt="main" />
-          ) : this.state.station === 1 ? (
-            <img class="main" src={this.state.img1} alt="main" />
-          ) : this.state.station === 2 ? (
-            <img class="main" src={this.state.img2} alt="main" />
-          ) : this.state.station === 3 ? (
-            <img class="main" src={this.state.img3} alt="main" />
-          ) : this.state.station === 4 ? (
-            <img class="main" src={this.state.img4} alt="main" />
-          ) : (
-            <img class="main" src={this.state.img5} alt="main" />
-          )}
-
-          <div>{this.goodOrBad()}</div>
-          <div class="calibration">
-            <button onClick={this.add} className="btn btn-secondary brn-sm">
-              Calibration
-            </button>
-          </div>
+      <div class="page">
+        <div>
+          <p class="credits">Student Co-Op Program Winter 2023</p>
+          <p class="names">
+            Made by Eren Yilmaz, Henrique Rodrigues, Jamie Yen, Kent Tren & Leo
+            You
+          </p>
         </div>
-      </React.Fragment>
+        <div>
+          <button onClick={() => this.update(1)} class="s1">
+            Station 1
+          </button>
+          <button onClick={() => this.update(2)} class="s2">
+            Station 2
+          </button>
+          <button onClick={() => this.update(3)} class="s3">
+            Station 3
+          </button>
+          <button onClick={() => this.update(4)} class="s4">
+            Station 4
+          </button>
+          <button onClick={() => this.update(5)} class="s5">
+            Station 5
+          </button>
+        </div>
+
+        <div class="header">
+          <img class="logo" src={this.state.imgLogo} alt="Logo" />
+          <h1 class="text" id="title">
+            BT1XX Testing
+          </h1>
+        </div>
+        <h1 class="text" id="result">
+          RESULT:
+        </h1>
+        <h1 class="stati">
+          Station:
+          {this.state.station}
+        </h1>
+        {this.state.station === 0 ? (
+          <img class="main" src={STANDARD} alt="main" />
+        ) : this.state.station === 1 ? (
+          <img class="main" src={this.state.img1} alt="main" />
+        ) : this.state.station === 2 ? (
+          <img class="main" src={this.state.img2} alt="main" />
+        ) : this.state.station === 3 ? (
+          <img class="main" src={this.state.img3} alt="main" />
+        ) : this.state.station === 4 ? (
+          <img class="main" src={this.state.img4} alt="main" />
+        ) : (
+          <img class="main" src={this.state.img5} alt="main" />
+        )}
+
+        <div>{this.goodOrBad()}</div>
+        <div class="calibration">
+          <button onClick={this.add} className="btn btn-secondary brn-sm">
+            {/*RUN MASK PROGRAM/} */}
+            Calibration
+          </button>
+        </div>
+      </div>
     );
   }
 }
