@@ -66,3 +66,15 @@ a.S1 {
   top: 50%;
   left: 30%;
 }
+div.stations {
+  position: fixed;
+  top: 30%;
+  left: 10%;
+}
+h1.stati {
+  position: fixed;
+  top: 15%;
+  left: 25%;
+  font-size: 4em;
+  color: black;
+}
