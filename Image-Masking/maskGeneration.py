@@ -47,8 +47,6 @@ videoEnc.bitstream.link(xoutStill.input)
 
 # Connect to device and start pipeline
 with dai.Device(pipeline) as device:
-
-    controlQueue = device.getInputQueue('control')
     
     # Output queue will be used to get the rgb frames from the output defined above
     qRgb = device.getOutputQueue(name="rgb", maxSize=30, blocking=False)
@@ -87,7 +85,7 @@ with dai.Device(pipeline) as device:
             print("Setting manual focus, lens position: ", lensPos)
             ctrl = dai.CameraControl()
             ctrl.setManualFocus(lensPos)
-            controlQueue.send(ctrl)
+            qControl.send(ctrl)
         if key in [ord('k'), ord('l')]:
             if key == ord('k'): brightness -= BRIGHT_STEP
             if key == ord('l'): brightness += BRIGHT_STEP
@@ -95,7 +93,7 @@ with dai.Device(pipeline) as device:
             print("Brightness:", brightness)
             ctrl = dai.CameraControl()
             ctrl.setBrightness(brightness)
-            controlQueue.send(ctrl)
+            qControl.send(ctrl)
         elif key == ord('q'):
             break
         elif key == ord('s'):
@@ -208,7 +206,7 @@ with dai.Device(pipeline) as device:
         #     ctrl = dai.CameraControl()
         #     ctrl.setAutoFocusMode(dai.CameraControl.AutoFocusMode.AUTO)
         #     ctrl.setAutoFocusTrigger()
-        #     controlQueue.send(ctrl)
+        #     qControl.send(ctrl)
         # elif key == ord('c'):
         #     dirName = rgb_data
         #     photoName = int(time.time() * 1000)

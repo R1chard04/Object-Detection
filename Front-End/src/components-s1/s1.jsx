@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import STANDARD from "../STANDARD.jpg";
-import "./style.css";
+import "../components-main/style.css";
 
-class Martinrea extends Component {
+class S1 extends Component {
   state = {
     count: 0,
     imgLogo: "https://camsc.ca/wp-content/uploads/2021/06/Martinrea-logo.png",
@@ -16,12 +16,12 @@ class Martinrea extends Component {
     if (this.state.goodOrNot === 1)
       return (
         <h1 class="goodOrBad" id="good">
-          PASS
+          PASSAAA
         </h1>
       );
     return (
       <h1 class="goodOrBad" id="bad">
-        FAIL
+        FAILAAA
       </h1>
     );
   };
@@ -50,4 +50,4 @@ class Martinrea extends Component {
   }
 }
 
-export default Martinrea;
+export default S1;
