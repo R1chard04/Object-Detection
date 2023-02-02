@@ -3,7 +3,7 @@ import numpy as np
 
 def denoiseWhite(img):
     for i in range(3):
-        img = cv.GaussianBlur(img, (5,5), 15, 15)
+        img = cv.GaussianBlur(img, (3,3), 15, 15)
         img = cv.add(img, img)
         img = cv.fastNlMeansDenoising(img, None, 30, 7, 15)
 
@@ -24,18 +24,18 @@ def floodFill(img):
 # final = feed+fillMask
 
 def fillHoles(img):
-    kernel = np.ones((1,10), np.uint8)  # note this is a horizontal kernel
+    kernel = np.ones((1,5), np.uint8)  # note this is a horizontal kernel
     img = cv.dilate(img, kernel, iterations=5)
-    kernel = np.ones((10,1), np.uint8)  # note this is a horizontal kernel
+    kernel = np.ones((5,1), np.uint8)  # note this is a horizontal kernel
     img = cv.dilate(img, kernel, iterations=5)
     
 
     img = floodFill(img)
 
 
-    kernel = np.ones((1,10), np.uint8)
+    kernel = np.ones((1,5), np.uint8)
     img = cv.erode(img, kernel, iterations=5)
-    kernel = np.ones((10,1), np.uint8)
+    kernel = np.ones((5,1), np.uint8)
     img = cv.erode(img, kernel, iterations=5)
 
     return img
