@@ -187,8 +187,6 @@ with dai.Device(pipeline) as device:
             start = time.time()
             print("blablabla")  
         
-            
-                  
 
         # elif key == ord('r'):
         #     ref = cv.imread('Image-Masking\mask_pics\\MASK.jpg')
