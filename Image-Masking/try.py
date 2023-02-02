@@ -39,7 +39,9 @@ lensPos = 150
 brightness = 0
 BRIGHT_STEP = 1
 LENS_STEP = 3
-
+ref = cv.imread('Image-Masking\mask_pics\\MASK.jpg')
+na = cv.imread('Image-Masking\mask_pics\\NONE.jpg')
+test = cv.imread('Image-Masking\mask_pics\\FRAME.jpg')
 
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
@@ -89,10 +91,13 @@ with dai.Device(pipeline) as device:
     Path(dirName).mkdir(parents=True, exist_ok=True)
     print("Press \'s\' to capture a standard photo that has parts on \nPress \'n\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask\nPress \'q\' to quit\nPress ,/. to adjest focal length\nPress k/l to adjest brightness")
     # take STANDARD
+    start = time.time()
+    startEvalutating = False
+    
     while True:
         # Non-blocking call, will return a new data that has arrived or None otherwise
         inRgb = qRgb.tryGet()
-
+        
         if inRgb is not None:
             frame = inRgb.getCvFrame()
             # 4k / 4
@@ -105,8 +110,16 @@ with dai.Device(pipeline) as device:
             with open(fName, "wb") as f:
                 f.write(qStill.get().getData())
                 print('Image saved to', fName)
-
+            
+            if (startEvalutating):
+                result = filterImage(test, na)
+                cv.imwrite("Image-Masking\mask_pics\\RESULT.jpg", result)
+                error, diff = mse()    
+                print(error)
+                print("Sent 'still' event to the camera!")
+            
         key = cv.waitKey(1)
+        # focal length adjestment
         if key in [ord(','), ord('.')]:
             if key == ord(','):
                 lensPos -= LENS_STEP
@@ -117,6 +130,8 @@ with dai.Device(pipeline) as device:
             ctrl = dai.CameraControl()
             ctrl.setManualFocus(lensPos)
             qControl.send(ctrl)
+        
+        # brightness adjestment
         if key in [ord('k'), ord('l')]:
             if key == ord('k'):
                 brightness -= BRIGHT_STEP
@@ -127,17 +142,16 @@ with dai.Device(pipeline) as device:
             ctrl = dai.CameraControl()
             ctrl.setBrightness(brightness)
             qControl.send(ctrl)
-        elif key == ord('q'):
+            
+        if key == ord('q'):
             break
         elif key == ord('s'):
             photoName = "STANDARD"
             # dirName = "mask_pics"
             ctrl = dai.CameraControl()
-
             # autofocus contro
             # ctrl.setAutoFocusMode(dai.CameraControl.AutoFocusMode.AUTO)
             # ctrl.setAutoFocusTrigger()
-
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
@@ -148,40 +162,48 @@ with dai.Device(pipeline) as device:
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             print("Sent 'still' event to the camera")
+            
         elif key == ord('g'):
             std = cv.imread('Image-Masking\mask_pics\\STANDARD.jpg')
             na = cv.imread('Image-Masking\mask_pics\\NONE.jpg')
-
             result = filterImage(std, na)
-
             # img = cv.resize(result, (0, 0), fx=0.2, fy=0.2)
             cv.imwrite("Image-Masking\mask_pics\MASK.jpg", result)
             # cv.imshow("MASK", img)
             cv.waitKey(0)
 
         elif key == ord('t'):
+            startEvalutating = True
             photoName = "TEST"
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             print("test")
+        elif (time.time() - start > 1) and startEvalutating:
+            photoName = "FRAME"
+            ctrl = dai.CameraControl()
+            ctrl.setCaptureStill(True)
+            qControl.send(ctrl)
+            start = time.time()
+            print("blablabla")  
+        
+            
+                  
+
+        # elif key == ord('r'):
+        #     ref = cv.imread('Image-Masking\mask_pics\\MASK.jpg')
+        #     na = cv.imread('Image-Masking\mask_pics\\NONE.jpg')
+        #     test = cv.imread('Image-Masking\mask_pics\\TEST.jpg')
+        #     while True:
+        #         result = filterImage(test, na)
+        #         cv.imwrite("Image-Masking\mask_pics\\RESULT.jpg", result)
+        #         error, diff = mse()
+
                 
+        #         print(error)
+        #         time.sleep(1)
 
-        elif key == ord('r'):
-            ref = cv.imread('Image-Masking\mask_pics\\MASK.jpg')
-            na = cv.imread('Image-Masking\mask_pics\\NONE.jpg')
-            test = cv.imread('Image-Masking\mask_pics\\TEST.jpg')
-            while True:
-                result = filterImage(test, na)
-                cv.imwrite("Image-Masking\mask_pics\\RESULT.jpg", result)
-                error, diff = mse()
-
-                
-                print(error)
-                time.sleep(1)
-
-        elif key == ord('q'):
-            break
+        
 
         # elif key == ord('t'):
         #     print("Autofocus trigger (and disable continuous)")
