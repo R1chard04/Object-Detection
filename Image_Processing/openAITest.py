@@ -80,8 +80,8 @@ model = SentenceTransformer('clip-ViT-B-32')
     
     
 # samples = list (glob.glob('Image_Processing\comparePairs./*.jpg'))
-samples = list (glob.glob('Image_Processing\photos\Test\Fault./*.jpg'))
-# samples = list (glob.glob('Image_Processing\photos\Test\Reference./*.jpg'))
+# samples = list (glob.glob('Image_Processing\photos\Test\Fault./*.jpg'))
+samples = list (glob.glob('Image_Processing\photos\Test\Reference./*.jpg'))
 
 encoded_image = model.encode([Image.open(filepath) for filepath in samples], batch_size=128, convert_to_tensor=True, show_progress_bar=True)
 processed_images = util.paraphrase_mining_embeddings(encoded_image)
@@ -89,7 +89,8 @@ processed_images = util.paraphrase_mining_embeddings(encoded_image)
 print("Images: ", len(samples))
 print("Finding near duplicate images...")
 for score, image_id1, image_id2 in processed_images:
-    if (samples[image_id1]  == "Image_Processing\photos\Test\Fault.\STANDARD.jpg") or (samples[image_id2]  == "Image_Processing\photos\Test\Fault.\STANDARD.jpg") : 
+    # if (samples[image_id1]  == "Image_Processing\photos\Test\Fault.\STANDARD.jpg") or (samples[image_id2]  == "Image_Processing\photos\Test\Fault.\STANDARD.jpg") :
+    if (samples[image_id1]  == "Image_Processing\photos\Test\Reference.\STANDARD.jpg") or (samples[image_id2]  == "Image_Processing\photos\Test\Reference.\STANDARD.jpg") :
         print("\nScore: {:.3f}%".format(score * 100))
         print(samples[image_id1])
         print(samples[image_id2])
