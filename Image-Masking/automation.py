@@ -88,10 +88,10 @@ with dai.Device(pipeline) as device:
         
         # get the current frame and save it to the file
         if qStill.has():
-            # fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
-            with open(photoName, "wb") as f:
+            fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
+            with open(fName, "wb") as f:
                 f.write(qStill.get().getData())
-                print('Image saved to', photoName)
+                print('Image saved to', fName)
             # compare()
         
         key = cv.waitKey(1)
@@ -114,26 +114,19 @@ with dai.Device(pipeline) as device:
             ctrl = dai.CameraControl()
             ctrl.setBrightness(brightness)
             qControl.send(ctrl)
- 
         if key == ord('q'):
             break
-        elif key == ord('s'):
-            photoName = "STANDARD"
-            # dirName = "mask_pics"
-            ctrl = dai.CameraControl()
-            # autofocus contro
-            # ctrl.setAutoFocusMode(dai.CameraControl.AutoFocusMode.AUTO)
-            # ctrl.setAutoFocusTrigger()
-            ctrl.setCaptureStill(True)
-            qControl.send(ctrl)
-            print("Set reference image!")
-        elif time.time() - start > 1:
-            photoName = "FRAME"
+        elif key == ord('c'):
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
-            start = time.time()
             print("Sent 'still' event to the camera!")
+        # elif time.time() - start > 1:
+        #     ctrl = dai.CameraControl()
+        #     ctrl.setCaptureStill(True)
+        #     qControl.send(ctrl)
+        #     start = time.time()
+        #     print("Sent 'still' event to the camera!")
 
 
 '''

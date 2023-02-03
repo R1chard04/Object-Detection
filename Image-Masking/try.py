@@ -76,8 +76,10 @@ videoEnc.bitstream.link(xoutStill.input)
 # -----------------------------------------MAIN LOOP-----------------------------------------#
 
 # Connect to device and start pipeline
-with dai.Device(pipeline) as device:
+# # Force USB2 communication
+# with dai.Device(pipeline, usb2Mode = True) as device:
 
+with dai.Device(pipeline, usb2Mode = True) as device:
     # Output queue will be used to get the rgb frames from the output defined above
     qRgb = device.getOutputQueue(name="rgb", maxSize=30, blocking=False)
     qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
@@ -89,8 +91,19 @@ with dai.Device(pipeline) as device:
     photoName = "null.jpg"
     dirName = "Image-Masking\mask_pics"
     Path(dirName).mkdir(parents=True, exist_ok=True)
-    print("Press \'s\' to capture a standard photo that has parts on \nPress \'n\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask\nPress \'q\' to quit\nPress ,/. to adjest focal length\nPress k/l to adjest brightness")
+    
+    # Instruction
+    print("Press \'s\' to capture a standard photo that has parts on")
+    print("Press \'n\' to capture a photo that does not have parts on")
+    print("Press \'g\' to generate a mask")
+    print("Press ,/. to adjest focal length")
+    print("Press k/l to adjest brightness")
+    print("Press \'t\' to start or end evaluating")
+    print("Press \'q\' to quit")
+    
+    
     # take STANDARD
+    
     start = time.time()
     startEvalutating = False
     
@@ -112,6 +125,7 @@ with dai.Device(pipeline) as device:
                 print('Image saved to', fName)
             
             if (startEvalutating):
+                test = cv.imread('Image-Masking\mask_pics\\FRAME.jpg')
                 result = filterImage(test, na)
                 cv.imwrite("Image-Masking\mask_pics\\RESULT.jpg", result)
                 error, diff = mse()    
@@ -173,19 +187,19 @@ with dai.Device(pipeline) as device:
             cv.waitKey(0)
 
         elif key == ord('t'):
-            startEvalutating = True
-            photoName = "TEST"
-            ctrl = dai.CameraControl()
-            ctrl.setCaptureStill(True)
-            qControl.send(ctrl)
-            print("test")
+            if (startEvalutating):
+                startEvalutating = False
+                print("END TESTING")
+            else:
+                startEvalutating = True
+                print("START TESTING")
+                
         elif (time.time() - start > 1) and startEvalutating:
             photoName = "FRAME"
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             start = time.time()
-            print("blablabla")  
         
 
         # elif key == ord('r'):
