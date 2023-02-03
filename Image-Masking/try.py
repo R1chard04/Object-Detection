@@ -5,6 +5,7 @@ from pathlib import Path
 import cv2 as cv
 import depthai as dai
 import numpy as np
+import argparse
 
 def mse():  # mean squared error
     img1 = cv.imread("Image-Masking\mask_pics\MASK.jpg")
@@ -30,6 +31,19 @@ def filterImage(std, na):
     # result[result > 10] = 255
 
     return subtract
+
+# Function filter orange into black image
+def orange2Black(image):
+    ORANGE_MIN = np.array([5, 50, 50], np.uint8)
+    ORANGE_MAX = np.array([15, 255, 255], np.uint8)
+
+    hsv_img = cv.cvtColor(image, cv.COLOR_BGR2HSV)
+
+    frame_threshed = cv.inRange(hsv_img, ORANGE_MIN, ORANGE_MAX)
+    cv.imwrite('output2.jpg', frame_threshed)
+
+    
+
 
 # -----------------------------------------OAK CAMERA SETUP-----------------------------------------#
 
