@@ -36,5 +36,3 @@ $ npm install
 # Start local host server
 $ npm start
 ```
-
-## Have fun!!!

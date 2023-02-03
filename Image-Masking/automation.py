@@ -92,9 +92,9 @@ with dai.Device(pipeline) as device:
             with open(photoName, "wb") as f:
                 f.write(qStill.get().getData())
                 print('Image saved to', photoName)
-            compare()
+            # compare()
         
-        cv.waitKey(1)
+        key = cv.waitKey(1)
         # focal length adjestment
         if key in [ord(','), ord('.')]:
             if key == ord(','): lensPos -= LENS_STEP
@@ -115,8 +115,6 @@ with dai.Device(pipeline) as device:
             ctrl.setBrightness(brightness)
             qControl.send(ctrl)
  
-        key = cv.waitKey(1)
-            
         if key == ord('q'):
             break
         elif key == ord('s'):
