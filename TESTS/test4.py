@@ -3,38 +3,74 @@ import cv2 as cv
 import numpy as np
 import os
 
+#------------------------------------------------------------------------------------------------#
+
+#FUNCTIONS:
+def orange2Black(image):
+  ORANGE_MIN = np.array([5, 50, 50], dtype = "uint8")
+  ORANGE_MAX = np.array([25, 255, 255], dtype = "uint8")
+
+  hsv_img = cv.cvtColor(image, cv.COLOR_BGR2HSV)
+
+  mask = cv.inRange(hsv_img, ORANGE_MIN, ORANGE_MAX)
+  
+  # Replace the orange pixels with black
+  image[np.where(mask == 255)] = [0, 0, 0]
+
+  cv.imwrite("image.jpg", image)
+  # Save the output image
+  return image
+
+def fillByLine(img, direction):
+  for row in range(img.shape[0]):
+    start, stop = 0, 0
+    for col in range(img.shape[1]):
+        if img[row,col] != 0 and start == 0: start = col, row
+        if img[row,col] != 0: stop = col, row
+    if start != 0:
+        cv.line(img, start, stop, 255, 1)
+  
+  return img 
+
+def floodFill(imgThresh):
+  fillMask = imgThresh.copy()
+  height, width = imgThresh.shape[:2]
+  mask = np.zeros((height+2,width+2),np.uint8)
+  cv.floodFill(fillMask, mask,(0,0),(255,255,255))
+  fillMask = cv.bitwise_not(fillMask)
+
+  return cv.add(imgThresh, fillMask)
+
+#------------------------------------------------------------------------------------------------#
+
 noneDir = 'TESTS/NONE/'
 stdDir = 'TESTS/STD/'
-stdPath = ['STANDARD1.jpg','STANDARD2.jpg','STANDARD3.jpg','STANDARD4.jpg','STANDARD5.jpg']
-nonePath = ['NONE1.jpg','NONE2.jpg','NONE3.jpg','NONE4.jpg','NONE5.jpg']
+stdPath = ['STANDARD1.jpg','STANDARD2.jpg','STANDARD3.jpg','STANDARD4.jpg']
+nonePath = ['NONE1.jpg','NONE2.jpg','NONE3.jpg','NONE4.jpg']
 noneArray = []
 stdArray = []
 
 ref = cv.imread('TESTS/STD/STANDARD1.jpg', cv.IMREAD_GRAYSCALE)
 __, ref = cv.threshold(ref, 0, 255, cv.THRESH_BINARY)
 ref[ref != 0] = 0
-cv.imshow("ref", ref)
+# cv.imshow("ref", ref)
 
-for i in range(5):
+for i in range(len(stdPath)):
   # image_path = os.path.join(stdDir, stdPath[i])
   image = cv.imread(stdDir + stdPath[i])
   stdArray.append(image)
   print(stdDir + stdPath[i])
   
-for i in range(5):
+for i in range(len(nonePath)):
   # Skip any files that are not images
   # photos_path = os.path.join(noneDir, nonePath[i])
   photos = cv.imread(noneDir + nonePath[i])
   noneArray.append(photos)
-  # print(photos_path)
+  print(noneDir + nonePath[i])
 
 for i in range(len(stdArray)):
-  std = stdArray[i]
-  none = noneArray[i]
-
-  # cv.imshow("standard{i}", std)
-  # cv.imshow("none{i}", none)
-  # cv.waitKey(0)
+  std = orange2Black(stdArray[i])
+  none = orange2Black(noneArray[i])
 
   std_gray = cv.cvtColor(std, cv.COLOR_BGR2GRAY)
   none_gray = cv.cvtColor(none, cv.COLOR_BGR2GRAY)
@@ -43,34 +79,37 @@ for i in range(len(stdArray)):
   subtract2 = cv.subtract(none_gray, std_gray)
 
   addImg = cv.add(subtract1, subtract2)
+
+
   _, thresholdImg = cv.threshold(addImg, 50, 255, cv.THRESH_BINARY)
 
-  denoiseImg = cv.GaussianBlur(addImg, (3,3), 7, 21)
+  denoiseImg = cv.GaussianBlur(addImg, (5,5), 7, 21)
   denoiseImg = cv.fastNlMeansDenoising(denoiseImg, 15, 21)
   kernel = np.ones((3, 3), np.uint8)
   opening = cv.morphologyEx(denoiseImg, cv.MORPH_OPEN, kernel)
   __, binary = cv.threshold(opening, 10, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)
 
-  ref = cv.add(ref, binary)
+  contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+  contours = sorted(contours, key=cv.contourArea, reverse=True)
+  largest_contour = contours[0]
+  img_contour = np.zeros((ref.shape[0], ref.shape[1], 3), np.uint8)
+  cv.drawContours(ref, [largest_contour], -1, (255, 255, 255), 1)
 
+  print("dodo")
 
-  # cv.imshow("binary{i}.jpg", binary)
-  
-  # cv.waitKey(0)
+ref[ref != 0] = 255
+ref = floodFill(ref)
+# ref = fillByLine(ref)
 
-
-contours, hierarchy = cv.findContours(ref, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-contours = sorted(contours, key=cv.contourArea, reverse=True)
-largest_contour = contours[0]
-img_contour = np.zeros((ref.shape[0], ref.shape[1], 3), np.uint8)
-cv.drawContours(img_contour, [largest_contour], -1, (255, 255, 255), 1)
-
-cv.imwrite("hi.jpg", img_contour)
+cv.imwrite("hi.jpg", ref)
 print("KENT WAS WRONG")
 
 
 
 
 #LEO WROTE THIS CODE
+
+
+
 
 
