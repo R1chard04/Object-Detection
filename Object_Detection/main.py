@@ -12,7 +12,7 @@ from imageStitchingClasses import imageStitching
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
-photosPath = "Object_Detection\Photos\Masking\INIT"
+photosPath = "Photos\Masking\INIT"
 
 #-----------------------------------------Main Loop-----------------------------------------#
 needCalibrate = False
@@ -42,16 +42,19 @@ with dai.Device(pipeline) as device:
                                 device.getInputQueue(name="control"))
 
 
+#-----------------------------------------Setup-----------------------------------------#
      #Set Brightness, Focal
     brightness, lensPos = captureObject.setParameters()
+    print(brightness , " ", lensPos)
+
     initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName, brightness, lensPos)
-    myCalibration = imageCalibration(initImgPath)
+    print(initImgPath)
+    myCalibration = imageCalibration("..\Photos\Masking\INIT")
     myCalibration.imageCalibration()
 
     processingObject = imageProcessing(initImg, initImg, initImg)
 
-    #-----------------------------------------Calibrate-----------------------------------------#
-  
+#-----------------------------------------Calibrate-----------------------------------------#
 
     maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
 

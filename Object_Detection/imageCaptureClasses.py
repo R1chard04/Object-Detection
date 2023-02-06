@@ -76,7 +76,8 @@ class imageCapture:
             if imgPath == "Test":
                 imgPath = round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":","")))
             
-            imgPath = os.path.join(directoryName,imgPath)
+            path = os.path.join(directoryName,imgPath)
+            print(path)
 
             if inRgb is not None:
                 img = inRgb.getCvFrame()
@@ -86,9 +87,9 @@ class imageCapture:
                 cv.imshow("rgb", img)
 
             if self.qStill.has():
-                with open(imgPath, "wb") as f:
+                with open(path, "wb") as f:
                     f.write(self.qStill.get().getData())
-                    print('Image saved to', imgPath)
+                    print('Image saved to', path)
                     imgUpdated = True
 
             ctrl = dai.CameraControl()

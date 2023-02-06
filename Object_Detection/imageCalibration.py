@@ -17,12 +17,14 @@ class imageCalibration:
 
     def imageCalibration(self) -> any:
         # set up the image
-        imageSetUp = setupImages(self.imgPath, objectSize, frameSize, objPoints, imgPoints)
+        imageSetUp = setupImages(self.imgPath, frameSize, objPoints, imgPoints)
         imageSetUp.setupImages()
+        print(objPoints)
+        print(imgPoints)
 
         # calibrate the images
-        myCalibration = cameraCalibration()
-        ret, cameraMatrix, dist, rvecs, tvecs = myCalibration.calibration(objPoints, imgPoints, frameSize)
+        myCalibration = cameraCalibration(objPoints, imgPoints, frameSize)
+        ret, cameraMatrix, dist, rvecs, tvecs = myCalibration.calibration()
 
         # undistort the image
         img = cv.imread(self.imgPath) # start reading an image
