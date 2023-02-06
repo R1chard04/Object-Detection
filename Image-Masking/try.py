@@ -112,6 +112,7 @@ with dai.Device(pipeline) as device:
                 print('Image saved to', fName)
             
             if (startEvalutating):
+                test = cv.imread('Image-Masking\mask_pics\\FRAME.jpg')
                 result = filterImage(test, na)
                 cv.imwrite("Image-Masking\mask_pics\\RESULT.jpg", result)
                 error, diff = mse()    
@@ -174,7 +175,7 @@ with dai.Device(pipeline) as device:
 
         elif key == ord('t'):
             startEvalutating = True
-            photoName = "TEST"
+            photoName = "FRAME"
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
@@ -185,7 +186,6 @@ with dai.Device(pipeline) as device:
             ctrl.setCaptureStill(True)
             qControl.send(ctrl)
             start = time.time()
-            print("blablabla")  
         
 
         # elif key == ord('r'):
