@@ -4,7 +4,7 @@
 import numpy as np
 import cv2 as cv
 import glob
-import imutils
+# import imutils
 
 class imageStitching:
     def __init__(self, image_paths) -> None:

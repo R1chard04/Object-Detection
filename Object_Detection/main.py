@@ -62,7 +62,7 @@ with dai.Device(pipeline) as device:
     #-------------------------------------------------------------------------------------------#
 
     while True:
-        testImg, testImgPath = captureObject.autoCapture("Test", photosPath, brightness, lensPos)
+        testImg, testImgPath = captureObject.setParameters("Test", photosPath, brightness, lensPos)
         cv.imshow("test", testImg)
     
         
