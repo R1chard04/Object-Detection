@@ -5,6 +5,7 @@ from pathlib import Path
 import cv2 as cv
 import depthai as dai
 import numpy as np
+import argparse
 
 def mse():  # mean squared error
     img1 = cv.imread("Image-Masking\mask_pics\MASK.jpg")
@@ -30,6 +31,19 @@ def filterImage(std, na):
     # result[result > 10] = 255
 
     return subtract
+
+# Function filter orange into black image
+def orange2Black(image):
+    ORANGE_MIN = np.array([5, 50, 50], np.uint8)
+    ORANGE_MAX = np.array([15, 255, 255], np.uint8)
+
+    hsv_img = cv.cvtColor(image, cv.COLOR_BGR2HSV)
+
+    frame_threshed = cv.inRange(hsv_img, ORANGE_MIN, ORANGE_MAX)
+    cv.imwrite('output2.jpg', frame_threshed)
+
+    
+
 
 # -----------------------------------------OAK CAMERA SETUP-----------------------------------------#
 
@@ -76,8 +90,10 @@ videoEnc.bitstream.link(xoutStill.input)
 # -----------------------------------------MAIN LOOP-----------------------------------------#
 
 # Connect to device and start pipeline
-with dai.Device(pipeline) as device:
+# # Force USB2 communication
+# with dai.Device(pipeline, usb2Mode = True) as device:
 
+with dai.Device(pipeline, usb2Mode = True) as device:
     # Output queue will be used to get the rgb frames from the output defined above
     qRgb = device.getOutputQueue(name="rgb", maxSize=30, blocking=False)
     qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
@@ -89,8 +105,19 @@ with dai.Device(pipeline) as device:
     photoName = "null.jpg"
     dirName = "Image-Masking\mask_pics"
     Path(dirName).mkdir(parents=True, exist_ok=True)
-    print("Press \'s\' to capture a standard photo that has parts on \nPress \'n\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask\nPress \'q\' to quit\nPress ,/. to adjest focal length\nPress k/l to adjest brightness")
+    
+    # Instruction
+    print("Press \'s\' to capture a standard photo that has parts on")
+    print("Press \'n\' to capture a photo that does not have parts on")
+    print("Press \'g\' to generate a mask")
+    print("Press ,/. to adjest focal length")
+    print("Press k/l to adjest brightness")
+    print("Press \'t\' to start or end evaluating")
+    print("Press \'q\' to quit")
+    
+    
     # take STANDARD
+    
     start = time.time()
     startEvalutating = False
     
@@ -174,12 +201,13 @@ with dai.Device(pipeline) as device:
             cv.waitKey(0)
 
         elif key == ord('t'):
-            startEvalutating = True
-            photoName = "FRAME"
-            ctrl = dai.CameraControl()
-            ctrl.setCaptureStill(True)
-            qControl.send(ctrl)
-            print("test")
+            if (startEvalutating):
+                startEvalutating = False
+                print("END TESTING")
+            else:
+                startEvalutating = True
+                print("START TESTING")
+                
         elif (time.time() - start > 1) and startEvalutating:
             photoName = "FRAME"
             ctrl = dai.CameraControl()

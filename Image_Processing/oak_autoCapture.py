@@ -71,7 +71,6 @@ with dai.Device(pipeline) as device:
             with open(fName, "wb") as f:
                 f.write(qStill.get().getData())
                 print('Image saved to', fName)
-            time.sleep(3)
         
             #fName = "'" + fName + "'"
             #photo = cv2.imread(fName)

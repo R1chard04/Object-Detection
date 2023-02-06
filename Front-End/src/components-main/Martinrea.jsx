@@ -2,14 +2,14 @@ import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import STANDARD from "../STANDARD.jpg";
 import "./style.css";
+import CAM from "../camPic.jpg";
 
 class Martinrea extends Component {
-  handleWebsiteChange = async (event) => {};
   state = {
     count: 0,
     station: 0,
     imgLogo: "https://camsc.ca/wp-content/uploads/2021/06/Martinrea-logo.png",
-    imgPicture1: "STANDARD", // Put camera pic here
+
     img1: "http://living-wild.net/wp-content/uploads/2016/09/16x9-c-1-768x432.jpg",
     img2: "http://www.jasontheaker.com/images/16x9/Ilkley-Heather.jpg",
     img3: "http://living-wild.net/wp-content/uploads/2016/09/Top-50-21-1.jpg",
@@ -84,9 +84,9 @@ class Martinrea extends Component {
           {this.state.station}
         </h1>
         {this.state.station === 0 ? (
-          <img class="main" src={STANDARD} alt="main" />
+          <img class="main" src={CAM} alt="main" /> // Put camera pic here
         ) : this.state.station === 1 ? (
-          <img class="main" src={this.state.img1} alt="main" />
+          <img class="main" src={CAM} alt="main" /> // put pic s1 here
         ) : this.state.station === 2 ? (
           <img class="main" src={this.state.img2} alt="main" />
         ) : this.state.station === 3 ? (
