@@ -24,7 +24,7 @@ for device in dai.Device.getAllAvailableDevices():
     print(f"{device.getMxId()} {device.state}")
 
 #device_info = dai.DeviceBootloader(dai.DeviceInfo("1944301051766E1300"), allowFlashingBootloader = True)
-device_info = dai.DeviceInfo("1944301051766E1300")
+device_info = dai.DeviceInfo("19443010A137DE1200")
 device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
 device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 
@@ -36,22 +36,22 @@ total_device_info = [device_info]
 total_pipeline = [pipeline]
 
 # for myDevice, myPipeline in total_device_info, total_pipeline:
-with dai.Device(pipeline, device_info) as device:
+with dai.Device(pipeline) as device:
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                 device.getOutputQueue(name="still", maxSize=30, blocking=True), 
-                                device.getInputQueue(name="control"),
-                                photoDirectoryName)
+                                device.getInputQueue(name="control"))
 
 
-    initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName)
+     #Set Brightness, Focal
+    brightness, lensPos = captureObject.setParameters()
+    initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName, brightness, lensPos)
     myCalibration = imageCalibration(initImgPath)
     myCalibration.imageCalibration()
 
     processingObject = imageProcessing(initImg, initImg, initImg)
 
     #-----------------------------------------Calibrate-----------------------------------------#
-    #Set Brightness, Focal
-    brightness, lensPos = captureObject.setParameters()
+  
 
     maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
 

@@ -17,7 +17,7 @@ class imageCalibration:
 
     def imageCalibration(self) -> any:
         # set up the image
-        imageSetUp = setupImages(objectSize, frameSize, objPoints, imgPoints)
+        imageSetUp = setupImages(self.imgPath, objectSize, frameSize, objPoints, imgPoints)
         imageSetUp.setupImages()
 
         # calibrate the images

@@ -17,17 +17,19 @@ class imageCapture:
         brightness = 0
         BRIGHT_STEP = 1
         LENS_STEP = 3
-
+        i = 0
         while True:
+            i+=1
+            print(i)
             inRgb = self.qRgb.tryGet() 
 
             if inRgb is not None:
-                img = inRgb.getCvFrame()
-                img = cv.pyrDown(img)
-                img = cv.pyrDown(img)
-                cv.imshow("rgb", img)
+                frame = inRgb.getCvFrame()
+                frame = cv.pyrDown(frame)
+                frame = cv.pyrDown(frame)
+                cv.imshow("rgb", frame)
 
-            key = cv.waitKey(1)
+            key = cv.waitKey(50)
             # focal length adjestment
             if key in [ord(','), ord('.')]:
                 if key == ord(','):
@@ -52,12 +54,10 @@ class imageCapture:
                 ctrl.setBrightness(brightness)
                 self.qControl.send(ctrl)
             
-            if key == ord('ENTER'):
+            if key == ord("q"):
                 return brightness, lensPos
             
             ctrl = dai.CameraControl()
-            ctrl.setManualFocus(lensPos)
-            ctrl.setBrightness(brightness)
             ctrl.setCaptureStill(True)
             self.qControl.send(ctrl)
 
