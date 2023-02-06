@@ -21,8 +21,8 @@ class imageCalibration:
         imageSetUp.setupImages()
 
         # calibrate the images
-        myCalibration = cameraCalibration()
-        ret, cameraMatrix, dist, rvecs, tvecs = myCalibration.calibration(objPoints, imgPoints, frameSize)
+        myCalibration = cameraCalibration(objPoints, imgPoints, frameSize)
+        ret, cameraMatrix, dist, rvecs, tvecs = myCalibration.calibration()
 
         # undistort the image
         img = cv.imread(self.imgPath) # start reading an image

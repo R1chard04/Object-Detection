@@ -37,6 +37,11 @@ total_pipeline = [pipeline]
 
 # for myDevice, myPipeline in total_device_info, total_pipeline:
 with dai.Device(pipeline) as device:
+    # Calibrate the camera using 10 images of the chessboards in order to get rid of the lens distortion
+    myImageCalibration = imageCalibration()
+    myImageCalibration.imageCalibration("calibrationImages/*.png")
+
+    # Start capture the images after the len is distorted
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                 device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                 device.getInputQueue(name="control"))
@@ -45,8 +50,6 @@ with dai.Device(pipeline) as device:
      #Set Brightness, Focal
     brightness, lensPos = captureObject.setParameters()
     initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName, brightness, lensPos)
-    myCalibration = imageCalibration(initImgPath)
-    myCalibration.imageCalibration()
 
     processingObject = imageProcessing(initImg, initImg, initImg)
 
