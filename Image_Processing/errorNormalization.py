@@ -8,6 +8,8 @@ import datetime
 from pathlib import Path
 import depthai as dai
 import os.path
+from skimage.metrics import structural_similarity
+
 
 def mse(img1, img2):  # mean squared error
     height, width = img1.shape
@@ -26,18 +28,16 @@ faultDirectory = "photos\Test\Fault"
 folderDirectories = [refDirectory, faultDirectory]
 
 # Mask
-maskImgG = cv.cvtColor(maskImg, cv.COLOR_BGR2GRAY)
-(maskThresh, maskImgBW) = cv.threshold(
-    maskImgG, 128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
-thresh = 127
-maskImgBinary = cv.threshold(maskImgG, maskThresh, 255, cv.THRESH_BINARY)[1]
+# maskImgG = cv.cvtColor(maskImg, cv.COLOR_BGR2GRAY)
+(maskThresh, maskImgBW) = cv.threshold(maskImg, 127, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
+maskImgBinary = cv.threshold(maskImg, maskThresh, 255, cv.THRESH_BINARY)[1]
 
 # Filter
 alpha = 3  # Contrast control (rec 1-3)
 beta = 0  # Brightness control (rec -300 <-> 300)
 
 refImg = cv.convertScaleAbs(refImg, alpha=alpha, beta=beta)
-refImg = cv.cvtColor(refImg, cv.COLOR_BGR2GRAY)
+# refImg = cv.cvtColor(refImg, cv.COLOR_BGR2GRAY)
 
 # Standard Mask
 refImgM = cv.bitwise_and(refImg, refImg, mask=maskImgBinary)
@@ -47,10 +47,34 @@ refImgM = cv.bitwise_and(refImg, refImg, mask=maskImgBinary)
 totalPixels = np.sum(maskImg) 
 whitePixels = np.sum(maskImg == 255)
 
-inputImgM1 = cv.bitwise_and(frame1, frame1, mask=maskImg)
-inputImgM2 = cv.bitwise_and(frame2, frame2, mask=maskImg)
+# inputImgM1 = cv.bitwise_and(frame1, frame1, mask=maskImg)
+# inputImgM2 = cv.bitwise_and(frame2, frame2, mask=maskImg)
 refImgM = cv.bitwise_and(refImgM, refImgM, mask=maskImg)
 
+def compare(testPath):
+    report.write("\n"+testPath)
+    testImg = cv.convertScaleAbs(cv.imread(testPath), alpha=alpha, beta=beta)
+    testImg = cv.cvtColor(testImg, cv.COLOR_BGR2GRAY)
+    inputImgM = cv.bitwise_and(testImg, testImg, mask=maskImgBinary)
+    # error, diffImg = mse1(refImgM, inputImgM)
+    error, diffImg= mse(refImgM, inputImgM)
+    error = error*totalPixels/whitePixels
+    report.write(str(error))
+    # report.write(" Pass") if error < 0.1 else report.write(" Fail")
+    # for this mask, the set tolerance is 0.1, this seems to work best, but this is experimentally tested (which isn't awesome)
+
+# Report
+report = open("report.txt", "w")
+report.write("Report of deviations from reference image")
+
+for i in range(len(folderDirectories)):
+
+    report.write("\n" + folderDirectories[i] + ":\n")
+
+    for images in os.listdir(folderDirectories[i]):
+        print(images)
+        images = os.path.join(folderDirectories[i], images)
+        compare(images)
 
 # # error, diffImg = mse1(refImgM, inputImgM)
 # error1, pic = mse(ref, inputImgM1)
