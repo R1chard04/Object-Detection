@@ -40,4 +40,4 @@ class imageCapture:
             if imgUpdated == True:
                 return img, imgPath
 
-    def displayCapture():
+    # def displayCapture():
