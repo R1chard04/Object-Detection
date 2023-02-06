@@ -47,8 +47,8 @@ for i in range(1, 5):
     if i in input_numbers:
         result.append(quadrant_map[i])
     else:
-        result.append 
-        non_chosen_images.append(np.zeros((height_cutoff, width_cutoff, 3), dtype=np.uint8))
+        result.append
+        non_chosen_images.append(img[:height_cutoff, :width_cutoff])
 
 #Combine non-chosen images
 if len(non_chosen_images) == 2:
@@ -60,7 +60,7 @@ if len(non_chosen_images) == 2:
         result.append(cv2.vconcat(non_chosen_images))
     elif 2 in input_numbers and 4 in input_numbers:
         result.append(cv2.vconcat(non_chosen_images))
-
+        
 # Use cv.imshow to output the result
 for i, res in enumerate(result):
     cv2.imshow(f"Quadrant {i+1}", res)
