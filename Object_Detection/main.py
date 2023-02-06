@@ -34,7 +34,7 @@ total_device_info = [device_info]
 total_pipeline = [pipeline]
 
 for myDevice, myPipeline in total_device_info, total_pipeline:
-    with dai.Device(myDevice, myDevice) as device:
+    with dai.Device(myPipeline, myDevice) as device:
         captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                     device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                     device.getInputQueue(name="control"),
