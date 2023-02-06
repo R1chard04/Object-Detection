@@ -77,18 +77,10 @@ __, ref = cv.threshold(ref, 0, 255, cv.THRESH_BINARY)
 ref[ref != 0] = 0
 # cv.imshow("ref", ref)
 
-for i in range(len(stdPath)):
-  # image_path = os.path.join(stdDir, stdPath[i])
-  image = cv.imread(stdDir + stdPath[i])
-  stdArray.append(image)
-  print(stdDir + stdPath[i])
-  
-for i in range(len(nonePath)):
-  # Skip any files that are not images
-  # photos_path = os.path.join(noneDir, nonePath[i])
-  photos = cv.imread(noneDir + nonePath[i])
-  noneArray.append(photos)
-  print(noneDir + nonePath[i])
+for directory in (stdDir, noneDir):
+  for filename in os.listdir(directory):
+    file_path = os.path.join(directory, filename)
+    stdArray.append(file_path) if directory == stdDir else noneArray.append(file_path)
 
 for i in range(len(stdArray)):
   std = orange2Black(stdArray[i])
@@ -123,7 +115,6 @@ for i in range(len(stdArray)):
 ref[ref != 0] = 255
 
 #Corrections
-kernel = np.ones((3,3), np.uint8)
 
 ref = fillByLine(ref, "H")
 ref = floodFill(ref)
@@ -135,10 +126,6 @@ result = cv.bitwise_and(img, img, mask = ref)
 cv.imwrite("hi.jpg", result)
 print("KENT WAS WRONG")
 
-
-
-
-#LEO WROTE THIS CODE
 
 
 

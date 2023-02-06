@@ -1,97 +1,24 @@
 import cv2 as cv
-import os
-from os import listdir
-import os.path
 import datetime
-from pathlib import Path
 import depthai as dai
-from imageMaskGeneration import recalibrate
-
-class initialise:
-    def __init__(self, photosFolderPath) -> None:
-        self.photosFolderPath = photosFolderPath
-
-    def initialise(self):
-        #Photos directory 
-        Path(self.photosFolderPath).mkdir(parents=True, exist_ok=True)
-
-        #Camera initialisation
-        pipeline = dai.Pipeline()
-        pipeline_1 = dai.Pipeline()
-
-
-        # pipeline
-        camRgb = pipeline.create(dai.node.ColorCamera)
-        camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
-        camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_4_K)
-        camRgb.initialControl.setManualFocus(100)  ##autofocus... should be changed to dynamic
-
-        # pipeline 1
-        camRgb1 = pipeline_1.create(dai.node.ColorCamera)
-        camRgb1.setBoardSocket(dai.CameraBoardSocket.RGB)
-        camRgb1.setResolution(dai.ColorCameraProperties.SensorResolution.THE_4_K)
-
-        # pipeline
-        xoutRgb = pipeline.create(dai.node.XLinkOut)
-        xoutRgb.setStreamName("rgb")
-        camRgb.video.link(xoutRgb.input)
-
-        # pipeline 1
-        xoutRgb1 = pipeline_1.create(dai.node.XLinkOut)
-        xoutRgb1.setStreamName("rgb1")
-        camRgb1.video.link(xoutRgb1.input)
-
-        # pipeline
-        xin = pipeline.create(dai.node.XLinkIn)
-        xin.setStreamName("control")
-        xin.out.link(camRgb.inputControl)
-
-        # pipeline 1
-        xin1 = pipeline_1.create(dai.node.XLinkIn)
-        xin1.setStreamName("control")
-        xin1.out.link(camRgb1.inputControl)
-
-
-        # Properties
-        # pipeline
-        videoEnc = pipeline.create(dai.node.VideoEncoder)
-        videoEnc.setDefaultProfilePreset(1, dai.VideoEncoderProperties.Profile.MJPEG)
-        camRgb.still.link(videoEnc.input)
-
-        # pipeline 1
-        videoEnc1 = pipeline_1.create(dai.node.VideoEncoder)
-        videoEnc1.setDefaultProfilePreset(1, dai.VideoEncoderProperties.Profile.MJPEG)
-        camRgb1.still.link(videoEnc1.input)
-
-        # Linking
-        # pipeline
-        xoutStill = pipeline.create(dai.node.XLinkOut)
-        xoutStill.setStreamName("still")
-        videoEnc.bitstream.link(xoutStill.input)
-
-        # pipeline 1
-        xoutStill1 = pipeline_1.create(dai.node.XLinkOut)
-        xoutStill1.setStreamName("still 1")
-        videoEnc1.bitstream.link(xoutStill1.input)
-
-        return self.photosFolderPath, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill, pipeline_1
 
 class imageCapture:
-    def __init__(self, qRgb, qStill, qControl, photosDirectoryName) -> None:
+    def __init__(self, qRgb, qStill, qControl) -> None:
         self.qRgb = qRgb
         self.qStill = qStill
         self.qControl = qControl
-        self.directoryName = photosDirectoryName
 
-    def autoCapture(self):
+    def autoCapture(self, imgPath, directoryName):
         while True:
             img = 1  #instantiates img
             imgUpdated = False #img updated condition
 
             inRgb = self.qRgb.tryGet() 
-
-            now = round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":","")))
-            imgPath = f"{self.directoryName}/{now}.jpg"
+            
+            if imgPath == "Test":
+                imgPath = round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":","")))
+            
+            imgPath = f"{self.directoryName}/{imgPath}.jpg"
 
             if inRgb is not None:
                 img = inRgb.getCvFrame()
@@ -113,54 +40,4 @@ class imageCapture:
             if imgUpdated == True:
                 return img, imgPath
 
-    def maskCapture(self):
-        photoName = "null.jpg"
-        dirName = "mask_pics"
-        Path(dirName).mkdir(parents=True, exist_ok=True)
-
-        print ("Press \'s\' to capture a standard photo that has parts on \nPress \'n\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask\nPress \'q\' to quit")
-        # take STANDARD
-        while True:
-            inRgb = self.qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
-            if inRgb is not None:
-                frame = inRgb.getCvFrame()
-                # 4k / 4
-                frame = cv.pyrDown(frame)
-                frame = cv.pyrDown(frame)
-                cv.imshow("rgb", frame)
-
-            if self.qStill.has():
-                fName = f"{dirName}/{photoName}.jpg"
-                with open(fName, "wb") as f:
-                    f.write(self.qStill.get().getData())
-                    print('Image saved to', fName)
-            
-            key = cv.waitKey(1)
-            if key == ord('q'):
-                break
-            elif key == ord('s'):
-                photoName = "STANDARD"
-                # dirName = "mask_pics"
-                ctrl = dai.CameraControl()
-                ctrl.setCaptureStill(True)
-                self.qControl.send(ctrl)
-                print("Sent 'still' event to the camera")
-            elif key == ord('n'):
-                photoName = "NONE"
-                # dirName = "mask_pics"
-                ctrl = dai.CameraControl()
-                ctrl.setCaptureStill(True)
-                self.qControl.send(ctrl)
-                print("Sent 'still' event to the camera")
-            elif key == ord('g'):
-                partImg = cv.imread('mask_pics/STANDARD.jpg') # ?? img
-                noPartImg = cv.imread('mask_pics/NONE.jpg')        # ?? no
-                maskPath = "Object_Detection\photos\mask.jpg" #This has to be fixed
-
-                maskCalibrationObject = recalibrate(noPartImg, partImg, maskPath)
-                mask = maskCalibrationObject.maskGeneration() #this might not need to return anything
-
-            elif key == ord('q'):
-                break
-
-            
+    # def displayCapture():

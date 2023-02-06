@@ -1,1 +1,0 @@
-https://github.com/luxonis/depthai-experiments/blob/master/gen2-deeplabv3_depth/main.py#L19-L32
