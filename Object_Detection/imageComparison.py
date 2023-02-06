@@ -1,7 +1,7 @@
 from PIL import Image
 
-i1 = Image.open("testPics/ready-STA100.jpg")
-i2 = Image.open("testPics/empty-STA100.jpg")
+i1 = Image.open("testPics/Quad2.jpg")
+i2 = Image.open("testPics/QuadEmpty2.jpg")
 assert i1.mode == i2.mode, "Different kinds of images."
 assert i1.size == i2.size, "Different sizes."
 

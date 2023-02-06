@@ -17,10 +17,10 @@ class imageCapture:
         brightness = 0
         BRIGHT_STEP = 1
         LENS_STEP = 3
-        i = 0
+        # i = 0
         while True:
-            i+=1
-            print(i)
+            # i+=1
+            # print(i)
             inRgb = self.qRgb.tryGet() 
 
             if inRgb is not None:
@@ -30,7 +30,7 @@ class imageCapture:
                 cv.imshow("rgb", frame)
 
             key = cv.waitKey(1)
-            # focal length adjustment
+            # focal length adjestment
             if key in [ord(','), ord('.')]:
                 if key == ord(','):
                     lensPos -= LENS_STEP
@@ -57,9 +57,10 @@ class imageCapture:
             if key == ord("q"):
                 return brightness, lensPos
             
-            ctrl = dai.CameraControl()
-            ctrl.setCaptureStill(True)
-            self.qControl.send(ctrl)
+            # print("hablabla")
+            # ctrl = dai.CameraControl()
+            # ctrl.setCaptureStill(True)
+            # self.qControl.send(ctrl)
 
     def autoCapture(self, imgPath, directoryName, brightness, focalLength):
         
@@ -92,11 +93,17 @@ class imageCapture:
 
             ctrl = dai.CameraControl()
             ctrl.setManualFocus(lensPos)
+            self.qControl.send(ctrl)
+            
+            ctrl = dai.CameraControl()
             ctrl.setBrightness(brightness)
+            self.qControl.send(ctrl)
+            
+            ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
-
             self.qControl.send(ctrl)
             print("Sent 'still' event to the camera!")
             
+            # print("not here")
             if imgUpdated == True:
                 return img, imgPath
