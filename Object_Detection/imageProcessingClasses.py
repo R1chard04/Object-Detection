@@ -4,23 +4,6 @@ import numpy as np
 class imageFiltering:
     def __init__(self) -> None:
         pass
-    def filterImage(img, mask):
-        #Filter
-        alpha = 3 # Contrast control (rec 1-3)
-        beta = 0 # Brightness control (rec -300 <-> 300)
-                
-        img = cv.convertScaleAbs(img, alpha=alpha, beta=beta)
-        img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-        img = cv.bitwise_and(img,img, mask = mask)
-        return img
-
-    def filterMask(maskImg):
-        maskImg = cv.cvtColor(maskImg, cv.COLOR_BGR2GRAY)
-        (maskImgThresh, maskImgBW) = cv.threshold(maskImg, 128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
-        thresh = 127
-        maskBinary = cv.threshold(maskImg, maskImgThresh, 255, cv.THRESH_BINARY)[1]
-
-        return maskBinary
 
     def mse(img1, img2):
         height, width = img1.shape

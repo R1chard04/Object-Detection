@@ -65,30 +65,32 @@ def floodFill(imgThresh):
 #------------------------------------------------------------------------------------------------#
 
 class recalibrate:
-    def __init__(self, noPart, part, maskPath) -> None:
-        self.partImg = part
-        self.noPartImg = noPart
-        self.maskPath = maskPath
+    def __init__(self, qRgb, qStill, qControl) -> None:
+        self.qRgb = qRgb
+        self.qStill = qStill
+        self.qControl = qControl
 
-    def setStandards():
+        self.captureObject = imageCapture(qRgb, qStill, qControl)
+
+    def setStandards(self):
         savePath = 'Object_Detection\Photos\Masking\\STD'
         for i in range(3):
             print("Set standard image: " + i)
+            imgName = 'STD' + i + '.jpg'
+            img, imgPath = self.captureObject.autocapture(imgName, savePath)
 
-    def setNones():
+    def setNones(self):
         savePath = 'Object_Detection\Photos\Masking\\NONE'
         for i in range(3):
             print("Set none image: " + i)
+            imgName = 'NONE' + i + '.jpg'
+            img, imgPath = self.captureObject.autocapture(imgName, savePath)
             
 
     def createMask():
         #Paths
         noneDir = 'Object_Detection\Photos\Masking\\NONE'
         stdDir = 'Object_Detection\Photos\Masking\\STD'
-
-        #Arrays for image names
-        stdPath = ['STANDARD2.jpg','STANDARD3.jpg','STANDARD4.jpg']
-        nonePath = ['NONE2.jpg','NONE3.jpg','NONE4.jpg']
 
         #Arrays for processed images
         noneArray = []
@@ -99,18 +101,10 @@ class recalibrate:
         ref[ref != 0] = 0
         # cv.imshow("ref", ref)
 
-        for i in range(len(stdPath)):
-            # image_path = os.path.join(stdDir, stdPath[i])
-            image = cv.imread(stdDir + stdPath[i])
-            stdArray.append(image)
-            print(stdDir + stdPath[i])
-        
-        for i in range(len(nonePath)):
-            # Skip any files that are not images
-            # photos_path = os.path.join(noneDir, nonePath[i])
-            photos = cv.imread(noneDir + nonePath[i])
-            noneArray.append(photos)
-            print(noneDir + nonePath[i])`
+        for directory in (stdDir, noneDir):
+            for filename in os.listdir(directory):
+                file_path = os.path.join(directory, filename)
+                stdArray.append(file_path) if directory == stdDir else noneArray.append(file_path)
 
         for i in range(len(stdArray)):
             std = orange2Black(stdArray[i])
@@ -123,8 +117,6 @@ class recalibrate:
         subtract2 = cv.subtract(none_gray, std_gray)
 
         addImg = cv.add(subtract1, subtract2)
-        cv.imshow('t', addImg)
-        cv.waitKey(0)
 
         _, thresholdImg = cv.threshold(addImg, 50, 255, cv.THRESH_BINARY)
 
@@ -149,9 +141,5 @@ class recalibrate:
         ref = fillByLine(ref, "H")
         ref = floodFill(ref)
         ref = fillByLine(ref, "V")
-
-        img = cv.imread('TESTS/STD/STANDARD4.jpg')
-        result = cv.bitwise_and(img, img, mask = ref)
-
-        cv.imwrite("hi.jpg", result)
-        print("KENT WAS WRONG")
+        print("KENT WAS WRONG LMAO")
+        return ref

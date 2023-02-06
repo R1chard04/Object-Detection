@@ -37,43 +37,18 @@ with dai.Device(pipeline, device_info) as device:
                                  photoDirectoryName)
    
     captureObject.maskCapture()    
-    # for i in range(5):                   
-    #     initialTestImg, initialTestImgPath = captureObject.autoCapture()
-    #     cv.imshow("test", initialTestImg)
-        
-    #     cv.waitKey(0)
-    # initialTestImg, initialTestImgPath = captureObject.autoCapture()
-        
-    # processingObject = imageProcessing(maskImg, refImg, initialTestImg, initialTestImgPath)
 
-    # while needCalibrate == False:
-    #     testImg, testImgPath = captureObject.capture()
 
-    #     cv.imshow("test",testImg)
-    #     # set up and calibrate the images from both cameras
-    #     myImageCalibration = imageCalibration(testImgPath)
-    #     myImageCalibration.imageCalibration() # -> return void and calibrate both images
-
-    #     # stitch the images together
-    #     myImageStitching = imageStitching(testImgPath)
-    #     myImageStitching.stitchImgs() # -> return void and stitch both images into 1 image
-
-    #     # start process the images
-    #     processingObject.setTestImg(testImg,testImgPath)
-    #     response = processingObject.compareImage()
-        
-    #     time.sleep(1)
-
-with dai.Device(pipeline_1, device_info_1) as device1:
-    captureObject1 = imageCapture(device1.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
-                                 device1.getOutputQueue(name="still", maxSize=30, blocking=True), 
-                                 device1.getInputQueue(name="control"),
-                                 photoDirectoryName)
+# with dai.Device(pipeline_1, device_info_1) as device1:
+#     captureObject1 = imageCapture(device1.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
+#                                  device1.getOutputQueue(name="still", maxSize=30, blocking=True), 
+#                                  device1.getInputQueue(name="control"),
+#                                  photoDirectoryName)
    
     
-    for i in range(5):                   
-        initialTestImg1, initialTestImgPath1 = captureObject1.capture()
-        cv.imshow("test", initialTestImg1)
+#     for i in range(5):                   
+#         initialTestImg1, initialTestImgPath1 = captureObject1.capture()
+#         cv.imshow("test", initialTestImg1)
         
-        cv.waitKey(0)
-    initialTestImg1, initialTestImgPath1 = captureObject1.capture()
+#         cv.waitKey(0)
+#     initialTestImg1, initialTestImgPath1 = captureObject1.capture()
