@@ -6,18 +6,19 @@ import os.path
 
 # Get user input numbers
 input_numbers = []
+print("1: image_topleft \n2: image_topright \n3: image_bottomleft \n4: image_bottomright \nInput a quadrant that should be split, non inputted quadrants will be non-split: ")
 while len(input_numbers) < 4:
-    user_input = input("Input number from 1 to 4: ")
+    user_input = input()
     if user_input == 'p':
         break
     elif user_input.isdigit() and 1 <= int(user_input) <= 4:
         if int(user_input) in input_numbers:
-            print("Number already chosen. Enter another number or press 'p' to end inputting numbers.")
+            print("Number already chosen. Enter another number or enter 'p' to end inputting numbers.")
         else:
             input_numbers.append(int(user_input))
-            print("Input another number or press 'p' to end inputting numbers.")
+            print("Input another quadrant to be split or enter 'p' to end inputting numbers.")
     else:
-        print("Invalid input. Enter a number from 1 to 4 or press 'p' to end inputting numbers.")
+        print("Invalid input. Enter a number from 1 to 4 or enter 'p' to end inputting numbers.")
 
 # Get image height and width
 img = cv2.imread("./NONE.jpg")

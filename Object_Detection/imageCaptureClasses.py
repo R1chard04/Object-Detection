@@ -34,7 +34,7 @@ class imageCapture:
             if key in [ord(','), ord('.')]:
                 if key == ord(','):
                     lensPos -= LENS_STEP
-                if key == ord('.'):
+                elif key == ord('.'):
                     lensPos += LENS_STEP
                 lensPos = clamp(lensPos, 0, 255)
                 print("Setting manual focus, lens position: ", lensPos)
@@ -43,16 +43,16 @@ class imageCapture:
                 self.qControl.send(ctrl)
             
             # brightness adjestment
-            if key in [ord('k'), ord('l')]:
+            elif key in [ord('k'), ord('l')]:
                 if key == ord('k'):
                     brightness -= BRIGHT_STEP
-                if key == ord('l'):
+                elif key == ord('l'):
                     brightness += BRIGHT_STEP
                 brightness = clamp(brightness, -10, 10)
                 print("Brightness:", brightness)
                 ctrl = dai.CameraControl()
                 ctrl.setBrightness(brightness)
-                self.qControl.send(ctrl)
+                self.qControl.send(ctrl) 
             
             if key == ord("q"):
                 return brightness, lensPos
