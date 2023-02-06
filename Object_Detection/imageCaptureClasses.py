@@ -29,8 +29,8 @@ class imageCapture:
                 frame = cv.pyrDown(frame)
                 cv.imshow("rgb", frame)
 
-            key = cv.waitKey(50)
-            # focal length adjestment
+            key = cv.waitKey(1)
+            # focal length adjustment
             if key in [ord(','), ord('.')]:
                 if key == ord(','):
                     lensPos -= LENS_STEP

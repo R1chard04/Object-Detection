@@ -65,26 +65,26 @@ def floodFill(imgThresh):
 
 #------------------------------------------------------------------------------------------------#
 
-noneDir = 'TESTS/NONE/'
-stdDir = 'TESTS/STD/'
-stdPath = ['STANDARD2.jpg','STANDARD3.jpg','STANDARD4.jpg']
-nonePath = ['NONE2.jpg','NONE3.jpg','NONE4.jpg']
-noneArray = []
-stdArray = []
+# noneDir = 'TESTS/NONE/'
+# stdDir = 'TESTS/STD/'
+# stdPath = ['STANDARD2.jpg','STANDARD3.jpg','STANDARD4.jpg']
+# nonePath = ['NONE2.jpg','NONE3.jpg','NONE4.jpg']
+# noneArray = []
+# stdArray = []
 
-ref = cv.imread('TESTS/STD/STANDARD1.jpg', cv.IMREAD_GRAYSCALE)
+ref = cv.imread("Object_Detection/testPics\empty-STA100.jpg", cv.IMREAD_GRAYSCALE)
 __, ref = cv.threshold(ref, 0, 255, cv.THRESH_BINARY)
 ref[ref != 0] = 0
 # cv.imshow("ref", ref)
 
-for directory in (stdDir, noneDir):
-  for filename in os.listdir(directory):
-    file_path = os.path.join(directory, filename)
-    stdArray.append(file_path) if directory == stdDir else noneArray.append(file_path)
+# for directory in (stdDir, noneDir):
+#   for filename in os.listdir(directory):
+#     file_path = os.path.join(directory, filename)
+#     stdArray.append(file_path) if directory == stdDir else noneArray.append(file_path)
 
-for i in range(len(stdArray)):
-  std = orange2Black(stdArray[i])
-  none = orange2Black(noneArray[i])
+for i in range(1):
+  std = orange2Black(cv.imread("Object_Detection\\testPics\\ready-STA100.jpg"))
+  none = orange2Black(cv.imread("Object_Detection\\testPics\empty-STA100.jpg"))
 
   std_gray = cv.cvtColor(std, cv.COLOR_BGR2GRAY)
   none_gray = cv.cvtColor(none, cv.COLOR_BGR2GRAY)
@@ -115,12 +115,11 @@ for i in range(len(stdArray)):
 ref[ref != 0] = 255
 
 #Corrections
-
 ref = fillByLine(ref, "H")
 ref = floodFill(ref)
 ref = fillByLine(ref, "V")
 
-img = cv.imread('TESTS/STD/STANDARD4.jpg')
+img = cv.imread('Object_Detection\\testPics\\ready-STA100.jpg')
 result = cv.bitwise_and(img, img, mask = ref)
 
 cv.imwrite("hi.jpg", result)
