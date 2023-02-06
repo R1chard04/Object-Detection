@@ -3,14 +3,16 @@
 import cv2 as cv
 import time
 import depthai as dai
+from cameraInitialisationClass import initialise
 from imageProcessingClasses import imageProcessing
-from imageCaptureClasses import initialise, imageCapture
+from imageCaptureClasses import imageCapture
+from imageMaskGeneration import recalibrate
 from imageCalibration import imageCalibration
 from imageStitchingClasses import imageStitching
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
-photosPath = "Object_Detection\photos\Input"
+photosPath = "Object_Detection\Photos\Masking\INIT"
 
 #-----------------------------------------Main Loop-----------------------------------------#
 needCalibrate = False
@@ -26,47 +28,44 @@ device_info = dai.DeviceInfo("1944301051766E1300")
 device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
 device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 
-device_info_1 = dai.DeviceInfo("19443010613C6E1300")
-device_info_1.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
-device_info_1.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+# device_info_1 = dai.DeviceInfo("19443010613C6E1300")
+# device_info_1.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
+# device_info_1.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 
 total_device_info = [device_info]
 total_pipeline = [pipeline]
 
-for myDevice, myPipeline in total_device_info, total_pipeline:
-    with dai.Device(myDevice, myDevice) as device:
-        captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
-                                    device.getOutputQueue(name="still", maxSize=30, blocking=True), 
-                                    device.getInputQueue(name="control"),
-                                    photoDirectoryName)
+# for myDevice, myPipeline in total_device_info, total_pipeline:
+with dai.Device(pipeline, device_info) as device:
+    captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
+                                device.getOutputQueue(name="still", maxSize=30, blocking=True), 
+                                device.getInputQueue(name="control"),
+                                photoDirectoryName)
+
+
+    initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName)
+    myCalibration = imageCalibration(initImgPath)
+    myCalibration.imageCalibration()
+
+    processingObject = imageProcessing(initImg, initImg, initImg)
+
+    #-----------------------------------------Calibrate-----------------------------------------#
+    #Set Brightness, Focal
+    brightness, lensPos = captureObject.setParameters()
+
+    maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
+
+    #gen mask
+    maskObject.setStandards()
+    maskObject.setNones()
+    maskObject.createMask()
+    #-------------------------------------------------------------------------------------------#
+
+    while True:
+        testImg, testImgPath = captureObject.autoCapture("Test", photosPath, brightness, lensPos)
+        cv.imshow("test", testImg)
     
-        captureObject.maskCapture()    
-        # for i in range(5):                   
-        #     initialTestImg, initialTestImgPath = captureObject.autoCapture()
-        #     cv.imshow("test", initialTestImg)
-            
-        #     cv.waitKey(0)
-        # initialTestImg, initialTestImgPath = captureObject.autoCapture()
-            
-        # processingObject = imageProcessing(maskImg, refImg, initialTestImg, initialTestImgPath)
-
-        # while needCalibrate == False:
-        #     testImg, testImgPath = captureObject.capture()
-
-        #     cv.imshow("test",testImg)
-        #     # set up and calibrate the images from both cameras
-        #     myImageCalibration = imageCalibration(testImgPath)
-        #     myImageCalibration.imageCalibration() # -> return void and calibrate both images
-
-        #     # stitch the images together
-        #     myImageStitching = imageStitching(testImgPath)
-        #     myImageStitching.stitchImgs() # -> return void and stitch both images into 1 image
-
-        #     # start process the images
-        #     processingObject.setTestImg(testImg,testImgPath)
-        #     response = processingObject.compareImage()
-            
-        #     time.sleep(1)
+        
 
     # with dai.Device(pipeline_1, device_info_1) as device1:
     #     captureObject1 = imageCapture(device1.getOutputQueue(name="rgb", maxSize=30, blocking=False), 

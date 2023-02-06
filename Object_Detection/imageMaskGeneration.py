@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 import os
-from imageCaptureClasses import imageCapture
+
 
 #------------------------------------------------------------------------------------------------#
 #FUNCTIONS:
@@ -65,32 +65,39 @@ def floodFill(imgThresh):
 #------------------------------------------------------------------------------------------------#
 
 class recalibrate:
-    def __init__(self, qRgb, qStill, qControl) -> None:
-        self.qRgb = qRgb
-        self.qStill = qStill
-        self.qControl = qControl
+    def __init__(self, captureObject, processingObject, brightness, focalLength) -> None:
 
-        self.captureObject = imageCapture(qRgb, qStill, qControl)
+      self.captureObject = captureObject
+      self.processingObject = processingObject
+      self.brightness = brightness
+      self.focalLength = focalLength
 
     def setStandards(self):
         savePath = 'Object_Detection\Photos\Masking\\STD'
+        brightness = [self.brightness - 1, self.brightness, self.brightness+1]
         for i in range(3):
             print("Set standard image: " + i)
             imgName = 'STD' + i + '.jpg'
-            img, imgPath = self.captureObject.autocapture(imgName, savePath)
+            img, imgPath = self.captureObject.autocapture(imgName, savePath, brightness[i], self.focalLength)
+
+            if i == 2:
+              self.processingObject.setRefImg(img)
 
     def setNones(self):
         savePath = 'Object_Detection\Photos\Masking\\NONE'
+        brightness = [self.brightness - 1, self.brightness, self.brightness+1]
         for i in range(3):
             print("Set none image: " + i)
             imgName = 'NONE' + i + '.jpg'
-            img, imgPath = self.captureObject.autocapture(imgName, savePath)
+            img, imgPath = self.captureObject.autocapture(imgName, savePath, brightness[i], self.focalLength)
             
-
-    def createMask():
+    def createMask(self):
         #Paths
         noneDir = 'Object_Detection\Photos\Masking\\NONE'
         stdDir = 'Object_Detection\Photos\Masking\\STD'
+        initDir = 'Object_Detection\Photos\Masking\\INIT'
+
+        maskPath = os.path.join(initDir, "mask.jpg")
 
         #Arrays for processed images
         noneArray = []
@@ -141,5 +148,9 @@ class recalibrate:
         ref = fillByLine(ref, "H")
         ref = floodFill(ref)
         ref = fillByLine(ref, "V")
+
+        self.processingObject.setMaskImg(ref)
+        cv.imwrite(maskPath, ref)
+
         print("KENT WAS WRONG LMAO")
-        return ref
+

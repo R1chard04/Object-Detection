@@ -15,20 +15,27 @@ class imageFiltering:
 filteringObject = imageFiltering()
 
 class imageProcessing:
-    def __init__(self, maskImg, refImg, testImg, testImgPath) -> None:
+    def __init__(self, maskImg, refImg, testImg) -> None:
         self.maskImg = filteringObject.filterMask(maskImg)
         self.refImg = filteringObject.filterImage(refImg, self.maskImg)
         self.testImg = filteringObject.filterImage(testImg, self.maskImg)
-        self.testImgPath = testImgPath
 
-    def setTestImg(self, img, imgPath) -> None:
-        self.testImg = filteringObject.filterImgage(img, self.maskImg)
-        self.testImgPath = imgPath
+    def setTestImg(self, img) -> None:
+        self.testImg = img
+
+    def setRefImg(self, img) -> None:
+        self.refImg = img
+
+    def setMaskImg(self, img) -> None:
+        self.maskImg = img
 
     def compareImage(self):
 
-        error, diffImg = filteringObject.mse(self.testImg, self.refImg)
-        return bool(error<0.1)
+        ref = cv.bitwise_and(self.refImg, self.refImg, mask = self.maskImg)
+        test = cv.bitwise_and(self.testfImg, self.testImg, mask = self.maskImg)
+
+        error, diffImg = filteringObject.mse(test, ref)
+        return error
 
 
 
