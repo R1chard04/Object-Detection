@@ -9,10 +9,13 @@ from imageCaptureClasses import imageCapture
 from imageMaskGeneration import recalibrate
 from imageCalibration import imageCalibration
 from imageStitchingClasses import imageStitching
+import time
+import os
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
-photosPath = "Photos\Masking\INIT"
+photosPath = "Object_Detection\Photos\INIT"
+diffPath = "Object_Detection\Photos\DIFF"
 
 #-----------------------------------------Main Loop-----------------------------------------#
 needCalibrate = False
@@ -49,8 +52,8 @@ with dai.Device(pipeline) as device:
 
     initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName, brightness, lensPos)
     print(initImgPath)
-    myCalibration = imageCalibration("..\Photos\Masking\INIT")
-    myCalibration.imageCalibration()
+    # myCalibration = imageCalibration("..\Photos\Masking\INIT")
+    # myCalibration.imageCalibration()
 
     processingObject = imageProcessing(initImg, initImg, initImg)
 
@@ -59,27 +62,30 @@ with dai.Device(pipeline) as device:
     maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
 
     #gen mask
-    maskObject.setStandards()
-    maskObject.setNones()
-    maskObject.createMask()
+    std = maskObject.setStandards()
+    time.sleep(5)
+    none = maskObject.setNones()
+    mask = maskObject.createMask()
+
+    processingObject.setMaskImg(mask)
+    processingObject.setRefImg(std)
+
+    print(mask.shape)
+    print(std.shape)
+
+    report = open("report.txt", "w")
     #-------------------------------------------------------------------------------------------#
 
     while True:
-        testImg, testImgPath = captureObject.setParameters("Test", photosPath, brightness, lensPos)
-        cv.imshow("test", testImg)
-    
-        
+        testImg, testImgPath = captureObject.autoCapture("Test", photosPath, brightness, lensPos)
+        processingObject.setTestImg(testImg)
 
-    # with dai.Device(pipeline_1, device_info_1) as device1:
-    #     captureObject1 = imageCapture(device1.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
-    #                                 device1.getOutputQueue(name="still", maxSize=30, blocking=True), 
-    #                                 device1.getInputQueue(name="control"),
-    #                                 photoDirectoryName)
+        error, diffImg = processingObject.compareImage()
+
+        path = os.path.join(diffPath, testImgPath)
+        cv.imwrite(path, diffImg)
+        print(error)
+        report.write(testImgPath + " %s"%error + " \n")
+
+        time.sleep(1)
     
-        
-    #     for i in range(5):                   
-    #         initialTestImg1, initialTestImgPath1 = captureObject1.capture()
-    #         cv.imshow("test", initialTestImg1)
-            
-    #         cv.waitKey(0)
-    #     initialTestImg1, initialTestImgPath1 = captureObject1.capture()

@@ -25,8 +25,6 @@ class imageCapture:
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
-                frame = cv.pyrDown(frame)
-                frame = cv.pyrDown(frame)
                 cv.imshow("rgb", frame)
 
             key = cv.waitKey(1)
@@ -55,6 +53,7 @@ class imageCapture:
                 self.qControl.send(ctrl)
             
             if key == ord("q"):
+                cv.destroyAllWindows()
                 return brightness, lensPos
             
             # print("hablabla")
@@ -74,19 +73,20 @@ class imageCapture:
             inRgb = self.qRgb.tryGet() 
             
             if imgPath == "Test":
-                imgPath = round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":","")))
+                imgPath = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
             
             path = os.path.join(directoryName,imgPath)
             print(path)
 
             if inRgb is not None:
                 img = inRgb.getCvFrame()
-                img = cv.pyrDown(img)
-                img = cv.pyrDown(img)
                 
                 cv.imshow("rgb", img)
 
             if self.qStill.has():
+                dirname = os.path.dirname(path)
+                if not os.path.exists(dirname):
+                    os.makedirs(dirname)
                 with open(path, "wb") as f:
                     f.write(self.qStill.get().getData())
                     print('Image saved to', path)
