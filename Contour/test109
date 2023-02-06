@@ -1,0 +1,56 @@
+
+import cv2 as cv
+import numpy as np
+import os
+from os import listdir
+import os.path
+import datetime
+from pathlib import Path
+
+img = cv.imread("./STANDARD.jpg")
+
+height = img.shape[0]
+width = img.shape[1]
+
+#Divide veritcally
+width_cutoff = width // 2
+#Left side of image
+s1 = img[:, :width_cutoff]
+#Right side of image
+s2 = img[:, width_cutoff:]
+
+#Divide Horizontally
+height_cutoff = height // 2
+s3 = img [:, :height_cutoff]
+s4 = img [:, height_cutoff:]
+
+
+
+cv.imshow("image", s3)
+cv.waitKey(0)
+        
+height_cutoff = height // 2
+
+
+
+
+image_topleft = img[:height_cutoff, :width_cutoff]
+image_topright = img[:height_cutoff, width_cutoff:]
+image_bottomleft = img[height_cutoff:, :width_cutoff]
+image_bottomright = img[height_cutoff:, width_cutoff:]
+        
+#datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+        
+#for i, img in enumerate(self.all_images):
+#    if i == 0:
+#        filename = "image_topleft"
+#    elif i == 1:
+#        filename = "image_topright"
+#    elif i == 2:
+#        filename = "image_bottomleft"
+#    else:
+#        filename = "image_bottomright"
+                
+#cv.imwrite(f'./{filename}({current_time})({self.counter}).jpg', img)
+        
+#self.counter += 1

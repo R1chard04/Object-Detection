@@ -23,11 +23,11 @@
 
 
 # Apply threshold to remove low intensity differences
-_, mask = cv.threshold(diff, 100, 255, cv.THRESH_BINARY)
+#_, mask = cv.threshold(diff, 100, 255, cv.THRESH_BINARY)
 
 # Apply morphological operations to fill in small holes
-kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
-maskPart = cv.morphologyEx(mask, cv.MORPH_CLOSE, kernel)
+#kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+#maskPart = cv.morphologyEx(mask, cv.MORPH_CLOSE, kernel)
 
 # 
 # subtract = cv.fastNlMeansDenoising(subtract, None, 40, 7, 15)
