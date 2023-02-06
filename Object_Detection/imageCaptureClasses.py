@@ -77,11 +77,12 @@ class initialise:
         return self.photosFolderPath, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill, pipeline_1
 
 class imageCapture:
-    def __init__(self, qRgb, qStill, qControl, photosDirectoryName) -> None:
+    def __init__(self, qRgb, qStill, qControl, photosDirectoryName, imgPath) -> None:
         self.qRgb = qRgb
         self.qStill = qStill
         self.qControl = qControl
         self.directoryName = photosDirectoryName
+        self.imgPath = imgPath
 
     def autoCapture(self):
         while True:
@@ -89,9 +90,10 @@ class imageCapture:
             imgUpdated = False #img updated condition
 
             inRgb = self.qRgb.tryGet() 
-
-            now = round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":","")))
-            imgPath = f"{self.directoryName}/{now}.jpg"
+            
+            if imgPath == "Test":
+                now = round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":","")))
+                imgPath = f"{self.directoryName}/{now}.jpg"
 
             if inRgb is not None:
                 img = inRgb.getCvFrame()
@@ -112,55 +114,3 @@ class imageCapture:
             
             if imgUpdated == True:
                 return img, imgPath
-
-    def maskCapture(self):
-        photoName = "null.jpg"
-        dirName = "mask_pics"
-        Path(dirName).mkdir(parents=True, exist_ok=True)
-
-        print ("Press \'s\' to capture a standard photo that has parts on \nPress \'n\' to capture a photo that does not have parts on \nPress \'g\' to generate a mask\nPress \'q\' to quit")
-        # take STANDARD
-        while True:
-            inRgb = self.qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
-            if inRgb is not None:
-                frame = inRgb.getCvFrame()
-                # 4k / 4
-                frame = cv.pyrDown(frame)
-                frame = cv.pyrDown(frame)
-                cv.imshow("rgb", frame)
-
-            if self.qStill.has():
-                fName = f"{dirName}/{photoName}.jpg"
-                with open(fName, "wb") as f:
-                    f.write(self.qStill.get().getData())
-                    print('Image saved to', fName)
-            
-            key = cv.waitKey(1)
-            if key == ord('q'):
-                break
-            elif key == ord('s'):
-                photoName = "STANDARD"
-                # dirName = "mask_pics"
-                ctrl = dai.CameraControl()
-                ctrl.setCaptureStill(True)
-                self.qControl.send(ctrl)
-                print("Sent 'still' event to the camera")
-            elif key == ord('n'):
-                photoName = "NONE"
-                # dirName = "mask_pics"
-                ctrl = dai.CameraControl()
-                ctrl.setCaptureStill(True)
-                self.qControl.send(ctrl)
-                print("Sent 'still' event to the camera")
-            elif key == ord('g'):
-                partImg = cv.imread('mask_pics/STANDARD.jpg') # ?? img
-                noPartImg = cv.imread('mask_pics/NONE.jpg')        # ?? no
-                maskPath = "Object_Detection\photos\mask.jpg" #This has to be fixed
-
-                maskCalibrationObject = recalibrate(noPartImg, partImg, maskPath)
-                mask = maskCalibrationObject.maskGeneration() #this might not need to return anything
-
-            elif key == ord('q'):
-                break
-
-            

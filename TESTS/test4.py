@@ -123,7 +123,6 @@ for i in range(len(stdArray)):
 ref[ref != 0] = 255
 
 #Corrections
-kernel = np.ones((3,3), np.uint8)
 
 ref = fillByLine(ref, "H")
 ref = floodFill(ref)
