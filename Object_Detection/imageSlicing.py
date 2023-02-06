@@ -20,7 +20,7 @@ while len(input_numbers) < 4:
         print("Invalid input. Enter a number from 1 to 4 or press 'p' to end inputting numbers.")
 
 # Get image height and width
-img = cv2.imread("./STANDARD.jpg")
+img = cv2.imread("./NONE.jpg")
 
 height = img.shape[0]
 width = img.shape[1]
