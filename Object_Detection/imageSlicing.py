@@ -6,7 +6,7 @@ import os.path
 
 # Get user input numbers
 input_numbers = []
-print("1: image_topleft \n2: image_topright \n3: image_bottomleft \n4: image_bottomright \nInput a quadrant that should be split, non inputted quadrants will be non-split: ")
+print("1: image_topleft \n2: image_topright \n3: image_bottomleft \n4: image_bottomright \nInput a quadrant that should be split out")
 while len(input_numbers) < 4:
     user_input = input()
     if user_input == 'p':
@@ -86,7 +86,7 @@ for i, res in enumerate(result):
     window_width = int(res.shape[1] * 0.7)
     cv2.namedWindow(f"Quadrant {i+1}", cv2.WINDOW_NORMAL)
     cv2.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
-    cv2.imshow(f"Quadrant {i+1}", res)
+    cv2.imwrite(f"./Quadrant {i+1}", res)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
