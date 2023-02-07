@@ -6,12 +6,12 @@ import os.path
 
 # Get user input numbers
 input_numbers = []
-print("1: image_topleft \n2: image_topright \n3: image_bottomleft \n4: image_bottomright \nInput a quadrant that should be split, non inputted quadrants will be non-split: ")
-while len(input_numbers) < 4:
+print("1: image_topleft \n2: image_topright \n3: image_bottomleft \n4: image_bottomright \n5: horizontal cut \n6: vertical cut\nInput a quadrant or a cut that should be split out")
+while len(input_numbers) < 2:
     user_input = input()
     if user_input == 'p':
         break
-    elif user_input.isdigit() and 1 <= int(user_input) <= 4:
+    elif user_input.isdigit() and 1 <= int(user_input) <= 6:
         if int(user_input) in input_numbers:
             print("Number already chosen. Enter another number or enter 'p' to end inputting numbers.")
         else:
@@ -19,20 +19,20 @@ while len(input_numbers) < 4:
             print("Input another quadrant to be split or enter 'p' to end inputting numbers.")
     else:
         print("Invalid input. Enter a number from 1 to 4 or enter 'p' to end inputting numbers.")
+    
+    # Get image height and width
+    img = cv2.imread("./NONE.jpg")
 
-# Get image height and width
-img = cv2.imread("./NONE.jpg")
+    height = img.shape[0]
+    width = img.shape[1]
 
-height = img.shape[0]
-width = img.shape[1]
-
-#Slice image into 4 quadrants
-width_cutoff = width // 2
-height_cutoff = height // 2
-image_topleft = img[:height_cutoff, :width_cutoff]
-image_topright = img[:height_cutoff, width_cutoff:]
-image_bottomleft = img[height_cutoff:, :width_cutoff]
-image_bottomright = img[height_cutoff:, width_cutoff:]
+    #Slice image into 4 quadrants
+    width_cutoff = width // 2
+    height_cutoff = height // 2
+    image_topleft = img[:height_cutoff, :width_cutoff]
+    image_topright = img[:height_cutoff, width_cutoff:]
+    image_bottomleft = img[height_cutoff:, :width_cutoff]
+    image_bottomright = img[height_cutoff:, width_cutoff:]
 
 # Assign a quadrant to each number 1 to 4
 quadrant_map = {
@@ -79,6 +79,14 @@ if len(non_chosen_images) == 2:
     # Resize the combined image to have the same aspect ratio as the quadrant but different width to fit everything
     result[0] = cv2.resize(result[0], (result[0].shape[1], combined_height),
                        interpolation=cv2.INTER_CUBIC)
+
+if input_numbers[0] == 5:
+    result.append(cv2.vconcat([image_topleft, image_topright]))
+    result.append(cv2.vconcat([image_bottomleft, image_bottomright]))
+    
+if input_numbers[0] == 6:
+    result.append(cv2.hconcat([image_topleft, image_bottomleft]))
+    result.append(cv2.hconcat([image_topright, image_bottomright]))
 
 # Use cv.imshow to output the result
 for i, res in enumerate(result):
