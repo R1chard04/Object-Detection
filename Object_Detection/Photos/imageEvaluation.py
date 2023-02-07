@@ -12,12 +12,15 @@ from skimage.metrics import structural_similarity
 # -----------------------------------------Importing folders and images-----------------------------------------#
 # Mask
 # No tolerance around piece, 1-4 is increasing in tolerance
-maskImg = cv.imread('Image_Processing\photos\Test\subtractOG.jpg')
-# maskImg =cv.imread('')
+# maskImg = cv.imread('Image_Processing\photos\Test\subtractOG.jpg')
+maskImg =cv.imread('INIT\\mask.jpg')
+maskImg = cv.cvtColor(maskImg, cv.COLOR_BGR2GRAY)
+maskImg = cv.resize(maskImg, (0,0), fx = 1.875, fy = 1.875)
 
 # Standard
 # refImg = cv.imread('Image_Processing\photos\Test\Reference\STANDARD.jpg')
-refImg = cv.imread('Object_Detection\Photos\STD\STD1.jpg')
+refImg = cv.imread('STD\\STD1.jpg')
+refImg = cv.cvtColor(refImg, cv.COLOR_BGR2GRAY)
 
 # References
 refDirectory = "Image_Processing\photos\Test\Reference"
@@ -25,7 +28,7 @@ refDirectory = "Image_Processing\photos\Test\Reference"
 # Faults
 faultDirectory = "Image_Processing\photos\Test\Fault"
 
-init = "Object_Detection\Photos\INIT"
+init = "INIT"
 
 # Folders
 # folderDirectories = [refDirectory, faultDirectory]
@@ -33,20 +36,20 @@ folderDirectories = [init]
 
 # -----------------------------------------Configuring Mask, MSE, Filter, Comparison, Report-----------------------------------------#
 # Mask
-maskImgG = cv.cvtColor(maskImg, cv.COLOR_BGR2GRAY)
-(maskThresh, maskImgBW) = cv.threshold(
-    maskImgG, 128, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
-thresh = 127
-maskImgBinary = cv.threshold(maskImgG, maskThresh, 255, cv.THRESH_BINARY)[1]
+# maskImgG = cv.cvtColor(maskImg, cv.COLOR_BGR2GRAY)
+(maskThresh, maskImgBW) = cv.threshold(maskImg, 127, 255, cv.THRESH_BINARY | cv.THRESH_OTSU)
+maskImgBinary = cv.threshold(maskImg, maskThresh, 255, cv.THRESH_BINARY)[1]
 
 # Filter
 alpha = 3  # Contrast control (rec 1-3)
 beta = 0  # Brightness control (rec -300 <-> 300)
 
 refImg = cv.convertScaleAbs(refImg, alpha=alpha, beta=beta)
-refImg = cv.cvtColor(refImg, cv.COLOR_BGR2GRAY)
+# refImg = cv.cvtColor(refImg, cv.COLOR_BGR2GRAY)
 
 # Standard Mask
+print(refImg.shape)
+print(maskImgBinary.shape)
 refImgM = cv.bitwise_and(refImg, refImg, mask=maskImgBinary)
 
 # MSE
@@ -131,77 +134,3 @@ for i in range(len(folderDirectories)):
         print(images)
         images = os.path.join(folderDirectories[i], images)
         compareNoMask(images)
-
-# -----------------------------------------Configuring Camera and Pictures Directory-----------------------------------------#
-# #Camera config
-# # Create pipeline
-# pipeline = dai.Pipeline()
-
-# camRgb = pipeline.create(dai.node.ColorCamera)
-# camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
-# camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_4_K)
-
-# xoutRgb = pipeline.create(dai.node.XLinkOut)
-# xoutRgb.setStreamName("rgb")
-# camRgb.video.link(xoutRgb.input)
-
-# xin = pipeline.create(dai.node.XLinkIn)
-# xin.setStreamName("control")
-# xin.out.link(camRgb.inputControl)
-
-# # Properties
-# videoEnc = pipeline.create(dai.node.VideoEncoder)
-# videoEnc.setDefaultProfilePreset(1, dai.VideoEncoderProperties.Profile.MJPEG)
-# camRgb.still.link(videoEnc.input)
-
-# # Linking
-# xoutStill = pipeline.create(dai.node.XLinkOut)
-# xoutStill.setStreamName("still")
-# videoEnc.bitstream.link(xoutStill.input)
-
-# #Photos directory
-# dirName = "Image-Processing\photos\Input"
-# Path(dirName).mkdir(parents=True, exist_ok=True)
-
-# #Pictures Name Generator
-# def timeStamp():
-#     now = str(datetime.datetime.now())
-#     now = round(float(((now.replace("-","")).replace(" ","")).replace(":","")))
-#     return now
-
-# -----------------------------------------Main Loop-----------------------------------------#
-
-# with dai.Device(pipeline) as device:
-
-#     # Output queue will be used to get the rgb frames from the output defined above
-#     qRgb = device.getOutputQueue(name="rgb", maxSize=30, blocking=False)
-#     qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
-#     qControl = device.getInputQueue(name="control")
-
-#     while True:
-#         inRgb = qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
-#         if inRgb is not None:
-#             frame = inRgb.getCvFrame()
-#             # 4k / 4
-#             frame = cv.pyrDown(frame)
-#             frame = cv.pyrDown(frame)
-#             # cv.imshow("rgb", frame)
-
-#         if qStill.has():
-#             fName = f"{dirName}/{timeStamp()}.jpeg"
-#             with open(fName, "wb") as f:
-#                 f.write(qStill.get().getData())
-#                 print('Image saved to', fName)
-#             time.sleep(3)
-#             # compare(fName)
-#             os.remove(fName)
-
-#         key = cv.waitKey(1)
-#         if key == ord('q'):
-#             break
-
-#         ctrl = dai.CameraControl()
-#         ctrl.setCaptureStill(True)
-#         qControl.send(ctrl)
-#         print("Sent 'still' event to the camera!")
-#         time.sleep(3)

@@ -11,7 +11,7 @@ class initialise:
     def __init__(self, photosFolderPath) -> None:
         self.photosFolderPath = photosFolderPath
 
-    def initialise(self):
+    def initialise(self) -> any:
         #Photos directory 
         Path(self.photosFolderPath).mkdir(parents=True, exist_ok=True)
 

@@ -9,6 +9,7 @@ from imageCaptureClasses import imageCapture
 from imageMaskGeneration import recalibrate
 from imageCalibration import imageCalibration
 from imageStitchingClasses import imageStitching
+from imageSlicing import imageSlicing
 import time
 import os
 
@@ -66,6 +67,7 @@ with dai.Device(pipeline) as device:
 
     # maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
 
+    
     #gen mask
     # std = maskObject.setStandards()
     std = cv.imread("Object_Detection\Photos\STD\STD.jpg")
@@ -84,6 +86,7 @@ with dai.Device(pipeline) as device:
     print(std.shape)
 
     report = open("report.txt", "w")
+    
     #-------------------------------------------------------------------------------------------#
 
     captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject)
