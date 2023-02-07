@@ -13,9 +13,11 @@ from skimage.metrics import structural_similarity
 # Mask
 # No tolerance around piece, 1-4 is increasing in tolerance
 maskImg = cv.imread('Image_Processing\photos\Test\subtractOG.jpg')
+# maskImg =cv.imread('')
 
 # Standard
-refImg = cv.imread('Image_Processing\photos\Test\Reference\STANDARD.jpg')
+# refImg = cv.imread('Image_Processing\photos\Test\Reference\STANDARD.jpg')
+refImg = cv.imread('Object_Detection\Photos\STD\STD1.jpg')
 
 # References
 refDirectory = "Image_Processing\photos\Test\Reference"
@@ -23,8 +25,11 @@ refDirectory = "Image_Processing\photos\Test\Reference"
 # Faults
 faultDirectory = "Image_Processing\photos\Test\Fault"
 
+init = "Object_Detection\Photos\INIT"
+
 # Folders
-folderDirectories = [refDirectory, faultDirectory]
+# folderDirectories = [refDirectory, faultDirectory]
+folderDirectories = [init]
 
 # -----------------------------------------Configuring Mask, MSE, Filter, Comparison, Report-----------------------------------------#
 # Mask
@@ -93,13 +98,13 @@ def mse2(before, after):
 def compare(testPath):
     report.write("\n"+testPath)
     testImg = cv.convertScaleAbs(cv.imread(testPath), alpha=alpha, beta=beta)
-    # testImg = cv.cvtColor(testImg, cv.COLOR_BGR2GRAY)
+    testImg = cv.cvtColor(testImg, cv.COLOR_BGR2GRAY)
     inputImgM = cv.bitwise_and(testImg, testImg, mask=maskImgBinary)
     # error, diffImg = mse1(refImgM, inputImgM)
-    error= mse2(refImgM, inputImgM)
+    error= mse(refImgM, inputImgM)
 
     report.write(str(error))
-    report.write(" Pass") if error < 0.1 else report.write(" Fail")
+    # report.write(" Pass") if error < 0.1 else report.write(" Fail")
     # for this mask, the set tolerance is 0.1, this seems to work best, but this is experimentally tested (which isn't awesome)
 
 def compareNoMask(testPath):
