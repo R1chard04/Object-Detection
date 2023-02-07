@@ -73,29 +73,34 @@ class recalibrate:
       self.focalLength = focalLength
 
     def setStandards(self):
-        savePath = 'Object_Detection\Photos\Masking\\STD'
+        savePath = 'Object_Detection\Photos\STD'
         brightness = [self.brightness - 1, self.brightness, self.brightness+1]
+        ref = None
         for i in range(3):
-            print("Set standard image: " + i)
-            imgName = 'STD' + i + '.jpg'
-            img, imgPath = self.captureObject.autocapture(imgName, savePath, brightness[i], self.focalLength)
-
-            if i == 2:
-              self.processingObject.setRefImg(img)
+          imgName = "STD%s" %i + ".jpg"
+          img, imgPath = self.captureObject.autoCapture(imgName, savePath, brightness[i], self.focalLength)
+    
+          if i == 2:
+            ref = img
+        return ref
 
     def setNones(self):
-        savePath = 'Object_Detection\Photos\Masking\\NONE'
+        savePath = 'Object_Detection\Photos/NONE'
         brightness = [self.brightness - 1, self.brightness, self.brightness+1]
+        ref = None
         for i in range(3):
-            print("Set none image: " + i)
-            imgName = 'NONE' + i + '.jpg'
-            img, imgPath = self.captureObject.autocapture(imgName, savePath, brightness[i], self.focalLength)
+          imgName = 'NONE%s'%i + '.jpg'
+          img, imgPath = self.captureObject.autoCapture(imgName, savePath, brightness[i], self.focalLength)
+
+          if i == 2:
+            ref = img
+        return ref
             
     def createMask(self):
         #Paths
-        noneDir = 'Object_Detection\Photos\Masking\\NONE'
-        stdDir = 'Object_Detection\Photos\Masking\\STD'
-        initDir = 'Object_Detection\Photos\Masking\\INIT'
+        noneDir = 'Object_Detection\Photos\\NONE'
+        stdDir = 'Object_Detection\Photos\\STD'
+        initDir = 'Object_Detection\Photos\\INIT'
 
         maskPath = os.path.join(initDir, "mask.jpg")
 
@@ -103,45 +108,46 @@ class recalibrate:
         noneArray = []
         stdArray = []
 
-        ref = cv.imread('TESTS/STD/STANDARD1.jpg', cv.IMREAD_GRAYSCALE)
-        __, ref = cv.threshold(ref, 0, 255, cv.THRESH_BINARY)
-        ref[ref != 0] = 0
-        # cv.imshow("ref", ref)
-
         for directory in (stdDir, noneDir):
             for filename in os.listdir(directory):
                 file_path = os.path.join(directory, filename)
-                stdArray.append(file_path) if directory == stdDir else noneArray.append(file_path)
+                stdArray.append(cv.imread(file_path)) if directory == stdDir else noneArray.append(cv.imread(file_path))
+
+        ref = cv.imread("Object_Detection\Photos\STD\STD0.jpg")
+        ref = cv.cvtColor(ref, cv.COLOR_BGR2GRAY)
+        __, ref = cv.threshold(ref, 1, 255, cv.THRESH_BINARY)
+        ref[ref != 0] = 0
 
         for i in range(len(stdArray)):
-            std = orange2Black(stdArray[i])
-            none = orange2Black(noneArray[i])
+          std = orange2Black(stdArray[i])
+          none = orange2Black(noneArray[i])
 
-        std_gray = cv.cvtColor(std, cv.COLOR_BGR2GRAY)
-        none_gray = cv.cvtColor(none, cv.COLOR_BGR2GRAY)
+          std_gray = cv.cvtColor(std, cv.COLOR_BGR2GRAY)
+          none_gray = cv.cvtColor(none, cv.COLOR_BGR2GRAY)
 
-        subtract1 = cv.subtract(std_gray, none_gray)
-        subtract2 = cv.subtract(none_gray, std_gray)
+          subtract1 = cv.subtract(std_gray, none_gray)
+          subtract2 = cv.subtract(none_gray, std_gray)
 
-        addImg = cv.add(subtract1, subtract2)
+          addImg = cv.add(subtract1, subtract2)
 
-        _, thresholdImg = cv.threshold(addImg, 50, 255, cv.THRESH_BINARY)
+          _, thresholdImg = cv.threshold(addImg, 50, 255, cv.THRESH_BINARY)
 
-        denoiseImg = cv.GaussianBlur(addImg, (5,5), 7, 21)
-        denoiseImg = cv.fastNlMeansDenoising(denoiseImg, 15, 21)
-        kernel = np.ones((3, 3), np.uint8)
-        opening = cv.morphologyEx(denoiseImg, cv.MORPH_OPEN, kernel)
-        __, binary = cv.threshold(opening, 10, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)
+          denoiseImg = cv.GaussianBlur(addImg, (5,5), 7, 21)
+          denoiseImg = cv.fastNlMeansDenoising(denoiseImg, 15, 21)
+          kernel = np.ones((3, 3), np.uint8)
+          opening = cv.morphologyEx(denoiseImg, cv.MORPH_OPEN, kernel)
+          __, binary = cv.threshold(opening, 10, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)
 
-        contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-        contours = sorted(contours, key=cv.contourArea, reverse=True)
-        largest_contour = contours[0]
-        img_contour = np.zeros((ref.shape[0], ref.shape[1], 3), np.uint8)
-        cv.drawContours(ref, [largest_contour], -1, (255, 255, 255), 1)
+          contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+          contours = sorted(contours, key=cv.contourArea, reverse=True)
+          largest_contour = contours[0]
 
-        print("dodo")
+          # ref = np.zeros((ref.shape[0], ref.shape[1], 3), np.uint8)
+          cv.drawContours(ref, [largest_contour], -1, (255, 255, 255), 1)
 
-        ref[ref != 0] = 255
+          print("dodo")
+
+          ref[ref != 0] = 255
 
         #Corrections
 
@@ -149,8 +155,8 @@ class recalibrate:
         ref = floodFill(ref)
         ref = fillByLine(ref, "V")
 
-        self.processingObject.setMaskImg(ref)
         cv.imwrite(maskPath, ref)
+        return ref
 
         print("KENT WAS WRONG LMAO")
 
