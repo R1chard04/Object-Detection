@@ -41,8 +41,8 @@ total_pipeline = [pipeline]
 # for myDevice, myPipeline in total_device_info, total_pipeline:
 with dai.Device(pipeline) as device:
     # Calibrate the camera using 10 images of the chessboards in order to get rid of the lens distortion
-    myImageCalibration = imageCalibration()
-    myImageCalibration.imageCalibration("calibrationImages/*.png")
+    # myImageCalibration = imageCalibration()
+    # myImageCalibration.imageCalibration("calibrationImages/*.png")
 
     # Start capture the images after the len is distorted
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
@@ -56,12 +56,9 @@ with dai.Device(pipeline) as device:
     print(brightness , " ", lensPos)
 
     initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName, brightness, lensPos)
-<<<<<<< HEAD
     print(initImgPath)
-    myCalibration = imageCalibration("..\Photos\Masking\INIT")
-    myCalibration.imageCalibration()
-=======
->>>>>>> a0822db842be1663067bc8fc636f40eaaf15a7e1
+    # myCalibration = imageCalibration("..\Photos\Masking\INIT")
+    # myCalibration.imageCalibration()
 
     processingObject = imageProcessing(initImg, initImg, initImg)
 
@@ -70,9 +67,10 @@ with dai.Device(pipeline) as device:
     maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
 
     #gen mask
-    std = maskObject.setStandards()
-    time.sleep(5)
-    none = maskObject.setNones()
+    # std = maskObject.setStandards()
+    std = cv.imread("Object_Detection\Photos\STD\STD1.jpg")
+    # cv.waitKey(0)
+    # none = maskObject.setNones()
     mask = maskObject.createMask()
 
     processingObject.setMaskImg(mask)
@@ -95,5 +93,5 @@ with dai.Device(pipeline) as device:
         print(error)
         report.write(testImgPath + " %s"%error + " \n")
 
-        time.sleep(1)
+        time.sleep(3)
     

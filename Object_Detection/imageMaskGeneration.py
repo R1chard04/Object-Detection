@@ -74,7 +74,7 @@ class recalibrate:
 
     def setStandards(self):
         savePath = 'Object_Detection\Photos\STD'
-        brightness = [self.brightness - 1, self.brightness, self.brightness+1]
+        brightness = [self.brightness - 2, self.brightness, self.brightness+2]
         ref = None
         for i in range(3):
           imgName = "STD%s" %i + ".jpg"
@@ -86,7 +86,7 @@ class recalibrate:
 
     def setNones(self):
         savePath = 'Object_Detection\Photos/NONE'
-        brightness = [self.brightness - 1, self.brightness, self.brightness+1]
+        brightness = [self.brightness - 2, self.brightness, self.brightness+2]
         ref = None
         for i in range(3):
           imgName = 'NONE%s'%i + '.jpg'
@@ -150,13 +150,16 @@ class recalibrate:
           ref[ref != 0] = 255
 
         #Corrections
-
+        print("here")
         ref = fillByLine(ref, "H")
+        print("here")
         ref = floodFill(ref)
+        print("here")
         ref = fillByLine(ref, "V")
 
         cv.imwrite(maskPath, ref)
+        print("here")
         return ref
 
-        print("KENT WAS WRONG LMAO")
+        
 

@@ -2,6 +2,7 @@ import cv2 as cv
 import datetime
 import depthai as dai
 import os
+import time
 
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
@@ -25,7 +26,7 @@ class imageCapture:
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
-                cv.imshow("rgb", frame)
+                cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
 
             key = cv.waitKey(1)
             # focal length adjestment
@@ -99,6 +100,8 @@ class imageCapture:
             ctrl = dai.CameraControl()
             ctrl.setBrightness(brightness)
             self.qControl.send(ctrl)
+
+            time.sleep(2)
             
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
