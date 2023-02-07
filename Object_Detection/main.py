@@ -9,6 +9,7 @@ from imageCaptureClasses import imageCapture
 from imageMaskGeneration import recalibrate
 from imageCalibration import imageCalibration
 from imageStitchingClasses import imageStitching
+from imageSlicing import imageSlicing
 import time
 import os
 
@@ -41,8 +42,8 @@ total_pipeline = [pipeline]
 # for myDevice, myPipeline in total_device_info, total_pipeline:
 with dai.Device(pipeline) as device:
     # Calibrate the camera using 10 images of the chessboards in order to get rid of the lens distortion
-    # myImageCalibration = imageCalibration()
-    # myImageCalibration.imageCalibration("calibrationImages/*.png")
+    myImageCalibration = imageCalibration()
+    myImageCalibration.imageCalibration("calibrationImages/*.png")
 
     # Start capture the images after the len is distorted
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
@@ -57,8 +58,8 @@ with dai.Device(pipeline) as device:
 
     initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName, brightness, lensPos)
     print(initImgPath)
-    # myCalibration = imageCalibration("..\Photos\Masking\INIT")
-    # myCalibration.imageCalibration()
+    myCalibration = imageCalibration("..\Photos\Masking\INIT")
+    myCalibration.imageCalibration()
 
     processingObject = imageProcessing(initImg, initImg, initImg)
 
@@ -66,11 +67,11 @@ with dai.Device(pipeline) as device:
 
     maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
 
+    
     #gen mask
-    # std = maskObject.setStandards()
-    std = cv.imread("Object_Detection\Photos\STD\STD1.jpg")
-    # cv.waitKey(0)
-    # none = maskObject.setNones()
+    std = maskObject.setStandards()
+    time.sleep(5)
+    none = maskObject.setNones()
     mask = maskObject.createMask()
 
     processingObject.setMaskImg(mask)
@@ -80,18 +81,21 @@ with dai.Device(pipeline) as device:
     print(std.shape)
 
     report = open("report.txt", "w")
+    
     #-------------------------------------------------------------------------------------------#
 
     while True:
+        
         testImg, testImgPath = captureObject.autoCapture("Test", photosPath, brightness, lensPos)
         processingObject.setTestImg(testImg)
 
         error, diffImg = processingObject.compareImage()
 
         path = os.path.join(diffPath, testImgPath)
+        
         cv.imwrite(path, diffImg)
         print(error)
         report.write(testImgPath + " %s"%error + " \n")
 
-        time.sleep(3)
+        time.sleep(1)
     
