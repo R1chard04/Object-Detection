@@ -72,27 +72,36 @@ class imageCapture:
             imgUpdated = False #img updated condition
             inRgb = self.qRgb.tryGet() 
             
-            # if imgPath == "Test":
-            #     imgPath = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
+            if imgPath == "Test":
+                imgPath = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
             
-            # path = os.path.join(directoryName,imgPath)
+            path = os.path.join(directoryName,imgPath)
+            diffPath = os.path.join("Object_Detection\Photos\DIFF", imgPath)
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
+
+                
+
+
                 frame = cv.pyrDown(frame)
                 frame = cv.pyrDown(frame)
                 cv.imshow("captured", frame)     
 
             if self.qStill.has():
-                fName = "Object_Detection\Photos\FRAME.jpg"
+                fName = path
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
+
+                    img = cv.imread(fName)
+                    processingObject.setTestImg(img)
+                    error, diffImg = processingObject.compareImage()
+                    cv.imwrite(diffPath,diffImg)
+                    print(error)
+
                     # print('Image saved to', fName)
                     # imgUpdated = True
-                img = cv.imread(fName)
-                processingObject.setTestImg(img)
-                error, diffImg = processingObject.compareImage()
-                print(error)
+                
             
             # print(time.time())
             key = cv.waitKey(1)

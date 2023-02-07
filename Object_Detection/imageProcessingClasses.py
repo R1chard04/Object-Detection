@@ -4,7 +4,7 @@ import numpy as np
 
 def mse(img1, img2):
     height, width, channels = img1.shape
-    diffImg = cv.subtract(img1, img2)
+    diffImg = cv.absdiff(img1, img2)
     err = np.sum(diffImg**2)
     ans = err/(float(height*width))  #Closer to 0 is better
     return ans, diffImg
