@@ -3,6 +3,7 @@ import datetime
 import depthai as dai
 import os
 import time
+from imageProcessingClasses import imageProcessing
 
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
@@ -55,59 +56,62 @@ class imageCapture:
             
             if key == ord("q"):
                 cv.destroyAllWindows()
-                return brightness, lensPos
+                return
+                # return brightness, lensPos
             
             # print("hablabla")
             # ctrl = dai.CameraControl()
             # ctrl.setCaptureStill(True)
             # self.qControl.send(ctrl)
 
-    def autoCapture(self, imgPath, directoryName, brightness, focalLength):
-        
-        lensPos = clamp(focalLength, 0, 255)
-        brightness = clamp(brightness, -10, 10)
-    
+    def autoCapture(self, imgPath, directoryName, processingObject):
+        capture = time.time()
+        print("START")
         while True:
-            img = 1  #instantiates img
+            # img = 1  #instantiates img
             imgUpdated = False #img updated condition
-
             inRgb = self.qRgb.tryGet() 
             
-            if imgPath == "Test":
-                imgPath = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
+            # if imgPath == "Test":
+            #     imgPath = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
             
-            path = os.path.join(directoryName,imgPath)
-            print(path)
+            # path = os.path.join(directoryName,imgPath)
 
             if inRgb is not None:
-                img = inRgb.getCvFrame()
-                
-                cv.imshow("rgb", img)
+                frame = inRgb.getCvFrame()
+                frame = cv.pyrDown(frame)
+                frame = cv.pyrDown(frame)
+                cv.imshow("captured", frame)     
 
             if self.qStill.has():
-                dirname = os.path.dirname(path)
-                if not os.path.exists(dirname):
-                    os.makedirs(dirname)
-                with open(path, "wb") as f:
+                fName = "Object_Detection\Photos\FRAME.jpg"
+                with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
-                    print('Image saved to', path)
-                    imgUpdated = True
-
-            ctrl = dai.CameraControl()
-            ctrl.setManualFocus(lensPos)
-            self.qControl.send(ctrl)
+                    # print('Image saved to', fName)
+                    # imgUpdated = True
+                img = cv.imread(fName)
+                processingObject.setTestImg(img)
+                error, diffImg = processingObject.compareImage()
+                print(error)
             
-            ctrl = dai.CameraControl()
-            ctrl.setBrightness(brightness)
-            self.qControl.send(ctrl)
-
-            time.sleep(2)
-            
-            ctrl = dai.CameraControl()
-            ctrl.setCaptureStill(True)
-            self.qControl.send(ctrl)
-            print("Sent 'still' event to the camera!")
-            
-            # print("not here")
-            if imgUpdated == True:
-                return img, imgPath
+            # print(time.time())
+            key = cv.waitKey(1)
+            # if self.qStill.has():
+            #     dirname = os.path.dirname(path)
+            #     if not os.path.exists(dirname):
+            #         os.makedirs(dirname)
+            #     with open(path, "wb") as f:
+            #         f.write(self.qStill.get().getData())
+                    # print('Image saved to', path)
+                    # imgUpdated = True
+            if (time.time() - capture) > 0.2:
+                capture = time.time()
+                ctrl = dai.CameraControl()
+                ctrl.setCaptureStill(True)
+                self.qControl.send(ctrl)
+                # print("Sent 'still' event to the camera!")
+            elif key == ord('q'):
+                break
+            # # print("not here")
+            # if imgUpdated == True:
+            #     return img, imgPath

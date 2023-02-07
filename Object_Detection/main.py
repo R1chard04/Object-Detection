@@ -41,8 +41,8 @@ total_pipeline = [pipeline]
 # for myDevice, myPipeline in total_device_info, total_pipeline:
 with dai.Device(pipeline) as device:
     # Calibrate the camera using 10 images of the chessboards in order to get rid of the lens distortion
-    # myImageCalibration = imageCalibration()
-    # myImageCalibration.imageCalibration("calibrationImages/*.png")
+    #myImageCalibration = imageCalibration("calibrationImages/*.png")
+    #myImageCalibration.imageCalibration()
 
     # Start capture the images after the len is distorted
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
@@ -51,27 +51,31 @@ with dai.Device(pipeline) as device:
 
 
 #-----------------------------------------Setup-----------------------------------------#
-     #Set Brightness, Focal
-    brightness, lensPos = captureObject.setParameters()
-    print(brightness , " ", lensPos)
+    #Set Brightness, Focal
+    captureObject.setParameters()
+    # brightness = -1
+    # lensPos = 108
+    # print(brightness , " ", lensPos)
 
-    initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName, brightness, lensPos)
-    print(initImgPath)
-    # myCalibration = imageCalibration("..\Photos\Masking\INIT")
-    # myCalibration.imageCalibration()
+    # initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName, brightness, lensPos)
 
+    initImg = cv.imread("Object_Detection\Photos\INIT\INIT.jpg")
     processingObject = imageProcessing(initImg, initImg, initImg)
 
 #-----------------------------------------Calibrate-----------------------------------------#
 
-    maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
+    # maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
 
     #gen mask
     # std = maskObject.setStandards()
-    std = cv.imread("Object_Detection\Photos\STD\STD1.jpg")
+    std = cv.imread("Object_Detection\Photos\STD\STD.jpg")
+    mask = cv.imread("Object_Detection\Photos\mask.jpg", cv.IMREAD_GRAYSCALE)
+    mask = cv.resize(mask, None, fx=1.875, fy=1.875, interpolation = cv.INTER_LINEAR)
+    mask[mask != 0 ] = 255
+
     # cv.waitKey(0)
     # none = maskObject.setNones()
-    mask = maskObject.createMask()
+    # mask = maskObject.createMask()
 
     processingObject.setMaskImg(mask)
     processingObject.setRefImg(std)
@@ -82,16 +86,30 @@ with dai.Device(pipeline) as device:
     report = open("report.txt", "w")
     #-------------------------------------------------------------------------------------------#
 
-    while True:
-        testImg, testImgPath = captureObject.autoCapture("Test", photosPath, brightness, lensPos)
-        processingObject.setTestImg(testImg)
+    captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject)
 
-        error, diffImg = processingObject.compareImage()
-
-        path = os.path.join(diffPath, testImgPath)
-        cv.imwrite(path, diffImg)
-        print(error)
-        report.write(testImgPath + " %s"%error + " \n")
-
-        time.sleep(3)
+    # capture = time.time()
+    # while True:
+        
+    #     path = "Object_Detection\Photos\INIT"
+    #     result = "Object_Detection\Photos\DIFF"
     
+    #     testImg, testImgPath = captureObject.autoCapture("Test", photosPath, brightness, lensPos)
+    #     testImg = cv.imread(os.path.join(path, testImgPath))
+    #     processingObject.setTestImg(testImg)
+    #     cv.imshow("test",  cv.resize(testImg,(0,0), fx = 0.2, fy = 0.2))
+    #     # cv.waitKey(1)
+
+    #     error, diffImg = processingObject.compareImage()
+
+    #     # dirname = os.path.dirname(result)
+    #     # if not os.path.exists(dirname):
+    #     #     os.makedirs(dirname)
+
+    #     diffPath = os.path.join(result, testImgPath)
+    #     cv.imwrite(diffPath, diffImg)
+    #     print(error)
+    #     report.write(testImgPath + " %s"%error + " \n")
+
+    #     # time.sleep(3)
+
