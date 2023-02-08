@@ -4,6 +4,7 @@ import depthai as dai
 import os
 import time
 from imageProcessingClasses import imageProcessing
+from imageSlicing import imageSlicing
 
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
@@ -91,8 +92,18 @@ class imageCapture:
                 frame = inRgb.getCvFrame()
                 frame = cv.pyrDown(frame)
                 frame = cv.pyrDown(frame)
-                cv.imshow("captured", frame)     
+                cv.imshow("captured", frame)
+                
+            img_slicer = imageSlicing(frame)
+            result = img_slicer.imageSlicing()
 
+            for i, res in enumerate(result):
+                window_height = int(res.shape[0] * 0.7)
+                window_width = int(res.shape[1] * 0.7)
+                cv.namedWindow(f"Quadrant {i+1}", cv.WINDOW_NORMAL)
+                cv.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
+                cv.imshow(f"Quadrant {i+1}", res)  
+                
             if self.qStill.has():
                 fName = path
                 with open(fName, "wb") as f:
