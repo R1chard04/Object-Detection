@@ -10,9 +10,6 @@ from imageMaskGeneration import recalibrate
 from imageCalibration import imageCalibration
 from imageStitchingClasses import imageStitching
 from imageSlicing import imageSlicing
-import time
-import os
-from pylogix import PLC
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
@@ -44,33 +41,23 @@ with dai.Device(pipeline) as device:
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                 device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                 device.getInputQueue(name="control"))
+    
+    img_slicer = imageSlicing(captureObject)
+    
+    result = img_slicer.imageSlicing()
+    for i, res in enumerate(result):
+        window_height = int(res.shape[0] * 0.7)
+        window_width = int(res.shape[1] * 0.7)
+        cv.namedWindow(f"Quadrant {i+1}", cv.WINDOW_NORMAL)
+        cv.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
+        cv.imshow(f"Quadrant {i+1}", res)
+
+    
 
 
-     #Set Brightness, Focal
-    brightness, lensPos = captureObject.setParameters()
-    initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName, brightness, lensPos)
-    myCalibration = imageCalibration(initImgPath)
-    myCalibration.imageCalibration()
-
-    processingObject = imageProcessing(initImg, initImg, initImg)
-
-    #-----------------------------------------Calibrate-----------------------------------------#
-  
-
-    maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
-
-    #gen mask
-    maskObject.setStandards()
-    maskObject.setNones()
-    maskObject.createMask()
     #-------------------------------------------------------------------------------------------#
-
-    while True:
-        error = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
-        
-
-    # capture = time.time()
-    # while True:
+    
+    
         
 
     # with dai.Device(pipeline_1, device_info_1) as device1:
