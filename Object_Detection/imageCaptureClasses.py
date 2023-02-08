@@ -19,10 +19,9 @@ class imageCapture:
         brightness = 0
         BRIGHT_STEP = 1
         LENS_STEP = 3
-        # i = 0
+        
         while True:
-            # i+=1
-            # print(i)
+    
             inRgb = self.qRgb.tryGet() 
 
             if inRgb is not None:
@@ -88,10 +87,6 @@ class imageCapture:
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
-
-                
-
-
                 frame = cv.pyrDown(frame)
                 frame = cv.pyrDown(frame)
                 cv.imshow("captured", frame)     
@@ -107,28 +102,39 @@ class imageCapture:
                     cv.imwrite(diffPath,diffImg)
                     print(error)
 
-                    # print('Image saved to', fName)
-                    # imgUpdated = True
-                
-            
-            # print(time.time())
             key = cv.waitKey(1)
-            # if self.qStill.has():
-            #     dirname = os.path.dirname(path)
-            #     if not os.path.exists(dirname):
-            #         os.makedirs(dirname)
-            #     with open(path, "wb") as f:
-            #         f.write(self.qStill.get().getData())
-                    # print('Image saved to', path)
-                    # imgUpdated = True
-            if (time.time() - capture) > 0.2:
+            if (time.time() - capture) > 0.3:
                 capture = time.time()
                 ctrl = dai.CameraControl()
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
-                # print("Sent 'still' event to the camera!")
+
             elif key == ord('q'):
                 break
-            # # print("not here")
-            # if imgUpdated == True:
-            #     return img, imgPath
+
+    def captureImage(self, path):
+        imgUpdated = False
+        img = 1
+
+        while not imgUpdated:
+            inRgb = self.qRgb.tryGet() 
+            
+            if inRgb is not None:
+                frame = inRgb.getCvFrame()
+                frame = cv.pyrDown(frame)
+                frame = cv.pyrDown(frame)
+                cv.imshow("captured", frame)     
+
+            if self.qStill.has():
+                fName = path
+                with open(fName, "wb") as f:
+                    f.write(self.qStill.get().getData())
+                    imgUpdated = True
+
+            key = cv.waitKey(1)
+        
+            ctrl = dai.CameraControl()
+            ctrl.setCaptureStill(True)
+            self.qControl.send(ctrl)
+
+        return

@@ -32,19 +32,8 @@ device_info = dai.DeviceInfo("19443010A137DE1200")
 device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
 device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 
-# device_info_1 = dai.DeviceInfo("19443010613C6E1300")
-# device_info_1.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
-# device_info_1.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 
-total_device_info = [device_info]
-total_pipeline = [pipeline]
-
-# for myDevice, myPipeline in total_device_info, total_pipeline:
 with dai.Device(pipeline) as device:
-    # Calibrate the camera using 10 images of the chessboards in order to get rid of the lens distortion
-    #myImageCalibration = imageCalibration("calibrationImages/*.png")
-    #myImageCalibration.imageCalibration()
-
     # Start capture the images after the len is distorted
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                 device.getOutputQueue(name="still", maxSize=30, blocking=True), 
