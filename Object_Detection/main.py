@@ -12,6 +12,11 @@ from imageStitchingClasses import imageStitching
 from imageSlicing import imageSlicing
 import time
 import os
+<<<<<<< HEAD
+=======
+from pylogix import PLC
+from PLCUpdate import updatePLC
+>>>>>>> 2d92cdc1252784bc50eea435e0226caeaeda5198
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
@@ -64,8 +69,11 @@ with dai.Device(pipeline) as device:
     maskObject.createMask()
     #-------------------------------------------------------------------------------------------#
 
+    errorArray = []
+
     while True:
-        error = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        errorArray = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        updatePLC(errorArray)
         
 
     # capture = time.time()

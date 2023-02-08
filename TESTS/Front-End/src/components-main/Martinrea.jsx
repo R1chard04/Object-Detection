@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.css";
-import STANDARD from "../STANDARD.jpg";
+
 import "./style.css";
 import CAM from "../camPic.jpg";
 
