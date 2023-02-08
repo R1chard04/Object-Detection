@@ -73,10 +73,12 @@ class imageCapture:
 
     def autoCapture(self, imgPath, directoryName, processingObject):
         capture = time.time()
-        print("START")
+
+        errorAcheived = False #img updated condition
+        error = 0
+        tolerance = 0
+
         while True:
-            # img = 1  #instantiates img
-            imgUpdated = False #img updated condition
             inRgb = self.qRgb.tryGet() 
             
             if imgPath == "Test":
@@ -102,6 +104,9 @@ class imageCapture:
                     cv.imwrite(diffPath,diffImg)
                     print(error)
 
+                    if error < tolerance:
+                        errorAcheived = True
+
             key = cv.waitKey(1)
             if (time.time() - capture) > 0.3:
                 capture = time.time()
@@ -109,8 +114,10 @@ class imageCapture:
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
 
-            elif key == ord('q'):
+            if key == ord('q') or errorAcheived:
                 break
+        
+        return error
 
     def captureImage(self, path):
         imgUpdated = False

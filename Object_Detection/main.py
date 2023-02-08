@@ -12,6 +12,7 @@ from imageStitchingClasses import imageStitching
 from imageSlicing import imageSlicing
 import time
 import os
+from pylogix import PLC
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
@@ -74,8 +75,9 @@ with dai.Device(pipeline) as device:
     
     #-------------------------------------------------------------------------------------------#
 
-    
-    captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject)
+    while True:
+        error = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        
 
     # capture = time.time()
     # while True:
