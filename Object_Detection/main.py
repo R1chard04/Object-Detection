@@ -12,7 +12,6 @@ from imageStitchingClasses import imageStitching
 from imageSlicing import imageSlicing
 import time
 import os
-from pylogix import PLC
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path

@@ -42,15 +42,25 @@ with dai.Device(pipeline) as device:
                                 device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                 device.getInputQueue(name="control"))
     
-    img_slicer = imageSlicing(captureObject)
-    
-    result = img_slicer.imageSlicing()
-    for i, res in enumerate(result):
-        window_height = int(res.shape[0] * 0.7)
-        window_width = int(res.shape[1] * 0.7)
-        cv.namedWindow(f"Quadrant {i+1}", cv.WINDOW_NORMAL)
-        cv.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
-        cv.imshow(f"Quadrant {i+1}", res)
+    while True:
+        
+        frame = camRgb.getCvFrame()
+        
+        if frame is not None:
+            img_slicer = imageSlicing(frame)
+            result = img_slicer.imageSlicing()
+        
+            for i, res in enumerate(result):
+                window_height = int(res.shape[0] * 0.7)
+                window_width = int(res.shape[1] * 0.7)
+                cv.namedWindow(f"Quadrant {i+1}", cv.WINDOW_NORMAL)
+                cv.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
+                cv.imshow(f"Quadrant {i+1}", res)
+            
+            if cv.waitKey(1) & 0xFF == ord('q'):
+                break
+
+cv.destroyAllWindows()
 
     
 

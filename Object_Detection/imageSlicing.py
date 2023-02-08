@@ -7,7 +7,7 @@ from cameraInitialisationClass import initialise
 
 class imageSlicing:
     def __init__(self, img) -> None:
-        self.img = img  
+        self.img = img
     
     def imageSlicing(self) -> any:
         
@@ -36,7 +36,7 @@ class imageSlicing:
             
     
         # Get image height and width
-        img = cv2.imread("image", self.img)
+        img = self.img
 
         height = img.shape[0]
         width = img.shape[1]
@@ -95,11 +95,11 @@ class imageSlicing:
             result[0] = cv2.resize(result[0], (result[0].shape[1], combined_height),
                             interpolation=cv2.INTER_CUBIC)
 
-        if input_numbers[0] == 5:
+        if input_numbers and input_numbers[0] == 5:
             result.append(cv2.vconcat([image_topleft, image_topright]))
             result.append(cv2.vconcat([image_bottomleft, image_bottomright]))
                 
-        if input_numbers[0] == 6:
+        if input_numbers and input_numbers [0] == 6:
             result.append(cv2.hconcat([image_topleft, image_bottomleft]))
             result.append(cv2.hconcat([image_topright, image_bottomright]))
                 
@@ -120,3 +120,4 @@ class imageSlicing:
 
 #cv2.waitKey(0)
 #cv2.destroyAllWindows()
+

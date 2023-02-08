@@ -120,6 +120,7 @@ class imageCapture:
         return error
 
     def captureImage(self, path):
+    
         imgUpdated = False
         img = 1
 
@@ -137,11 +138,11 @@ class imageCapture:
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
                     imgUpdated = True
-
-            key = cv.waitKey(1)
-        
-            ctrl = dai.CameraControl()
-            ctrl.setCaptureStill(True)
-            self.qControl.send(ctrl)
-
-        return
+                    
+                    return
+    
+    def getFrame(self, name="rgb"):
+        if name == "rgb":
+            return self.qRgb.get()
+        else:
+            raise ValueError("Invalid name")
