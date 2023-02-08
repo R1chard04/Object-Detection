@@ -13,6 +13,7 @@ from imageSlicing import imageSlicing
 import time
 import os
 from pylogix import PLC
+from PLCUpdate import updatePLC
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
@@ -65,8 +66,11 @@ with dai.Device(pipeline) as device:
     maskObject.createMask()
     #-------------------------------------------------------------------------------------------#
 
+    errorArray = []
+
     while True:
-        error = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        errorArray = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        updatePLC(errorArray)
         
 
     # capture = time.time()

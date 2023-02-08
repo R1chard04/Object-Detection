@@ -78,7 +78,7 @@ class imageCapture:
         error = 0
         tolerance = 0
 
-        while True:
+        while not errorAcheived:
             inRgb = self.qRgb.tryGet() 
             
             if imgPath == "Test":
@@ -113,9 +113,6 @@ class imageCapture:
                 ctrl = dai.CameraControl()
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
-
-            if key == ord('q') or errorAcheived:
-                break
         
         return error
 
