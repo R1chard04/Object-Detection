@@ -29,6 +29,13 @@ class imageCapture:
                 frame = inRgb.getCvFrame()
                 cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
 
+            if self.qStill.has():
+                dirName = "Object_Detection\Photos\MASKS"
+                fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
+                with open(fName, "wb") as f:
+                    f.write(self.qStill.get().getData())
+                    print('Image saved to', fName)
+
             key = cv.waitKey(1)
             # focal length adjestment
             if key in [ord(','), ord('.')]:
@@ -57,12 +64,13 @@ class imageCapture:
             if key == ord("q"):
                 cv.destroyAllWindows()
                 return
-                # return brightness, lensPos
-            
-            # print("hablabla")
-            # ctrl = dai.CameraControl()
-            # ctrl.setCaptureStill(True)
-            # self.qControl.send(ctrl)
+
+            elif key == ord('c'):
+                ctrl = dai.CameraControl()
+                ctrl.setCaptureStill(True)
+                self.qControl.send(ctrl)
+                print("Sent 'still' event to the camera!")
+
 
     def autoCapture(self, imgPath, directoryName, processingObject):
         capture = time.time()

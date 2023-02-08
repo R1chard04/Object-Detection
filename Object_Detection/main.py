@@ -75,10 +75,6 @@ with dai.Device(pipeline) as device:
     mask = cv.resize(mask, None, fx=1.875, fy=1.875, interpolation = cv.INTER_LINEAR)
     mask[mask != 0 ] = 255
 
-    # cv.waitKey(0)
-    # none = maskObject.setNones()
-    # mask = maskObject.createMask()
-
     processingObject.setMaskImg(mask)
     processingObject.setRefImg(std)
 
@@ -89,6 +85,7 @@ with dai.Device(pipeline) as device:
     
     #-------------------------------------------------------------------------------------------#
 
+    
     captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject)
 
     # capture = time.time()
