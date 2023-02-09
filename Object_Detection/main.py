@@ -49,11 +49,11 @@ with dai.Device(pipeline) as device:
     
 
      #Set Brightness, Focal
-    brightness, lensPos, initImg = captureObject.setParameters()
+    brightness, lensPos, initImgArray = captureObject.setParameters()
     # myCalibration = imageCalibration(initImgPath)
     # myCalibration.imageCalibration()
 
-    processingObject = imageProcessing(initImg, initImg, initImg)
+    processingObject = imageProcessing(initImgArray[0], initImgArray[0], initImgArray[0])
 
     #-----------------------------------------Calibrate-----------------------------------------#
   
@@ -67,8 +67,17 @@ with dai.Device(pipeline) as device:
     #-------------------------------------------------------------------------------------------#
     
     while True:
-        captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        capturedImages = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        
+        # for i in range(len(result)):
+        for object in processingObjectArray:
+            object.setTestImg()
+            error, diffImg = object.compareImage()
+            print("Image " + i+ ": " +error)
+            # if error < tolerance:
+            #     resultArray[i] = 1
         # updatePLC(errorArray)
+        
         
 
     # capture = time.time()

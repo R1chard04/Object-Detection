@@ -10,6 +10,8 @@ from imageSlicingClasses import imageSlicing, input_number
 input_number_list = []
 input_number(input_number_list)
 
+
+
 # Make sure the value don't go out of the range
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
@@ -34,14 +36,8 @@ class imageCapture:
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
-                #cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
-                
-                # create an object to slice the images
-                img_slicer = imageSlicing(frame, input_number_list)
-                result = img_slicer.imageSlicing()
-                img_slicer.show_cut_images(result)
-                
-
+                cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
+            
             if self.qStill.has():
                 dirName = "Object_Detection\Photos\STD"
                 fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
@@ -51,10 +47,15 @@ class imageCapture:
 
                     imgUpdated = True
                     img = cv.imread(fName)
+                    
+                    # create an object to slice the images
+                    img_slicer = imageSlicing(img, input_number_list)
+                    result = img_slicer.imageSlicing()
+                    # img_slicer.show_cut_images(result)
 
                     if imgUpdated is True:
                         cv.destroyAllWindows()
-                        return brightness, lensPos, img
+                        return brightness, lensPos, result
 
             key = cv.waitKey(1)
             # focal length adjestment
@@ -83,13 +84,14 @@ class imageCapture:
             
             if key == ord("q"):
                 
-                ctrl = dai.CameraControl()
-                ctrl.setCaptureStill(True)
-                self.qControl.send(ctrl)
-                print("Sent 'still' event to the camera!")
+                # ctrl = dai.CameraControl()
+                # ctrl.setCaptureStill(True)
+                # self.qControl.send(ctrl)
+                # print("Sent 'still' event to the camera!")
+                break
                 
     # Capture images every 0.3 secs and process it
-    def autoCapture(self, imgPath, directoryName, processingObject):
+    def autoCapture(self, imgPath, directoryName, processingObjectArray):
         capture = time.time()
 
         errorAcheived = False #img updated condition
@@ -105,7 +107,7 @@ class imageCapture:
             
             path = os.path.join(directoryName,imgPath)
             # Where the subtracted image is being saved
-            diffPath = os.path.join("Object_Detection\Photos\DIFF", imgPath)
+            # diffPath = os.path.join("Object_Detection\Photos\DIFF", imgPath)
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
@@ -118,17 +120,10 @@ class imageCapture:
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
 
-                    # img_slicer = imageSlicing(cv.imread(path))
-                    # result = img_slicer.imageSlicing()
+                    img_slicer = imageSlicing(cv.imread(path))
+                    result = img_slicer.imageSlicing()
 
-                    # for i in range(len(result)):
-                    processingObject.setTestImg(cv.imread(fName))
-                    error, diffImg = processingObject.compareImage()
-                    cv.imwrite(diffPath,diffImg)
-                    print(error)
-
-                        # if error < tolerance:
-                        #     resultArray[i] = 1
+                    return result
 
             key = cv.waitKey(1)
             if (time.time() - capture) > 0.3:
