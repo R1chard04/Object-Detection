@@ -42,26 +42,32 @@ videoEnc.bitstream.link(xoutStill.input)
 # Connect to device and start pipeline
 with dai.Device(pipeline) as device:
 
+    
     # Output queue will be used to get the rgb frames from the output defined above
     qRgb = device.getOutputQueue(name="rgb", maxSize=30, blocking=False)
     qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
     qControl = device.getInputQueue(name="control")
 
+    
+    
     # Make sure the destination path is present before starting to store the examples
     dirName = "rgb_data"
     Path(dirName).mkdir(parents=True, exist_ok=True)
 
     while True:
+        
         inRgb = qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
+
+        
         if inRgb is not None:
             frame = inRgb.getCvFrame()
             # 4k / 4
             frame = cv2.pyrDown(frame)
             frame = cv2.pyrDown(frame)    
-        
+
             img_slicer = imageSlicing(frame)
             result = img_slicer.imageSlicing()
-
+            
             for i, res in enumerate(result):
                 window_height = int(res.shape[0] * 0.7)
                 window_width = int(res.shape[1] * 0.7)

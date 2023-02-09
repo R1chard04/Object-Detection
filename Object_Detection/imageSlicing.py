@@ -6,7 +6,7 @@ import os.path
 from cameraInitialisationClass import initialise
 
 class imageSlicing:
-    def __init__(self, img) -> None:
+    def __init__(self, img):
         self.img = img
     
     def imageSlicing(self) -> any:
@@ -25,8 +25,9 @@ class imageSlicing:
                     input_numbers.append(int(user_input))
                     print("Input another quadrant to be split or enter 'p' to end inputting numbers.")
             else:
-                print("Invalid input. Enter a number from 1 to 4 or enter 'p' to end inputting numbers.")   
-        
+                print("Invalid input. Enter a number from 1 to 4 or enter 'p' to end inputting numbers.")
+                
+
         #img = cv2.VideoCapture(0)  # 0 is the index of the default camera
         
         #while True:
@@ -102,8 +103,10 @@ class imageSlicing:
         if input_numbers and input_numbers [0] == 6:
             result.append(cv2.hconcat([image_topleft, image_bottomleft]))
             result.append(cv2.hconcat([image_topright, image_bottomright]))
-                
+
         return result
+
+        
   
             # Use cv.imshow to output the result
             #for i, res in enumerate(result):
