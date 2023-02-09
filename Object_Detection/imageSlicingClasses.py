@@ -88,14 +88,21 @@ class imageSlicing:
             result[0] = cv2.resize(result[0], (result[0].shape[1], combined_height),
                             interpolation=cv2.INTER_CUBIC)
 
-        if self.input_number and self.input_number[0] == 5:
+
+        if self.input_number and self.input_number [0] == 5 and 6:
+            result.append(cv2.vconcat([image_topleft, image_bottomleft]))
+            result.append(cv2.vconcat([image_topright, image_bottomright]))
+            result.append(cv2.hconcat([image_topleft, image_topright]))
+            result.append(cv2.hconcat([image_bottomleft, image_bottomright]))
+            
+        elif self.input_number and self.input_number[0] == 5:
             result.append(cv2.vconcat([image_topleft, image_bottomleft]))
             result.append(cv2.vconcat([image_topright, image_bottomright]))
                 
-        if self.input_number and self.input_number [0] == 6:
+        elif self.input_number and self.input_number [0] == 6:
             result.append(cv2.hconcat([image_topleft, image_topright]))
             result.append(cv2.hconcat([image_bottomleft, image_bottomright]))
-
+            
         return result
 
         
