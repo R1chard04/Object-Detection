@@ -20,6 +20,8 @@ class imageCapture:
         brightness = 0
         BRIGHT_STEP = 1
         LENS_STEP = 3
+        img = 1
+        imgUpdated = False
         
         while True:
     
@@ -35,6 +37,13 @@ class imageCapture:
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
                     print('Image saved to', fName)
+
+                    imgUpdated = True
+                    img = cv.imread(fName)
+
+                    if imgUpdated is True:
+                        cv.destroyAllWindows()
+                        return brightness, lensPos, img
 
             key = cv.waitKey(1)
             # focal length adjestment
@@ -62,15 +71,12 @@ class imageCapture:
                 self.qControl.send(ctrl) 
             
             if key == ord("q"):
-                cv.destroyAllWindows()
-                return
-
-            elif key == ord('c'):
+                
                 ctrl = dai.CameraControl()
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
                 print("Sent 'still' event to the camera!")
-
+                
 
     def autoCapture(self, imgPath, directoryName, processingObject):
         capture = time.time()
@@ -78,6 +84,7 @@ class imageCapture:
         errorAcheived = False #img updated condition
         error = 0
         tolerance = 0
+        resultArray = []
 
         while not errorAcheived:
             inRgb = self.qRgb.tryGet() 
@@ -94,29 +101,22 @@ class imageCapture:
                 frame = cv.pyrDown(frame)
                 cv.imshow("captured", frame)
                 
-            img_slicer = imageSlicing(frame)
-            result = img_slicer.imageSlicing()
-
-            for i, res in enumerate(result):
-                window_height = int(res.shape[0] * 0.7)
-                window_width = int(res.shape[1] * 0.7)
-                cv.namedWindow(f"Quadrant {i+1}", cv.WINDOW_NORMAL)
-                cv.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
-                cv.imshow(f"Quadrant {i+1}", res)  
-                
             if self.qStill.has():
                 fName = path
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
 
-                    img = cv.imread(fName)
-                    processingObject.setTestImg(img)
+                    # img_slicer = imageSlicing(cv.imread(path))
+                    # result = img_slicer.imageSlicing()
+
+                    # for i in range(len(result)):
+                    processingObject.setTestImg(cv.imread(fName))
                     error, diffImg = processingObject.compareImage()
                     cv.imwrite(diffPath,diffImg)
                     print(error)
 
-                    if error < tolerance:
-                        errorAcheived = True
+                        # if error < tolerance:
+                        #     resultArray[i] = 1
 
             key = cv.waitKey(1)
             if (time.time() - capture) > 0.3:
@@ -125,7 +125,7 @@ class imageCapture:
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
         
-        return error
+        return resultArray
 
     def captureImage(self, path):
     

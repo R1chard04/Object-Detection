@@ -12,11 +12,8 @@ from imageStitchingClasses import imageStitching
 from imageSlicing import imageSlicing
 import time
 import os
-<<<<<<< HEAD
-=======
-from pylogix import PLC
-from PLCUpdate import updatePLC
->>>>>>> 2d92cdc1252784bc50eea435e0226caeaeda5198
+# from pylogix import PLC
+# from PLCUpdate import updatePLC
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
@@ -51,10 +48,9 @@ with dai.Device(pipeline) as device:
 
 
      #Set Brightness, Focal
-    brightness, lensPos = captureObject.setParameters()
-    initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName, brightness, lensPos)
-    myCalibration = imageCalibration(initImgPath)
-    myCalibration.imageCalibration()
+    brightness, lensPos, initImg = captureObject.setParameters()
+    # myCalibration = imageCalibration(initImgPath)
+    # myCalibration.imageCalibration()
 
     processingObject = imageProcessing(initImg, initImg, initImg)
 
@@ -63,17 +59,17 @@ with dai.Device(pipeline) as device:
 
     maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
 
-    #gen mask
-    maskObject.setStandards()
-    maskObject.setNones()
-    maskObject.createMask()
+    # #gen mask
+    # maskObject.setStandards()
+    # maskObject.setNones()
+    # maskObject.createMask()
     #-------------------------------------------------------------------------------------------#
 
     errorArray = []
 
     while True:
-        errorArray = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
-        updatePLC(errorArray)
+        captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        # updatePLC(errorArray)
         
 
     # capture = time.time()
