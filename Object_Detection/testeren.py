@@ -64,7 +64,7 @@ with dai.Device(pipeline) as device:
             # 4k / 4
             frame = cv2.pyrDown(frame)
             frame = cv2.pyrDown(frame)    
-
+            
             img_slicer = imageSlicing(frame)
             result = img_slicer.imageSlicing()
             

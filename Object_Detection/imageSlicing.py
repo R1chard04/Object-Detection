@@ -97,12 +97,12 @@ class imageSlicing:
                             interpolation=cv2.INTER_CUBIC)
 
         if input_numbers and input_numbers[0] == 5:
-            result.append(cv2.vconcat([image_topleft, image_topright]))
-            result.append(cv2.vconcat([image_bottomleft, image_bottomright]))
+            result.append(cv2.vconcat([image_topleft, image_bottomleft]))
+            result.append(cv2.vconcat([image_topright, image_bottomright]))
                 
         if input_numbers and input_numbers [0] == 6:
-            result.append(cv2.hconcat([image_topleft, image_bottomleft]))
-            result.append(cv2.hconcat([image_topright, image_bottomright]))
+            result.append(cv2.hconcat([image_topleft, image_topright]))
+            result.append(cv2.hconcat([image_bottomleft, image_bottomright]))
 
         return result
 
