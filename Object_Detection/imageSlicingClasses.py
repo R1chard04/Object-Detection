@@ -3,39 +3,31 @@ import numpy as np
 import os
 from os import listdir
 import os.path
-from cameraInitialisationClass import initialise
+
+def input_number(input_number) -> None:       
+
+    # Get user input numbers
+    print("1: image_topleft \n2: image_topright \n3: image_bottomleft \n4: image_bottomright \n5: horizontal cut \n6: vertical cut\nInput a quadrant or a cut that should be split out")
+    while len(input_number) < 2:
+        user_input = input()
+        if user_input == 'p':
+            break
+        elif user_input.isdigit() and 1 <= int(user_input) <= 6:
+            if int(user_input) in input_number:
+                print("Number already chosen. Enter another number or enter 'p' to end inputting numbers.")
+            else:
+                input_number.append(int(user_input))
+                print("Input another quadrant to be split or enter 'p' to end inputting numbers.")
+        else:
+            print("Invalid input. Enter a number from 1 to 4 or enter 'p' to end inputting numbers.")
 
 class imageSlicing:
-    def __init__(self, img):
+    def __init__(self, img, input_number):
         self.img = img
+        self.input_number = input_number
     
     def imageSlicing(self) -> any:
-        
-        # Get user input numbers
-        input_numbers = []
-        print("1: image_topleft \n2: image_topright \n3: image_bottomleft \n4: image_bottomright \n5: horizontal cut \n6: vertical cut\nInput a quadrant or a cut that should be split out")
-        while len(input_numbers) < 2:
-            user_input = input()
-            if user_input == 'p':
-                break
-            elif user_input.isdigit() and 1 <= int(user_input) <= 6:
-                if int(user_input) in input_numbers:
-                    print("Number already chosen. Enter another number or enter 'p' to end inputting numbers.")
-                else:
-                    input_numbers.append(int(user_input))
-                    print("Input another quadrant to be split or enter 'p' to end inputting numbers.")
-            else:
-                print("Invalid input. Enter a number from 1 to 4 or enter 'p' to end inputting numbers.")
-                
-
-        #img = cv2.VideoCapture(0)  # 0 is the index of the default camera
-        
-        #while True:
-            #ret, img = img.read()  # Capture a frame from the camera
-            #if not ret:  # Check if the frame was successfully captured
-                #break
             
-    
         # Get image height and width
         img = self.img
 
@@ -62,7 +54,7 @@ class imageSlicing:
         result = []
         non_chosen_images = []
         for i in range(1, 5):
-            if i in input_numbers:
+            if i in self.input_number:
                 result.append(quadrant_map[i])
             else:
                 if i == 1:
@@ -77,13 +69,13 @@ class imageSlicing:
 
         # Combine non-chosen images
         if len(non_chosen_images) == 2:
-            if 1 in input_numbers and 2 in input_numbers:
+            if 1 in self.input_number and 2 in self.input_number:
                 result.append(cv2.hconcat(non_chosen_images))
-            elif 3 in input_numbers and 4 in input_numbers:
+            elif 3 in self.input_number and 4 in self.input_number:
                 result.append(cv2.hconcat(non_chosen_images))
-            elif 1 in input_numbers and 3 in input_numbers:
+            elif 1 in self.input_number and 3 in self.input_number:
                 result.append(cv2.vconcat(non_chosen_images))
-            elif 2 in input_numbers and 4 in input_numbers:
+            elif 2 in self.input_number and 4 in self.input_number:
                 result.append(cv2.vconcat(non_chosen_images))
                     
             # Get aspect ratio of the quadrant
@@ -96,31 +88,26 @@ class imageSlicing:
             result[0] = cv2.resize(result[0], (result[0].shape[1], combined_height),
                             interpolation=cv2.INTER_CUBIC)
 
-        if input_numbers and input_numbers[0] == 5:
+        if self.input_number and self.input_number[0] == 5:
             result.append(cv2.vconcat([image_topleft, image_bottomleft]))
             result.append(cv2.vconcat([image_topright, image_bottomright]))
                 
-        if input_numbers and input_numbers [0] == 6:
+        if self.input_number and self.input_number [0] == 6:
             result.append(cv2.hconcat([image_topleft, image_topright]))
             result.append(cv2.hconcat([image_bottomleft, image_bottomright]))
 
         return result
 
         
-  
-            # Use cv.imshow to output the result
-            #for i, res in enumerate(result):
-                #window_height = int(res.shape[0] * 0.7)
-                #window_width = int(res.shape[1] * 0.7)
-                #cv2.namedWindow(f"Quadrant {i+1}", cv2.WINDOW_NORMAL)
-                #cv2.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
-                #cv2.imshow(f"Quadrant {i+1}", res)
-                    
-                #return res
-        
-            #if cv2.waitKey(1) & 0xFF == ord('q'):  # Break the loop if 'q' is pressed
-                #break
+    def show_cut_images(self, result) -> None:
+        #Use cv.imshow to output the result
+        for i, res in enumerate(result):
+            window_height = int(res.shape[0] * 0.7)
+            window_width = int(res.shape[1] * 0.7)
+            cv2.namedWindow(f"Quadrant {i+1}", cv2.WINDOW_NORMAL)
+            cv2.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
+            cv2.imshow(f"Quadrant {i+1}", res)
+                
 
-#cv2.waitKey(0)
-#cv2.destroyAllWindows()
+
 

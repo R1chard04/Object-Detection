@@ -9,14 +9,11 @@ from imageCaptureClasses import imageCapture
 from imageMaskGeneration import recalibrate
 from imageCalibration import imageCalibration
 from imageStitchingClasses import imageStitching
-from imageSlicing import imageSlicing
+from imageSlicingClasses import imageSlicing, input_number
 import time
 import os
-<<<<<<< HEAD
-=======
 from pylogix import PLC
 from PLCUpdate import updatePLC
->>>>>>> 2d92cdc1252784bc50eea435e0226caeaeda5198
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path

@@ -1,6 +1,7 @@
-from imageSlicing import imageSlicing
+from imageSlicingClasses import imageSlicing
 import cv2 as cv
 
+#input image
 img = cv.imread("./mask.jpg")
 
 img_slicer = imageSlicing(img)

@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 import cv2
 import depthai as dai
-from imageSlicing import imageSlicing
+from imageSlicingClasses import imageSlicing, input_number
 
 # Create pipeline
 pipeline = dai.Pipeline()
@@ -54,6 +54,9 @@ with dai.Device(pipeline) as device:
     dirName = "rgb_data"
     Path(dirName).mkdir(parents=True, exist_ok=True)
 
+    input_number_array = []
+    input_number(input_number_array)
+    
     while True:
         
         inRgb = qRgb.tryGet()  # Non-blocking call, will return a new data that has arrived or None otherwise
@@ -62,18 +65,15 @@ with dai.Device(pipeline) as device:
         if inRgb is not None:
             frame = inRgb.getCvFrame()
             # 4k / 4
+            
             frame = cv2.pyrDown(frame)
             frame = cv2.pyrDown(frame)    
+
             
-            img_slicer = imageSlicing(frame)
+            img_slicer = imageSlicing(frame, input_number_array)
+            
             result = img_slicer.imageSlicing()
-            
-            for i, res in enumerate(result):
-                window_height = int(res.shape[0] * 0.7)
-                window_width = int(res.shape[1] * 0.7)
-                cv.namedWindow(f"Quadrant {i+1}", cv.WINDOW_NORMAL)
-                cv.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
-                cv.imshow(f"Quadrant {i+1}", res)
+            img_slicer.show_cut_images(result)
 
         if qStill.has():
             fName = f"{dirName}/{int(time.time() * 1000)}.jpeg"
