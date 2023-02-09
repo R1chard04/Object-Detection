@@ -9,10 +9,9 @@ from imageCaptureClasses import imageCapture
 from imageMaskGeneration import recalibrate
 from imageCalibration import imageCalibration
 from imageStitchingClasses import imageStitching
-from imageSlicingClasses import imageSlicing, input_number
 import time
 import os
-from pylogix import PLC
+#from pylogix import PLC
 from PLCUpdate import updatePLC
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
@@ -37,17 +36,19 @@ device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 # device_info_1.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
 # device_info_1.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 
-total_device_info = [device_info]
-total_pipeline = [pipeline]
+# total_device_info = [device_info]
+# total_pipeline = [pipeline]
 
 # for myDevice, myPipeline in total_device_info, total_pipeline:
-with dai.Device(pipeline) as device:
+with dai.Device(pipeline) as device:  
+    # capture the image 
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                 device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                 device.getInputQueue(name="control"))
 
+    
 
-     #Set Brightness, Focal
+     #Set Brightness, Focal, slice the images
     brightness, lensPos = captureObject.setParameters()
     initImg, initImgPath = captureObject.autoCapture("INIT.jpg", photoDirectoryName, brightness, lensPos)
     myCalibration = imageCalibration(initImgPath)
@@ -65,9 +66,7 @@ with dai.Device(pipeline) as device:
     maskObject.setNones()
     maskObject.createMask()
     #-------------------------------------------------------------------------------------------#
-
-    errorArray = []
-
+    
     while True:
         errorArray = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
         updatePLC(errorArray)

@@ -4,7 +4,11 @@ import depthai as dai
 import os
 import time
 from imageProcessingClasses import imageProcessing
-from imageSlicing import imageSlicing
+from imageSlicingClasses import imageSlicing, input_number
+
+# create a list to store input numbers from users
+input_number_list = []
+input_number(input_number_list)
 
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
@@ -28,6 +32,12 @@ class imageCapture:
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
                 cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
+                
+                # create an object to slice the images
+                img_slicer = imageSlicing(frame, input_number_list)
+                result = img_slicer.imageSlicing()
+                img_slicer.show_cut_images(result)
+                
 
             if self.qStill.has():
                 dirName = "Object_Detection\Photos\MASKS"
@@ -93,17 +103,7 @@ class imageCapture:
                 frame = cv.pyrDown(frame)
                 frame = cv.pyrDown(frame)
                 cv.imshow("captured", frame)
-                
-            img_slicer = imageSlicing(frame)
-            result = img_slicer.imageSlicing()
-
-            for i, res in enumerate(result):
-                window_height = int(res.shape[0] * 0.7)
-                window_width = int(res.shape[1] * 0.7)
-                cv.namedWindow(f"Quadrant {i+1}", cv.WINDOW_NORMAL)
-                cv.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
-                cv.imshow(f"Quadrant {i+1}", res)  
-                
+            
             if self.qStill.has():
                 fName = path
                 with open(fName, "wb") as f:
