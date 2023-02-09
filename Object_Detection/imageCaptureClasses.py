@@ -10,6 +10,7 @@ from imageSlicingClasses import imageSlicing, input_number
 input_number_list = []
 input_number(input_number_list)
 
+# Make sure the value don't go out of the range
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
 
@@ -42,7 +43,7 @@ class imageCapture:
                 
 
             if self.qStill.has():
-                dirName = "Object_Detection\Photos\MASKS"
+                dirName = "Object_Detection\Photos\STD"
                 fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
@@ -87,7 +88,7 @@ class imageCapture:
                 self.qControl.send(ctrl)
                 print("Sent 'still' event to the camera!")
                 
-
+    # Capture images every 0.3 secs and process it
     def autoCapture(self, imgPath, directoryName, processingObject):
         capture = time.time()
 
@@ -103,6 +104,7 @@ class imageCapture:
                 imgPath = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
             
             path = os.path.join(directoryName,imgPath)
+            # Where the subtracted image is being saved
             diffPath = os.path.join("Object_Detection\Photos\DIFF", imgPath)
 
             if inRgb is not None:
@@ -191,9 +193,3 @@ class imageCapture:
         frame = cv.putText(frame, "Top: ", (text_x + shift_x, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
         frame = cv.putText(frame, "Right: ", (text_x + shift_x, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
         frame = cv.putText(frame, "Left: ", (text_x + shift_x, text_y + gap), font, partsFontScale, blue, partsFontthickness)
-    
-    def getFrame(self, name="rgb"):
-        if name == "rgb":
-            return self.qRgb.get()
-        else:
-            raise ValueError("Invalid name")
