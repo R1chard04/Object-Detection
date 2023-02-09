@@ -31,7 +31,7 @@ class imageCapture:
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
-                cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
+                #cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
                 
                 # create an object to slice the images
                 img_slicer = imageSlicing(frame, input_number_list)
