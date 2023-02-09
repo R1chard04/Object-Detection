@@ -10,8 +10,6 @@ from imageSlicingClasses import imageSlicing, input_number
 input_number_list = []
 input_number(input_number_list)
 
-
-
 # Make sure the value don't go out of the range
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
@@ -36,12 +34,7 @@ class imageCapture:
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
-                #cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
-                
-                # create an object to slice the images
-                img_slicer = imageSlicing(frame, input_number_list)
-                result = img_slicer.imageSlicing()
-                img_slicer.show_cut_images(result)
+                cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
                 
 
             if self.qStill.has():
@@ -52,11 +45,14 @@ class imageCapture:
                     print('Image saved to', fName)
 
                     imgUpdated = True
+
                     img = cv.imread(fName)
+                    img_slicer = imageSlicing(img, input_number_list)
+                    result = img_slicer.imageSlicing()
 
                     if imgUpdated is True:
                         cv.destroyAllWindows()
-                        return brightness, lensPos, img
+                        return brightness, lensPos, result
 
             key = cv.waitKey(1)
             # focal length adjestment
@@ -120,19 +116,21 @@ class imageCapture:
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
 
-                    # img_slicer = imageSlicing(cv.imread(path))
-                    # result = img_slicer.imageSlicing()
+                    img = cv.imread(fName)
+                    img_slicer = imageSlicing(img, input_number_list)
+                    result = img_slicer.imageSlicing()
 
-                    # for i in range(len(result)):
+                    PLCArray = []
+
                     for i in range(4):
                         processingObjectArray[i].setTestImg(result[i])
                         error, diffImg = processingObjectArray[i].compareImage()
                         print("Image " + i+ ": " +error)
-                    
-                    
                         
                         # if error < tolerance:
                         #     resultArray[i] = 1
+
+                    return PLCArray
 
             key = cv.waitKey(1)
             if (time.time() - capture) > 0.3:
