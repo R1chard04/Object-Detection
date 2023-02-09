@@ -7,7 +7,7 @@ import os.path
 def input_number(input_number) -> None:       
 
     # Get user input numbers
-    print("1: image_topleft \n2: image_topright \n3: image_bottomleft \n4: image_bottomright \n5: horizontal cut \n6: vertical cut\nInput a quadrant or a cut that should be split out")
+    print("1: image_topleft \n2: image_topright \n3: image_bottomleft \n4: image_bottomright \n5: vertical cut \n6: horizontal cut\nInput a quadrant or a cut that should be split out")
     while len(input_number) < 2:
         user_input = input()
         if user_input == 'p':
