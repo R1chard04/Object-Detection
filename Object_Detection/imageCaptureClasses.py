@@ -10,6 +10,8 @@ from imageSlicingClasses import imageSlicing, input_number
 input_number_list = []
 input_number(input_number_list)
 
+
+
 # Make sure the value don't go out of the range
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
@@ -89,7 +91,7 @@ class imageCapture:
                 print("Sent 'still' event to the camera!")
                 
     # Capture images every 0.3 secs and process it
-    def autoCapture(self, imgPath, directoryName, processingObject):
+    def autoCapture(self, imgPath, directoryName, processingObjectArray):
         capture = time.time()
 
         errorAcheived = False #img updated condition
@@ -105,7 +107,7 @@ class imageCapture:
             
             path = os.path.join(directoryName,imgPath)
             # Where the subtracted image is being saved
-            diffPath = os.path.join("Object_Detection\Photos\DIFF", imgPath)
+            # diffPath = os.path.join("Object_Detection\Photos\DIFF", imgPath)
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
@@ -122,11 +124,13 @@ class imageCapture:
                     # result = img_slicer.imageSlicing()
 
                     # for i in range(len(result)):
-                    processingObject.setTestImg(cv.imread(fName))
-                    error, diffImg = processingObject.compareImage()
-                    cv.imwrite(diffPath,diffImg)
-                    print(error)
-
+                    for i in range(4):
+                        processingObjectArray[i].setTestImg(result[i])
+                        error, diffImg = processingObjectArray[i].compareImage()
+                        print("Image " + i+ ": " +error)
+                    
+                    
+                        
                         # if error < tolerance:
                         #     resultArray[i] = 1
 
