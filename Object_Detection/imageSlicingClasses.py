@@ -105,6 +105,16 @@ class imageSlicing:
             
         return result
 
+        
+    def show_cut_images(self, result) -> None:
+        #Use cv.imshow to output the result
+        for i, res in enumerate(result):
+            window_height = int(res.shape[0] * 0.7)
+            window_width = int(res.shape[1] * 0.7)
+            cv2.namedWindow(f"Quadrant {i+1}", cv2.WINDOW_NORMAL)
+            cv2.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
+            cv2.imshow(f"Quadrant {i+1}", res)
+                
 
 
 
