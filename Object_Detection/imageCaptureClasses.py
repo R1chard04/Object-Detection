@@ -120,10 +120,19 @@ class imageCapture:
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
 
-                    img_slicer = imageSlicing(cv.imread(path))
-                    result = img_slicer.imageSlicing()
+                    # img_slicer = imageSlicing(cv.imread(path))
+                    # result = img_slicer.imageSlicing()
 
-                    return result
+                    # for i in range(len(result)):
+                    for i in range(4):
+                        processingObjectArray[i].setTestImg(result[i])
+                        error, diffImg = processingObjectArray[i].compareImage()
+                        print("Image " + i+ ": " +error)
+                    
+                    
+                        
+                        # if error < tolerance:
+                        #     resultArray[i] = 1
 
             key = cv.waitKey(1)
             if (time.time() - capture) > 0.3:
