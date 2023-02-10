@@ -55,6 +55,26 @@ with dai.Device(pipeline) as device:
 
     processingObject = imageProcessing(initImg, initImg, initImg)
 
+
+    topMask = cv.imread("Object_Detection\Photos\MASKS\topPart.png")
+    bottomMask = cv.imread("Object_Detection\Photos\MASKS\bottomPart.png")
+    rightMask = cv.imread("Object_Detection\Photos\MASKS\rightPart.png")
+    leftMask = cv.imread("Object_Detection\Photos\MASKS\leftPart.png")
+
+    topRef =cv.imread("Quadrant 3.jpg")
+    leftRef =cv.imread("Quadrant 1.jpg")
+    bottomRef =cv.imread("Quadrant 4.jpg")
+    rightRef =cv.imread("Quadrant 2.jpg")
+
+    processingObjectArray = []
+
+    masks=[topMask,leftMask, bottomMask, rightMask]
+    refs =[topRef, leftRef, bottomRef,rightRef]
+
+    for i in range(4):
+        object = imageProcessing(masks[i], refs[i], initImg)
+        processingObjectArray.append(object)
+
     #-----------------------------------------Calibrate-----------------------------------------#
   
 
@@ -67,7 +87,7 @@ with dai.Device(pipeline) as device:
     #-------------------------------------------------------------------------------------------#
     
     while True:
-        captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObjectArray) 
         # updatePLC(errorArray)
         
 
