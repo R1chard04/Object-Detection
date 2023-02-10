@@ -3,10 +3,10 @@ import numpy as np
 
 
 def mse(img1, img2):
-    height, width = img1.shape
+    # height, width = img1.shape
     diffImg = cv.absdiff(img1, img2)
     err = np.sum(diffImg**2)
-    ans = err/(float(height*width))  
+    ans = err/(float(2160*3840))  
     #Closer to 0 is better
     return ans
 
@@ -62,18 +62,14 @@ class imageProcessing:
         
         # return a result array
         i = 0
-        MSEResults = [0]*4
-        
         # comparing all the parts individually
         while i < 4:
-            print(self.slicedRef[i].shape)
-            print(self.maskImg[i].shape)
-            
             ref = cv.bitwise_and(self.slicedRef[i], self.slicedRef[i], mask = self.maskImg[i])
             test = cv.bitwise_and(self.slicedTestImgs[i], self.slicedTestImgs[i], mask = self.maskImg[i])
             error = mse(test, ref)
-            MSEResults[i] = error
-        return MSEResults
+            self.MSEResults[i] = error
+            i = i + 1
+        
 
     def sliceStation100(self) ->None:
         # slice the images in four parts 

@@ -116,13 +116,9 @@ class imageCapture:
                     
                     # slice the testImg in four, hardcoded for now
                     processingObject.sliceStation100()
-                    
-                    
-                    error= processingObject.compareImage()
+                    processingObject.compareImage()
                     
                     # cv.imwrite(diffPath,diffImg)
-                    print(error)
-                    
                     # if error < tolerance:
                     #     resultArray[i] = 1
 
