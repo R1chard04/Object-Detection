@@ -1,6 +1,6 @@
 import cv2 as cv
 import numpy as np
-
+from imagePredictionClass import Prediction
 
 def mse(img1, img2):
     # height, width = img1.shape
@@ -10,6 +10,44 @@ def mse(img1, img2):
     #Closer to 0 is better
     return ans
 
+# a list of response to compare with the errors
+response = []
+myArray0 = []
+myArray1 = []
+myArray2 = []
+myArray3 = []
+
+def switch_case(case_value, error):
+    switcher = {
+        0: myArray0.append(error),
+        1: myArray1.append(error),
+        2: myArray2.append(error),
+        3: myArray3.append(error)         
+    }
+    return switcher.get(case_value)
+
+# calculuate the mean square errors 
+# def mse(img1, img2):
+#     # img1 is the reference mask
+#     # img2 is the test mask
+#     height, width, channels = img1.shape
+#     diffImg = cv.absdiff(img1, img2)
+#     err = np.sum(diffImg**2)
+#     # divide the error by the total white pixels of the mask image
+#     # convert reference mask image into grayscale
+#     gray = cv.cvtColor(img1, cv.COLOR_BGR2GRAY)
+
+#     # Threshold the image to get only the white pixels
+#     _, thresh = cv.threshold(gray, 250, 255, cv.THRESH_BINARY)
+    
+#     # Find the coordinates of all the white pixels
+#     coords = np.column_stack(np.where(thresh == 255))
+
+#     # Get the proportion between the error and the white pixels
+#     ans = err/float(coords.shape[0])
+
+#     return ans
+
 class imageProcessing:
     def __init__(self, maskImg, refImg, testImg, station) -> None:
         # in station, we indicate which station this object is
@@ -17,7 +55,7 @@ class imageProcessing:
         self.station = station
         # self.parts = ""
         # if station == "station100":
-        self.parts = ["Top", "Left", "Right", "Bottom"]
+        self.parts = ["Top", "Left", "Bottom", "Right"]
         
         # convert maskImg to grayscale
         self.maskImg = maskImg
@@ -51,8 +89,6 @@ class imageProcessing:
         
     def setMaskImg(self, img) -> None:
         self.maskImg = img
-        
-    
 
     def setFrame(self, img) -> None:
         # call the slicing method, slice the pic and save it to the array
@@ -62,13 +98,26 @@ class imageProcessing:
         
         # return a result array
         i = 0
+        
+
+        
         # comparing all the parts individually
         while i < 4:
             ref = cv.bitwise_and(self.slicedRef[i], self.slicedRef[i], mask = self.maskImg[i])
             test = cv.bitwise_and(self.slicedTestImgs[i], self.slicedTestImgs[i], mask = self.maskImg[i])
             error = mse(test, ref)
             self.MSEResults[i] = error
-            i = i + 1
+            if i == 0:
+                myArray0.append(self.MSEResults[i])
+            elif i == 1:
+                myArray1.append(self.MSEResults[i])
+            elif i == 2:
+                myArray2.append(self.MSEResults[i])
+            else:
+                myArray3.append(self.MSEResults[i])
+            i += 1
+        
+            
         
 
     def sliceStation100(self) ->None:
@@ -125,3 +174,4 @@ class imageProcessing:
         frame = cv.putText(frame, str(self.MSEResults[0]), (text_x + shift_x + shift_x_error, text_y + gap), font, partsFontScale, blue, partsFontthickness)
         
         return frame
+    
