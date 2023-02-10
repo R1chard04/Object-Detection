@@ -11,7 +11,7 @@ def mse(img1, img2):
     return ans, diffImg
 
 class imageProcessing:
-    def __init__(self, maskImg, refImg, testImg, parts) -> None:
+    def __init__(self, maskImg, refImg, testImg) -> None:
         self.maskImg = maskImg
         self.refImg = refImg
         self.testImg = testImg

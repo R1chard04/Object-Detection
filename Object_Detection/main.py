@@ -1,4 +1,4 @@
-#main.py#
+#main.py
 
 import cv2 as cv
 import time
@@ -52,14 +52,14 @@ with dai.Device(pipeline) as device:
     brightness, lensPos = captureObject.setParameters()
     # myCalibration = imageCalibration(initImgPath)
     # myCalibration.imageCalibration()
-    initImgArry = ["", "", "", ""]
+    initImgArray = ["", "", "", ""]
     processingObject = imageProcessing(initImgArray[0], initImgArray[0], initImgArray[0])
 
 
-    topMask = cv.imread("Object_Detection\Photos\MASKS\topPart.png")
-    bottomMask = cv.imread("Object_Detection\Photos\MASKS\bottomPart.png")
-    rightMask = cv.imread("Object_Detection\Photos\MASKS\rightPart.png")
-    leftMask = cv.imread("Object_Detection\Photos\MASKS\leftPart.png")
+    topMask = cv.imread("Object_Detection/Photos/MASKS/topPart.png")
+    bottomMask = cv.imread("Object_Detection/Photos/MASKS/bottomPart.png")
+    rightMask = cv.imread("Object_Detection/Photos/MASKS/rightPart.png")
+    leftMask = cv.imread("Object_Detection/Photos/MASKS/leftPart.png")
 
     topRef =cv.imread("Quadrant 3.jpg")
     leftRef =cv.imread("Quadrant 1.jpg")
@@ -72,8 +72,9 @@ with dai.Device(pipeline) as device:
     refs =[topRef, leftRef, bottomRef,rightRef]
 
     for i in range(4):
-        object = imageProcessing(masks[i], refs[i], initImg)
+        object = imageProcessing(masks[i], refs[i], initImgArray[i])
         processingObjectArray.append(object)
+    print(processingObjectArray)
 
     #-----------------------------------------Calibrate-----------------------------------------#
   
@@ -89,7 +90,9 @@ with dai.Device(pipeline) as device:
     while True:
         captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObjectArray) 
         # updatePLC(errorArray)
-        capturedImages = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        capturedImages = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObjectArray) 
+        
+
         
         # # for i in range(len(result)):
         # for object in processingObjectArray:

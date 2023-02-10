@@ -82,7 +82,7 @@ class imageCapture:
                 return brightness, lensPos
                 
     # Capture images every 0.3 secs and process it
-    def autoCapture(self, imgPath, directoryName, processingObject):
+    def autoCapture(self, imgPath, directoryName, processingObjectArray):
         capture = time.time()
 
         errorAcheived = False #img updated condition
@@ -111,14 +111,16 @@ class imageCapture:
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
 
-                    # img_slicer = imageSlicing(cv.imread(path))
-                    # result = img_slicer.imageSlicing()
+                    img_slicer = imageSlicing(cv.imread(path), input_number_list)
+                    result = img_slicer.imageSlicing()
+                    
 
                     # for i in range(len(result)):
-                    for i in range(4):
-                        processingObjectArray[i].setTestImg(result[i])
-                        error, diffImg = processingObjectArray[i].compareImage()
+                    for i in processingObjectArray:
+                        i.setTestImg(result[i])
+                        error, diffImg = i.compareImage()
                         print("Image " + i+ ": " +error)
+                        print (" ")
                     
                     
                         
