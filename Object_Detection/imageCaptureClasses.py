@@ -6,9 +6,6 @@ import time
 from imageProcessingClasses import imageProcessing
 from imageSlicingClasses import imageSlicing, input_number
 
-# create a list to store input numbers from users
-input_number_list = []
-input_number(input_number_list)
 
 # Make sure the value don't go out of the range
 def clamp(num, v0, v1):
@@ -19,6 +16,7 @@ class imageCapture:
         self.qRgb = qRgb
         self.qStill = qStill
         self.qControl = qControl
+        self.MSEresults = 0
 
     def setParameters(self):
         lensPos = 150
@@ -35,24 +33,15 @@ class imageCapture:
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
                 cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
-                
-
+            
             if self.qStill.has():
                 dirName = "Object_Detection\Photos\STD"
                 fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
                     print('Image saved to', fName)
-
                     imgUpdated = True
-
                     img = cv.imread(fName)
-                    img_slicer = imageSlicing(img, input_number_list)
-                    result = img_slicer.imageSlicing()
-
-                    if imgUpdated is True:
-                        cv.destroyAllWindows()
-                        return brightness, lensPos, result
 
             key = cv.waitKey(1)
             # focal length adjestment
@@ -81,13 +70,14 @@ class imageCapture:
             
             if key == ord("q"):
                 
-                ctrl = dai.CameraControl()
-                ctrl.setCaptureStill(True)
-                self.qControl.send(ctrl)
-                print("Sent 'still' event to the camera!")
+                # ctrl = dai.CameraControl()
+                # ctrl.setCaptureStill(True)
+                # self.qControl.send(ctrl)
+                # print("Sent 'still' event to the camera!")
+                return brightness, lensPos
                 
     # Capture images every 0.3 secs and process it
-    def autoCapture(self, imgPath, directoryName, processingObjectArray):
+    def autoCapture(self, imgPath, directoryName, processingObject):
         capture = time.time()
 
         errorAcheived = False #img updated condition
@@ -103,10 +93,15 @@ class imageCapture:
             
             path = os.path.join(directoryName,imgPath)
             # Where the subtracted image is being saved
-            # diffPath = os.path.join("Object_Detection\Photos\DIFF", imgPath)
+            diffPath = os.path.join("Object_Detection\Photos\DIFF", imgPath)
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
+                
+                # get the result display to frame
+                processingObject.setTestImg(frame)
+                frame = processingObject.displayResultPosition()
+                
                 frame = cv.pyrDown(frame)
                 frame = cv.pyrDown(frame)
                 cv.imshow("captured", frame)
@@ -114,23 +109,18 @@ class imageCapture:
             if self.qStill.has():
                 fName = path
                 with open(fName, "wb") as f:
+                    
                     f.write(self.qStill.get().getData())
-
                     img = cv.imread(fName)
-                    img_slicer = imageSlicing(img, input_number_list)
-                    result = img_slicer.imageSlicing()
-
-                    PLCArray = []
-
-                    for i in range(4):
-                        processingObjectArray[i].setTestImg(result[i])
-                        error, diffImg = processingObjectArray[i].compareImage()
-                        print("Image " + i+ ": " +error)
-                        
-                        # if error < tolerance:
-                        #     resultArray[i] = 1
-
-                    return PLCArray
+                    processingObject.setTestImg(img)
+                    
+                    # slice the testImg in four, hardcoded for now
+                    processingObject.sliceStation100()
+                    processingObject.compareImage()
+                    
+                    # cv.imwrite(diffPath,diffImg)
+                    # if error < tolerance:
+                    #     resultArray[i] = 1
 
             key = cv.waitKey(1)
             if (time.time() - capture) > 0.3:
@@ -163,35 +153,3 @@ class imageCapture:
                     
                     return
                 
-    def displayOutput(self):
-        frame = cv.imread('STD.jpg')
-        # 2160*3840 window size
-        font = cv.FONT_HERSHEY_SIMPLEX
-
-        color = (0, 255, 0)
-        blue = (75, 25 ,23)
-        shift_x = 10
-        gap = 90
-        partsFontScale = 3
-        partsFontthickness = 4
-
-        text_x = 2980
-        text_y = 1700
-        # 2160*3840
-        box_x1 = text_x 
-        box_x2 = 3780
-        box_y1 = 1700 - 115
-        box_y2 = 2100
-
-        # start_point, end_point
-        frame = cv.rectangle(frame, (box_x1, box_y1), (box_x2, box_y2), (255, 255, 255), -1)
-
-        title_y = 1610+60 #1610
-        line_y = title_y +20
-
-        frame = cv.putText(frame, "RESULTS", (text_x + shift_x, title_y), font, partsFontScale, blue, partsFontthickness+3)
-        frame = cv.line(frame, (box_x1 + 20, line_y), (box_x2-20, line_y), blue, 3)
-        frame = cv.putText(frame, "Bottom: ", (text_x + shift_x, text_y + gap*4), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, "Top: ", (text_x + shift_x, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, "Right: ", (text_x + shift_x, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, "Left: ", (text_x + shift_x, text_y + gap), font, partsFontScale, blue, partsFontthickness)
