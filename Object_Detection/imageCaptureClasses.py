@@ -21,6 +21,7 @@ class imageCapture:
         self.qRgb = qRgb
         self.qStill = qStill
         self.qControl = qControl
+        self.MSEresults = 0
 
     def setParameters(self):
         lensPos = 150
@@ -36,27 +37,16 @@ class imageCapture:
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
-                #cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
-                
-                # create an object to slice the images
-                img_slicer = imageSlicing(frame, input_number_list)
-                result = img_slicer.imageSlicing()
-                img_slicer.show_cut_images(result)
-                
-
+                cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
+            
             if self.qStill.has():
                 dirName = "Object_Detection\Photos\STD"
                 fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
                     print('Image saved to', fName)
-
                     imgUpdated = True
                     img = cv.imread(fName)
-
-                    if imgUpdated is True:
-                        cv.destroyAllWindows()
-                        return brightness, lensPos, img
 
             key = cv.waitKey(1)
             # focal length adjestment
@@ -85,13 +75,14 @@ class imageCapture:
             
             if key == ord("q"):
                 
-                ctrl = dai.CameraControl()
-                ctrl.setCaptureStill(True)
-                self.qControl.send(ctrl)
-                print("Sent 'still' event to the camera!")
+                # ctrl = dai.CameraControl()
+                # ctrl.setCaptureStill(True)
+                # self.qControl.send(ctrl)
+                # print("Sent 'still' event to the camera!")
+                return brightness, lensPos
                 
     # Capture images every 0.3 secs and process it
-    def autoCapture(self, imgPath, directoryName, processingObjectArray):
+    def autoCapture(self, imgPath, directoryName, processingObject):
         capture = time.time()
 
         errorAcheived = False #img updated condition
@@ -107,7 +98,7 @@ class imageCapture:
             
             path = os.path.join(directoryName,imgPath)
             # Where the subtracted image is being saved
-            # diffPath = os.path.join("Object_Detection\Photos\DIFF", imgPath)
+            diffPath = os.path.join("Object_Detection\Photos\DIFF", imgPath)
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
@@ -120,16 +111,14 @@ class imageCapture:
                 with open(fName, "wb") as f:
                     f.write(self.qStill.get().getData())
 
-                    img_slicer = imageSlicing(cv.imread(path), input_number_list)
-                    result = img_slicer.imageSlicing()
-
+                    # img_slicer = imageSlicing(cv.imread(path))
+                    # result = img_slicer.imageSlicing()
 
                     # for i in range(len(result)):
                     for i in range(4):
                         processingObjectArray[i].setTestImg(result[i])
                         error, diffImg = processingObjectArray[i].compareImage()
                         print("Image " + i+ ": " +error)
-                    print(" ")
                     
                     
                         
@@ -175,6 +164,7 @@ class imageCapture:
         color = (0, 255, 0)
         blue = (75, 25 ,23)
         shift_x = 10
+        shift_x_error = 50
         gap = 90
         partsFontScale = 3
         partsFontthickness = 4
@@ -195,7 +185,14 @@ class imageCapture:
 
         frame = cv.putText(frame, "RESULTS", (text_x + shift_x, title_y), font, partsFontScale, blue, partsFontthickness+3)
         frame = cv.line(frame, (box_x1 + 20, line_y), (box_x2-20, line_y), blue, 3)
-        frame = cv.putText(frame, "Bottom: ", (text_x + shift_x, text_y + gap*4), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, "Top: ", (text_x + shift_x, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, "Right: ", (text_x + shift_x, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, "Left: ", (text_x + shift_x, text_y + gap), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, "Right: ", (text_x + shift_x, text_y + gap*4), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, self.MSEresults[3], (text_x + shift_x + shift_x_error, text_y + gap*4), font, partsFontScale, blue, partsFontthickness)
+        
+        frame = cv.putText(frame, "Bottom: ", (text_x + shift_x, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, self.MSEresults[2], (text_x + shift_x + shift_x_error, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
+        
+        frame = cv.putText(frame, "Left: ", (text_x + shift_x, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, self.MSEresults[1], (text_x + shift_x + shift_x_error, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
+        
+        frame = cv.putText(frame, "Top: ", (text_x + shift_x, text_y + gap), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, self.MSEresults[0], (text_x + shift_x + shift_x_error, text_y + gap), font, partsFontScale, blue, partsFontthickness)

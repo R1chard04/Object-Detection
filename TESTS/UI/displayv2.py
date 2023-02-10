@@ -1,33 +1,34 @@
 import cv2 as cv
 
-# define starting point
-x1 = 100
-y1 = 300
-
-# define ending point
-x2 = 400
-y2 = 1600
-
-color = (0,255,0)
-text_color = (255,255,255)
-label = "PASS"
-
-# Load the image
 frame = cv.imread('STD.jpg')
+# 2160*3840 window size
+station100 = ["Top", "Left", "Bottom", "Right"]
+x2 = 3840 - 60
+y2 = 2160 - 60
+x1 = x2 - 800
+y1 = 0
+output_x = x2 - 40
+output_y = []
+line_p1 = (0,0)
+line_p2 = (0,0)
 
-# For bounding box
-frame = cv.rectangle(frame, (x1, y1), (x2, y2), color, 3)
- 
-# For the text background
-# Finds space required by the text so that we can put a background with that amount of width.
-(w, h), _ = cv.getTextSize(label, cv.FONT_HERSHEY_SIMPLEX, 0.6, 1)
+def displayResultPosition(parts):
+    num = len(parts)
+    n = 0
+    while (n < num):
+        output_y.append(y2 -40 -90* (num-n-1))
+        n = n + 1
 
-# Prints the text.    
-frame = cv.rectangle(frame, (x1, y1 - 20), (x1 + w, y1), color, -1)
-frame = cv.putText(frame, label, (x1, y1 - 5), cv.FONT_HERSHEY_SIMPLEX, 0.6, text_color, 1)
+line_p1 = (x1+20, output_y[-1]-100)
+line_p2 = (0,output_y[-1]-100)
+print("line_p1: ", line_p1)
+print("line_p2: ", line_p2)
 
-# For printing text
-frame = cv.putText(frame, 'test', (x1, y1), cv.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 3)
+y1 = output_y[-1] - 205
+
+displayResultPosition(station100)
+for i in output_y:
+    print (i)
 
 frame = cv.pyrDown(frame)
 frame = cv.pyrDown(frame)
@@ -35,9 +36,5 @@ frame = cv.pyrDown(frame)
 # Display the image
 cv.imshow("Square on Image", frame)
 
-
-# Wait for user to close the window
 cv.waitKey(0)
-
-# Destroy all windows
 cv.destroyAllWindows()
