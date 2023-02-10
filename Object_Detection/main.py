@@ -52,33 +52,34 @@ with dai.Device(pipeline) as device:
     brightness, lensPos = captureObject.setParameters()
     # myCalibration = imageCalibration(initImgPath)
     # myCalibration.imageCalibration()
-    initImgArry = ["", "", "", ""]
-    processingObject = imageProcessing(initImgArray[0], initImgArray[0], initImgArray[0])
 
+    
 
-    topMask = cv.imread("Object_Detection\Photos\MASKS\topPart.png")
-    bottomMask = cv.imread("Object_Detection\Photos\MASKS\bottomPart.png")
-    rightMask = cv.imread("Object_Detection\Photos\MASKS\rightPart.png")
-    leftMask = cv.imread("Object_Detection\Photos\MASKS\leftPart.png")
+#----------------------Inputs for station100, hardcoded for now---------------------#
 
-    topRef =cv.imread("Quadrant 3.jpg")
-    leftRef =cv.imread("Quadrant 1.jpg")
-    bottomRef =cv.imread("Quadrant 4.jpg")
-    rightRef =cv.imread("Quadrant 2.jpg")
+    topMask = cv.imread("Photos\MASKS\\topPartM.jpg")
+    bottomMask = cv.imread("Photos\MASKS\\bottomPartM.jpg")
+    rightMask = cv.imread("Photos\MASKS\\rightPartM.jpg")
+    leftMask = cv.imread("Photos\MASKS\leftPartM.jpg")
 
-    processingObjectArray = []
+    topRef =cv.imread("Photos\STD\\topPart.jpg")
+    leftRef =cv.imread("Photos\STD\leftPart.jpg")
+    bottomRef =cv.imread("Photos\STD\\bottomPart.jpg")
+    rightRef =cv.imread("Photos\STD\\rightPart.jpg")
 
     masks=[topMask,leftMask, bottomMask, rightMask]
+    ref = cv.imread("Photos\STD\STD.jpg")
     refs =[topRef, leftRef, bottomRef,rightRef]
 
-    for i in range(4):
-        object = imageProcessing(masks[i], refs[i], initImg)
-        processingObjectArray.append(object)
-
+    # for i in range(4):
+    #     object = imageProcessing(masks[i], refs[i], initImg)
+    #     station100ProcessingObjectArray.append(object)
+        
+    station100ProcessingObject = imageProcessing(masks, refs, ref,"station100")
+    
     #-----------------------------------------Calibrate-----------------------------------------#
   
-
-    maskObject = recalibrate(captureObject, processingObject, brightness, lensPos)
+    maskObject = recalibrate(captureObject, station100ProcessingObject, brightness, lensPos)
 
     # #gen mask
     # maskObject.setStandards()
@@ -87,12 +88,12 @@ with dai.Device(pipeline) as device:
     #-------------------------------------------------------------------------------------------#
     
     while True:
-        captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObjectArray) 
+        captureObject.autoCapture("Test.jpg", photoDirectoryName, station100ProcessingObject) 
         # updatePLC(errorArray)
-        capturedImages = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        capturedImages = captureObject.autoCapture("Test.jpg", photoDirectoryName, station100ProcessingObject) 
         
         # # for i in range(len(result)):
-        # for object in processingObjectArray:
+        # for object in station100ProcessingObjectArray:
         #     object.setTestImg()
         #     error, diffImg = object.compareImage()
         #     print("Image " + i+ ": " +error)

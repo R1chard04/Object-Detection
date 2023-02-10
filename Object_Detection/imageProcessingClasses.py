@@ -3,20 +3,27 @@ import numpy as np
 
 
 def mse(img1, img2):
-    height, width, channels = img1.shape
+    height, width = img1.shape
     diffImg = cv.absdiff(img1, img2)
     err = np.sum(diffImg**2)
     ans = err/(float(height*width))  
     #Closer to 0 is better
-    return ans, diffImg
+    return ans
 
 class imageProcessing:
-    def __init__(self, maskImg, refImg, testImg, parts) -> None:
+    def __init__(self, maskImg, refImg, testImg, station) -> None:
+        # in station, we indicate which station this object is
+        
+        self.station = station
+        self.parts = ""
+        if station == "station100":
+            self.parts = ["Top", "Left", "Right", "Bottom"]
+        
         self.maskImg = maskImg
-        self.refImg = refImg
-        self.testImg = testImg
+        self.slicedRef = refImg  # array type variable
+        self.testImg = testImg 
         # ['top.jpg', 'left.jpg', 'bottom.jpg', 'right.jpg']
-        self.slicedRef = [refImg, refImg, refImg, refImg]
+        # self.slicedRef = [refImg, refImg, refImg, refImg]
         self.slicedTestImgs = [refImg, refImg, refImg, refImg] 
         # self.slicedTestImgs = ["imagePath"]* len(parts) # initialize a empty list w num of parts ""
         # self.mseResults = [0]*4
@@ -27,17 +34,18 @@ class imageProcessing:
         self.testImg = img
 
     def setRefImg(self, img) -> None:
-        
-        # slice the ref images
-        tmp = [img,img,img,img]
         self.refImg = img
-    
-        tmp[0] = self.refImg[:self.height//2, :self.width] # top
-        tmp[1] = self.refImg[:self.height, :self.width//2] # left
-        tmp[2] = self.refImg[self.height//2:, :self.width] # bottom
-        tmp[3] = self.refImg[:self.height, :self.width//2] # right
-        self.refImg = tmp
-
+        # slice the ref images depending on which station it is
+        
+        # if self.station == "station100":
+        #     tmp = [img,img,img,img]
+        #     self.refImg = img
+        #     tmp[0] = self.refImg[:self.height//2, :self.width] # top
+        #     tmp[1] = self.refImg[:self.height, :self.width//2] # left
+        #     tmp[2] = self.refImg[self.height//2:, :self.width] # bottom
+        #     tmp[3] = self.refImg[:self.height, :self.width//2] # right
+        #     self.refImg = tmp
+        
     def setMaskImg(self, img) -> None:
         self.maskImg = img
 
@@ -52,7 +60,7 @@ class imageProcessing:
         MSEResults = [0]*4
         
         # comparing all the parts individually
-        while i < len(self.parts):
+        while i < 4:
             ref = cv.bitwise_and(self.slicedRef[i], self.slicedRef[i], mask = self.maskImg[i])
             test = cv.bitwise_and(self.slicedTestImgs[i], self.slicedTestImgs[i], mask = self.maskImg[i])
             error, diffImg = mse(test, ref)
@@ -65,6 +73,11 @@ class imageProcessing:
         self.slicedTestImgs[1] = self.testImg[:self.height, :self.width//2] # left
         self.slicedTestImgs[2] = self.testImg[self.height//2:, :self.width] # bottom
         self.slicedTestImgs[3] = self.testImg[:self.height, :self.width//2] # right
+        
+        # self.slicedTestImgs[0] = self.testImg[:self.height//2, :self.width] # top
+        # self.slicedTestImgs[1] = self.testImg[:self.height, :self.width//2] # left
+        # self.slicedTestImgs[2] = self.testImg[self.height//2:, :self.width] # bottom
+        # self.slicedTestImgs[3] = self.testImg[:self.height, :self.width//2] # right
         
     
     def displayResultPosition(self):

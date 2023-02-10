@@ -6,11 +6,6 @@ import time
 from imageProcessingClasses import imageProcessing
 from imageSlicingClasses import imageSlicing, input_number
 
-# create a list to store input numbers from users
-input_number_list = []
-input_number(input_number_list)
-
-
 
 # Make sure the value don't go out of the range
 def clamp(num, v0, v1):
@@ -109,19 +104,20 @@ class imageCapture:
             if self.qStill.has():
                 fName = path
                 with open(fName, "wb") as f:
+                    
                     f.write(self.qStill.get().getData())
-
-                    # img_slicer = imageSlicing(cv.imread(path))
-                    # result = img_slicer.imageSlicing()
-
-                    # for i in range(len(result)):
-                    for i in range(4):
-                        processingObjectArray[i].setTestImg(result[i])
-                        error, diffImg = processingObjectArray[i].compareImage()
-                        print("Image " + i+ ": " +error)
+                    img = cv.imread(fName)
+                    processingObject.setTestImg(img)
+                    
+                    # slice the testImg in four, hardcoded for now
+                    processingObject.sliceStation100()
                     
                     
-                        
+                    error= processingObject.compareImage()
+                    
+                    # cv.imwrite(diffPath,diffImg)
+                    print(error)
+                    
                     # if error < tolerance:
                     #     resultArray[i] = 1
 
