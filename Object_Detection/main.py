@@ -57,10 +57,10 @@ with dai.Device(pipeline) as device:
 
 #----------------------Inputs for station100, hardcoded for now---------------------#
 
-    topMask = cv.imread("Photos\MASKS\\topPartM.jpg")
-    bottomMask = cv.imread("Photos\MASKS\\bottomPartM.jpg")
-    rightMask = cv.imread("Photos\MASKS\\rightPartM.jpg")
-    leftMask = cv.imread("Photos\MASKS\leftPartM.jpg")
+    topMask = cv.cvtColor(cv.imread("Photos\MASKS\\topPartM.jpg"), cv.COLOR_BGR2GRAY)
+    bottomMask = cv.cvtColor(cv.imread("Photos\MASKS\\bottomPartM.jpg"), cv.COLOR_BGR2GRAY)
+    rightMask = cv.cvtColor(cv.imread("Photos\MASKS\\rightPartM.jpg"), cv.COLOR_BGR2GRAY)
+    leftMask = cv.cvtColor(cv.imread("Photos\MASKS\leftPartM.jpg"), cv.COLOR_BGR2GRAY)
 
     topRef =cv.imread("Photos\STD\\topPart.jpg")
     leftRef =cv.imread("Photos\STD\leftPart.jpg")

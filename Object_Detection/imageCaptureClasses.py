@@ -97,6 +97,11 @@ class imageCapture:
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
+                
+                # get the result display to frame
+                processingObject.setTestImg(frame)
+                frame = processingObject.displayResultPosition()
+                
                 frame = cv.pyrDown(frame)
                 frame = cv.pyrDown(frame)
                 cv.imshow("captured", frame)
@@ -152,43 +157,3 @@ class imageCapture:
                     
                     return
                 
-    def displayOutput(self):
-        frame = cv.imread('STD.jpg')
-        # 2160*3840 window size
-        font = cv.FONT_HERSHEY_SIMPLEX
-
-        color = (0, 255, 0)
-        blue = (75, 25 ,23)
-        shift_x = 10
-        shift_x_error = 50
-        gap = 90
-        partsFontScale = 3
-        partsFontthickness = 4
-
-        text_x = 2980
-        text_y = 1700
-        # 2160*3840
-        box_x1 = text_x 
-        box_x2 = 3780
-        box_y1 = 1700 - 115
-        box_y2 = 2100
-
-        # start_point, end_point
-        frame = cv.rectangle(frame, (box_x1, box_y1), (box_x2, box_y2), (255, 255, 255), -1)
-
-        title_y = 1610+60 #1610
-        line_y = title_y +20
-
-        frame = cv.putText(frame, "RESULTS", (text_x + shift_x, title_y), font, partsFontScale, blue, partsFontthickness+3)
-        frame = cv.line(frame, (box_x1 + 20, line_y), (box_x2-20, line_y), blue, 3)
-        frame = cv.putText(frame, "Right: ", (text_x + shift_x, text_y + gap*4), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, self.MSEresults[3], (text_x + shift_x + shift_x_error, text_y + gap*4), font, partsFontScale, blue, partsFontthickness)
-        
-        frame = cv.putText(frame, "Bottom: ", (text_x + shift_x, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, self.MSEresults[2], (text_x + shift_x + shift_x_error, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
-        
-        frame = cv.putText(frame, "Left: ", (text_x + shift_x, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, self.MSEresults[1], (text_x + shift_x + shift_x_error, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
-        
-        frame = cv.putText(frame, "Top: ", (text_x + shift_x, text_y + gap), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, self.MSEresults[0], (text_x + shift_x + shift_x_error, text_y + gap), font, partsFontScale, blue, partsFontthickness)

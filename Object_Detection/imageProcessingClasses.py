@@ -15,18 +15,21 @@ class imageProcessing:
         # in station, we indicate which station this object is
         
         self.station = station
-        self.parts = ""
-        if station == "station100":
-            self.parts = ["Top", "Left", "Right", "Bottom"]
+        # self.parts = ""
+        # if station == "station100":
+        self.parts = ["Top", "Left", "Right", "Bottom"]
         
+        # convert maskImg to grayscale
         self.maskImg = maskImg
+
         self.slicedRef = refImg  # array type variable
         self.testImg = testImg 
         # ['top.jpg', 'left.jpg', 'bottom.jpg', 'right.jpg']
         # self.slicedRef = [refImg, refImg, refImg, refImg]
         self.slicedTestImgs = [refImg, refImg, refImg, refImg] 
         # self.slicedTestImgs = ["imagePath"]* len(parts) # initialize a empty list w num of parts ""
-        # self.mseResults = [0]*4
+        
+        self.MSEResults = [0]*4
         self.height = 2160
         self.width = 3840
 
@@ -48,6 +51,8 @@ class imageProcessing:
         
     def setMaskImg(self, img) -> None:
         self.maskImg = img
+        
+    
 
     def setFrame(self, img) -> None:
         # call the slicing method, slice the pic and save it to the array
@@ -61,9 +66,12 @@ class imageProcessing:
         
         # comparing all the parts individually
         while i < 4:
+            print(self.slicedRef[i].shape)
+            print(self.maskImg[i].shape)
+            
             ref = cv.bitwise_and(self.slicedRef[i], self.slicedRef[i], mask = self.maskImg[i])
             test = cv.bitwise_and(self.slicedTestImgs[i], self.slicedTestImgs[i], mask = self.maskImg[i])
-            error, diffImg = mse(test, ref)
+            error = mse(test, ref)
             MSEResults[i] = error
         return MSEResults
 
@@ -81,5 +89,43 @@ class imageProcessing:
         
     
     def displayResultPosition(self):
-        # calculate the pixel value to display the part pics
-        pass
+        
+        frame = self.testImg
+        # 2160*3840 window size
+        font = cv.FONT_HERSHEY_SIMPLEX
+        
+        blue = (75, 25 ,23)
+        shift_x = 10
+        shift_x_error = 400
+        gap = 90
+        partsFontScale = 3
+        partsFontthickness = 4
+
+        text_x = 2980
+        text_y = 1700
+        # 2160*3840
+        box_x1 = text_x 
+        box_x2 = 3780
+        box_y1 = 1700 - 115
+        box_y2 = 2100
+
+        # start_point, end_point
+        frame = cv.rectangle(frame, (box_x1, box_y1), (box_x2, box_y2), (255, 255, 255), -1)
+        title_y = 1610+60 #1610
+        line_y = title_y +20
+
+        frame = cv.putText(frame, "RESULTS", (text_x + shift_x, title_y), font, partsFontScale, blue, partsFontthickness+3)
+        frame = cv.line(frame, (box_x1 + 20, line_y), (box_x2-20, line_y), blue, 3)
+        frame = cv.putText(frame, "Right: ", (text_x + shift_x, text_y + gap*4), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, str(self.MSEResults[3]), (text_x + shift_x + shift_x_error, text_y + gap*4), font, partsFontScale, blue, partsFontthickness)
+        
+        frame = cv.putText(frame, "Bottom: ", (text_x + shift_x, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, str(self.MSEResults[2]), (text_x + shift_x + shift_x_error, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
+        
+        frame = cv.putText(frame, "Left: ", (text_x + shift_x, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, str(self.MSEResults[1]), (text_x + shift_x + shift_x_error, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
+        
+        frame = cv.putText(frame, "Top: ", (text_x + shift_x, text_y + gap), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, str(self.MSEResults[0]), (text_x + shift_x + shift_x_error, text_y + gap), font, partsFontScale, blue, partsFontthickness)
+        
+        return frame
