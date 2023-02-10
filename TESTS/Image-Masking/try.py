@@ -93,7 +93,7 @@ videoEnc.bitstream.link(xoutStill.input)
 # # Force USB2 communication
 # with dai.Device(pipeline, usb2Mode = True) as device:
 
-with dai.Device(pipeline, usb2Mode = True) as device:
+with dai.Device(pipeline) as device:
     # Output queue will be used to get the rgb frames from the output defined above
     qRgb = device.getOutputQueue(name="rgb", maxSize=30, blocking=False)
     qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
@@ -194,7 +194,10 @@ with dai.Device(pipeline, usb2Mode = True) as device:
         elif key == ord('g'):
             std = cv.imread('Image-Masking\mask_pics\\STANDARD.jpg')
             na = cv.imread('Image-Masking\mask_pics\\NONE.jpg')
-            result = filterImage(std, na)
+            result = cv.absdiff(std, na)
+            # result = cv.cvtColor(result, cv.COLOR_BGR2GRAY)
+            # result[result >= 30] = 255
+            # result - cv.threshold(result, 10, 255, cv.THRESH_BINARY)
             # img = cv.resize(result, (0, 0), fx=0.2, fy=0.2)
             cv.imwrite("Image-Masking\mask_pics\MASK.jpg", result)
             # cv.imshow("MASK", img)
