@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #Load video
-video = cv2.VideoCapture('Videos_Test/IMG_4965.mp4')
+video = cv2.VideoCapture('PXL_20230210_210347789.mp4')
 #Array of numerical co-efficents for pixels in an image. None is default 3x3 size.
 kernel = None
 
@@ -20,7 +20,7 @@ while(video.isOpened()):
         fgmask = BackgroundObject.apply(frame)
 
         #Since shadows are masked as grey and objects as white. We can set threshold to ignore grey.
-        _ , fgmask = cv2.threshold(fgmask, 200, 255, cv2.THRESH_BINARY)
+        _ , fgmask = cv2.threshold(fgmask, 300, 455, cv2.THRESH_BINARY)
 
         #Dilation increases white area of figures
         #Erode increases black area of mask
@@ -36,7 +36,7 @@ while(video.isOpened()):
         for cnt in contours:
 
         #Raise threshold detection area
-            if cv2.contourArea(cnt) > 400:
+            if cv2.contourArea(cnt) > 10000:
 
                 # Retrieve the bounding box coordinates from the contour.
                 x, y, width, height = cv2.boundingRect(cnt)
