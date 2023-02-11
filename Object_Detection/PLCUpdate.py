@@ -57,34 +57,21 @@ def writePLC(station, resultError):
 # readPLC('AA_test.5')
 
 
-# class DOG:
-#     def __init__(self, name, breed):
-#         self.name = name
-#         self.breed = breed
-
-#     def bark(self):
-#         print("Woof!")
-
-# dog = Dog("Rufus", "Labrador")
-# print("Dog's name is:", dog.name)
-# print("Dog's breed is:", dog.breed)
-# dog.bark()
 
 
-class allenBradley :
-    def __init__(self, station, results):
-        self.station = station
-        self.results = results
+# class allenBradley :
+#     def __init__(self, station, results):
+#         self.station = station
+#         self.results = results
 
-    def crossVerify(self):
-        stationName = ["OP100","OP120", "OP140"]
-        stationResults = [4, 1, 1]
+#     def crossVerify(self):
+#         stationName = ["OP100","OP120", "OP140"]
+#         stationResults = [4, 1, 1]
         
 
-        print("Valid data")
+#         print("Valid data")
         
-preVerified = allenBradley("OP100", "Hello")
-print(preVerified.station)
-print(preVerified.results)
-preVerified.crossVerify()
-
+# preVerified = allenBradley("OP100", "Hello")
+# print(preVerified.station)
+# print(preVerified.results)
+# preVerified.crossVerify()
