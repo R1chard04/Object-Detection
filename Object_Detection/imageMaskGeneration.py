@@ -65,101 +65,56 @@ def floodFill(imgThresh):
 #------------------------------------------------------------------------------------------------#
 
 class recalibrate:
-    def __init__(self, captureObject, processingObject, brightness, focalLength) -> None:
+  def __init__(self, captureObject, processingObject, brightness, focalLength) -> None:
 
-      self.captureObject = captureObject
-      self.processingObject = processingObject
-      self.brightness = brightness
-      self.focalLength = focalLength
-
-    def setStandards(self):
-        savePath = 'Object_Detection\Photos\STD'
-        brightness = [self.brightness - 2, self.brightness, self.brightness+2]
-        ref = None
-        for i in range(3):
-          imgName = "STD%s" %i + ".jpg"
-          img, imgPath = self.captureObject.autoCapture(imgName, savePath, brightness[i], self.focalLength)
+    self.captureObject = captureObject
+    self.processingObject = processingObject
+    self.brightness = brightness
+    self.focalLength = focalLength
     
-          if i == 2:
-            ref = img
-        return ref
+  def createMask(self,stdPath, nonePath, maskPath):
+    #Reading in images
+    std = cv.imread(stdPath)
+    colour = cv.imread(nonePath)
 
-    def setNones(self):
-        savePath = 'Object_Detection\Photos/NONE'
-        brightness = [self.brightness - 2, self.brightness, self.brightness+2]
-        ref = None
-        for i in range(3):
-          imgName = 'NONE%s'%i + '.jpg'
-          img, imgPath = self.captureObject.autoCapture(imgName, savePath, brightness[i], self.focalLength)
+    #Creating ref image
+    ref = cv.cvtColor(std, cv.COLOR_BGR2GRAY)
+    ref[ref != 0] = 0
 
-          if i == 2:
-            ref = img
-        return ref
-            
-    def createMask(self):
-        #Paths
-        noneDir = 'Object_Detection\Photos\\NONE'
-        stdDir = 'Object_Detection\Photos\\STD'
-        initDir = 'Object_Detection\Photos\\INIT'
+    #Image subtraction
+    diff = cv.subtract(std, colour)
 
-        maskPath = os.path.join(initDir, "mask.jpg")
+    #Denoising
+    denoise = np.float32(diff) / 255.0
 
-        #Arrays for processed images
-        noneArray = []
-        stdArray = []
+    kernel_size = 3
+    blur = cv.GaussianBlur(denoise, (kernel_size, kernel_size),0)
 
-        for directory in (stdDir, noneDir):
-            for filename in os.listdir(directory):
-                file_path = os.path.join(directory, filename)
-                stdArray.append(cv.imread(file_path)) if directory == stdDir else noneArray.append(cv.imread(file_path))
+    denoise = np.uint8(blur * 255)
 
-        ref = cv.imread("Object_Detection\Photos\STD\STD0.jpg")
-        ref = cv.cvtColor(ref, cv.COLOR_BGR2GRAY)
-        __, ref = cv.threshold(ref, 1, 255, cv.THRESH_BINARY)
-        ref[ref != 0] = 0
 
-        for i in range(len(stdArray)):
-          std = orange2Black(stdArray[i])
-          none = orange2Black(noneArray[i])
+    #Convert to gray
+    gray = cv.cvtColor(denoise, cv.COLOR_BGR2GRAY)
 
-          std_gray = cv.cvtColor(std, cv.COLOR_BGR2GRAY)
-          none_gray = cv.cvtColor(none, cv.COLOR_BGR2GRAY)
+    #Convert to binary
+    kernel = np.ones((3, 3), np.uint8)
+    opening = cv.morphologyEx(gray, cv.MORPH_OPEN, kernel)
+    __, binary = cv.threshold(opening, 1, 255, cv.THRESH_TRIANGLE)
 
-          subtract1 = cv.subtract(std_gray, none_gray)
-          subtract2 = cv.subtract(none_gray, std_gray)
+    #Finding Contours
+    contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    contours = sorted(contours, key=cv.contourArea, reverse=True)
+    largest_contour = contours[0]
+    cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 5)
 
-          addImg = cv.add(subtract1, subtract2)
+    #Reparing contoured
+    repair = fillByLine(ref, "V")
+    repair = fillByLine(repair, "H")
+    repair = floodFill(repair)
 
-          _, thresholdImg = cv.threshold(addImg, 50, 255, cv.THRESH_BINARY)
+    mask = repair
+    cv.imwrite(maskPath, mask)
+    return
 
-          denoiseImg = cv.GaussianBlur(addImg, (5,5), 7, 21)
-          denoiseImg = cv.fastNlMeansDenoising(denoiseImg, 15, 21)
-          kernel = np.ones((3, 3), np.uint8)
-          opening = cv.morphologyEx(denoiseImg, cv.MORPH_OPEN, kernel)
-          __, binary = cv.threshold(opening, 10, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)
-
-          contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-          contours = sorted(contours, key=cv.contourArea, reverse=True)
-          largest_contour = contours[0]
-
-          # ref = np.zeros((ref.shape[0], ref.shape[1], 3), np.uint8)
-          cv.drawContours(ref, [largest_contour], -1, (255, 255, 255), 1)
-
-          print("dodo")
-
-          ref[ref != 0] = 255
-
-        #Corrections
-        print("here")
-        ref = fillByLine(ref, "H")
-        print("here")
-        ref = floodFill(ref)
-        print("here")
-        ref = fillByLine(ref, "V")
-
-        cv.imwrite(maskPath, ref)
-        print("here")
-        return ref
-
-        
+      
 

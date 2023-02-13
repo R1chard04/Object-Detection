@@ -75,23 +75,23 @@ class imageCapture:
                 return brightness, lensPos
                 
     # Capture images every 0.3 secs and process it
-    def autoCapture(self, imgPath, directoryName, processingObject):
+    def autoCapture(self, imgName, directoryName, processingObject):
         capture = time.time()
 
-        errorAcheived = False #img updated condition
+        stationSuccess = False #img updated condition
         error = 0
         tolerance = 0
         resultArray = []
 
-        while not errorAcheived:
+        while not stationSuccess:
             inRgb = self.qRgb.tryGet() 
             
-            if imgPath == "Test":
-                imgPath = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
+            if imgName == "Test":
+                imgName = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
             
-            path = os.path.join(directoryName,imgPath)
+            path = os.path.join(directoryName,imgName)
             # Where the subtracted image is being saved
-            diffPath = os.path.join("Object_Detection\Photos\DIFF", imgPath)
+            diffPath = os.path.join("Object_Detection\Photos\DIFF", imgName)
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
@@ -105,11 +105,11 @@ class imageCapture:
                 cv.imshow("captured", frame)
                 
             if self.qStill.has():
-                fName = path
-                with open(fName, "wb") as f:
-                    
+                path
+                with open(path, "wb") as f:
                     f.write(self.qStill.get().getData())
-                    img = cv.imread(fName)
+
+                    img = cv.imread(path)
                     processingObject.setTestImg(img)
                     
                     # slice the testImg in four, hardcoded for now
@@ -144,10 +144,10 @@ class imageCapture:
                 cv.imshow("captured", frame)     
 
             if self.qStill.has():
-                fName = path
-                with open(fName, "wb") as f:
+                with open(path, "wb") as f:
                     f.write(self.qStill.get().getData())
                     imgUpdated = True
                     
-                    return
+        img = cv.imread(path)
+        return img
                 

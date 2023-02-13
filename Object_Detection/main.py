@@ -11,8 +11,8 @@ from imageCalibration import imageCalibration
 from imageStitchingClasses import imageStitching
 import time
 import os
-# from pylogix import PLC
-# from PLCUpdate import updatePLC
+from pylogix import PLC
+from PLCUpdate import transferToPLC
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
@@ -89,8 +89,8 @@ with dai.Device(pipeline) as device:
     
     while True:
         captureObject.autoCapture("Test.jpg", photoDirectoryName, station100ProcessingObject) 
-        # updatePLC(errorArray)
         capturedImages = captureObject.autoCapture("Test.jpg", photoDirectoryName, station100ProcessingObject) 
+        transferToPLC("OP100", capturedImages)
         
         # # for i in range(len(result)):
         # for object in station100ProcessingObjectArray:
@@ -101,22 +101,3 @@ with dai.Device(pipeline) as device:
         #     #     resultArray[i] = 1
         # # updatePLC(errorArray)
         
-        
-
-    # capture = time.time()
-    # while True:
-        
-
-    # with dai.Device(pipeline_1, device_info_1) as device1:
-    #     captureObject1 = imageCapture(device1.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
-    #                                 device1.getOutputQueue(name="still", maxSize=30, blocking=True), 
-    #                                 device1.getInputQueue(name="control"),
-    #                                 photoDirectoryName)
-    
-        
-    #     for i in range(5):                   
-    #         initialTestImg1, initialTestImgPath1 = captureObject1.capture()
-    #         cv.imshow("test", initialTestImg1)
-            
-    #         cv.waitKey(0)
-    #     initialTestImg1, initialTestImgPath1 = captureObject1.capture()
