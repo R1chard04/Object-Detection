@@ -68,7 +68,7 @@ class imageProcessing:
         return MSEResults
 
     def sliceStation100(self) ->None:
-        # slice the images in four parts 
+        # slice the images in four parts
         self.slicedTestImgs[0] = self.testImg[:self.height//2, :self.width] # top
         self.slicedTestImgs[1] = self.testImg[:self.height, :self.width//2] # left
         self.slicedTestImgs[2] = self.testImg[self.height//2:, :self.width] # bottom
