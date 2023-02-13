@@ -104,8 +104,8 @@ class imageCapture:
             if self.qStill.has():
                 path
                 with open(path, "wb") as img:
-                    img.read(self.qStill.get().getData())
-                    return img
+                    img.write(self.qStill.get().getData())
+                    return path
                     
             key = cv.waitKey(1)
             if (time.time() - capture) > 0.3:
@@ -127,12 +127,20 @@ class imageCapture:
                 frame = cv.pyrDown(frame)
                 frame = cv.pyrDown(frame)
                 cv.imshow("captured", frame)     
+            
 
             if self.qStill.has():
                 with open(path, "wb") as f:
                     f.write(self.qStill.get().getData())
                     imgUpdated = True
-                    
-        img = cv.imread(path)
-        return img
+
+                    img = cv.imread(path)
+                    return img
+
+            key = cv.waitKey(1)  
+            if key == ord('c'):
+                ctrl = dai.CameraControl()
+                ctrl.setCaptureStill(True)
+                self.qControl.send(ctrl)
+        
                 

@@ -2,8 +2,9 @@ import cv2 as cv
 import numpy as np
 import os
 
-
-#------------------------------------------------------------------------------------------------#
+refDir = "Object_Detection\Photos\Refs"
+colDir = "Object_Detection\Photos\Col"
+maskDir = "Object_Detection\Photos\Masks"
 
 def fillByLine(img, direction):
   if direction == "H":
@@ -47,16 +48,9 @@ def floodFill(imgThresh):
 
   return cv.add(imgThresh, fillMask)
 
-#------------------------------------------------------------------------------------------------#
-
-class recalibrate:
-    
-  def createMask(std, col, maskPath):
-
-    #Creating ref image
+def createMask(std, col):
     ref = cv.cvtColor(std, cv.COLOR_BGR2GRAY)
-    ref[ref != 0] = 0
-    __, ref = cv.threshold(ref, 0, 255, cv.THRESH_BINARY)
+    ref = np.zeros(ref.shape[:2], dtype = np.uint8)
 
     #Image subtraction
     diff = cv.subtract(std, col)
@@ -73,13 +67,13 @@ class recalibrate:
     #Convert to binary
     kernel = np.ones((5, 5), np.uint8)
     opening = cv.morphologyEx(gray, cv.MORPH_OPEN, kernel)
-    __, binary = cv.threshold(opening, 1, 255, cv.THRESH_TRIANGLE)
+    __, binary = cv.threshold(opening, 0, 255, cv.THRESH_TRIANGLE)
 
     #Finding Contours
     contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     contours = sorted(contours, key=cv.contourArea, reverse=True)
     largest_contour = contours[0]
-    cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 5)
+    cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 7)
 
     #Reparing contoured
     repair = fillByLine(ref, "V")
@@ -87,8 +81,42 @@ class recalibrate:
     repair = floodFill(repair)
 
     mask = repair
-    cv.imwrite(maskPath, mask)
     return mask
 
-      
 
+for image in os.listdir(refDir):
+
+    path = os.path.join(refDir,image)
+    std = cv.imread(path)
+    path = os.path.join(colDir,image)
+    col = cv.imread(path)
+
+    maskPath = os.path.join(maskDir, image)
+
+    mask = createMask(std, col)
+    cv.imwrite('Object_Detection\Photos\Masks\leftNew.jpg', mask)
+
+
+
+    frame = cv.pyrDown(mask)
+    frame = cv.pyrDown(frame)
+    
+    cv.imshow("test", frame)
+    print(mask.shape)
+    cv.waitKey(0)
+# mask = cv.imread('Object_Detection\Photos\Masks\left.jpg')
+
+# mask[mask!=0] = 255
+# print(mask.shape)
+
+# # mask = cv.cvtColor(mask, cv.COLOR_BAYER_BG2BGR)
+# # print(mask.shape)
+
+# cv.imwrite('Object_Detection\Photos\Masks\leftNew.jpg', mask)
+
+# frame = cv.pyrDown(mask)
+# frame = cv.pyrDown(frame)
+
+# cv.imshow("test", frame)
+# print(mask.shape)
+# cv.waitKey(0)

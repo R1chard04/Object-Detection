@@ -9,8 +9,9 @@ from imageCaptureClasses import imageCapture
 from imageMaskGeneration import recalibrate
 import time
 import os
-from pylogix import PLC
-from PLCUpdate import transferToPLC
+import pdb
+# from pylogix import PLC
+# from PLCUpdate import transferToPLC
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
@@ -48,50 +49,69 @@ with dai.Device(pipeline) as device:
 
     #Set Brightness, Focal
     brightness, lensPos = captureObject.setParameters()
+    cv.destroyAllWindows()
 
 #----------------------Mask Init---------------------#
 
-    maskObject = recalibrate()
+    # maskObject = recalibrate()
 
-    maskDir = "Object_Detection\Photos\Masks"
-    masks = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
+    # maskDir = "Object_Detection\Photos\Masks"
+    # masks = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
 
-    refDir = "Object_Detection\Photos\Refs"
-    refs = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
+    # refDir = "Object_Detection\Photos\Refs"
+    # refs = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
 
-    colDir = "Object_Detection\Photos\Col"
-    cols = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
+    # colDir = "Object_Detection\Photos\Col"
+    # cols = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
 
-    for i in range(len(refs)):
-        refPath = os.path.join(refDir, refs[i])
-        colPath = os.path.join(colDir, cols[i])
-        maskPath = os.path.join(maskDir, masks[i])
+    # for i in range(len(refs)):
+    #     refPath = os.path.join(refDir, refs[i])
+    #     colPath = os.path.join(colDir, cols[i])
+    #     maskPath = os.path.join(maskDir, masks[i])
 
-        print("Load " + masks[i])
-        cv.waitKey(0)
-        refs[i] = captureObject.captureImage(refPath)
+    #     print("Load " + masks[i])
+    #     cv.waitKey(0)
+    #     refs[i] = captureObject.captureImage(refPath)
 
-        print("Change to colour")
-        cv.waitKey(0)
-        cols[i] = captureObject.captureImage(colPath)
+    #     cv.destroyAllWindows()
+        
+    #     print("Change to colour")
+    #     cv.waitKey(0)
 
-        mask = recalibrate.createMask(refs[i], cols[i], maskPath)
-        masks[i] = mask
+    #     # pdb.set_trace()
+    #     cols[i] = captureObject.captureImage(colPath)
+
+    #     cv.destroyAllWindows()
+
+    #     cv.imshow("ref", refs[i])
+    #     cv.waitKey(0)
+    #     cv.destroyAllWindows()
+
+    #     mask = recalibrate.createMask(refs[i], cols[i], maskPath)
+    #     cv.imshow("mask", mask)
+    #     cv.waitKey(0)
+    #     masks[i] = mask
     #-------------------------------------------------------------------------------------------#
     print("Load all parts")
     cv.waitKey(0)
-    ref = captureObject.captureImage(colPath)
+    ref = captureObject.captureImage(os.path.join(photosPath, "STD.jpg"))
+    top = cv.imread("Object_Detection\Photos\Masks/top.jpg")
+    left = cv.imread("Object_Detection\Photos\Masks/left.jpg")
+    bottom=cv.imread("Object_Detection\Photos\Masks/bottom.jpg")
+    right = cv.imread("Object_Detection\Photos\Masks/right.jpg")
+    masks = [top,left,bottom,right]    
     partList = ["Top", "Left", "Bottom", "Right"]
     processingObject = imageProcessing(masks, ref, ref, partList)
     #-------------------------------------------------------------------------------------------#
     
     while True:
-        img = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject))
         
         processingObject.setTestImg(img)   
         error = processingObject.compareImage()
+        print(error)
          
-        transferToPLC("OP100", RESULTARRAYTBD)
+    #     transferToPLC("OP100", RESULTARRAYTBD)
         
         # # for i in range(len(result)):
         # for object in station100ProcessingObjectArray:

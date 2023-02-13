@@ -1,6 +1,6 @@
 import cv2 as cv
 import numpy as np
-
+import pdb
 from imagePredictionClass import Prediction
 
 def mse(img1, img2):
@@ -24,7 +24,7 @@ class imageProcessing:
         self.masks = maskArray
         self.ref = ref  
         self.test = test
-        self.MSEResults = []
+        self.MSEResults = [0]*4
         self.parts = partList
 
     def setTestImg(self, img) -> None:
@@ -42,7 +42,9 @@ class imageProcessing:
         errors = []
     
         for i in range(len(self.masks)):
+            pdb.set_trace()
             ref = cv.bitwise_and(self.ref, self.ref, mask = self.masks[i])
+            
             test = cv.bitwise_and(self.test, self.test, mask = self.masks[i])
             error = mse(test, ref)
 
@@ -53,7 +55,7 @@ class imageProcessing:
     
     def displayResultPosition(self):
         
-        frame = self.testImg
+        frame = self.test
         # 2160*3840 window size
         font = cv.FONT_HERSHEY_SIMPLEX
         
