@@ -7,8 +7,6 @@ from cameraInitialisationClass import initialise
 from imageProcessingClasses import imageProcessing
 from imageCaptureClasses import imageCapture
 from imageMaskGeneration import recalibrate
-from imageCalibration import imageCalibration
-from imageStitchingClasses import imageStitching
 import time
 import os
 from pylogix import PLC
@@ -40,18 +38,18 @@ device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 # total_pipeline = [pipeline]
 
 # for myDevice, myPipeline in total_device_info, total_pipeline:
+
+#----------------------Capture Init---------------------#
 with dai.Device(pipeline) as device:
     
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                 device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                 device.getInputQueue(name="control"))
 
-    
-
-     #Set Brightness, Focal
+    #Set Brightness, Focal
     brightness, lensPos = captureObject.setParameters()
 
-#----------------------Inputs for station100, hardcoded for now---------------------#
+#----------------------Mask Init---------------------#
 
     maskObject = recalibrate()
 
@@ -72,21 +70,28 @@ with dai.Device(pipeline) as device:
         print("Load " + masks[i])
         cv.waitKey(0)
         refs[i] = captureObject.captureImage(refPath)
+
         print("Change to colour")
         cv.waitKey(0)
         cols[i] = captureObject.captureImage(colPath)
 
         mask = recalibrate.createMask(refs[i], cols[i], maskPath)
         masks[i] = mask
-        
-    station100ProcessingObject = imageProcessing(masks, refs, ref,"station100")
-    
+    #-------------------------------------------------------------------------------------------#
+    print("Load all parts")
+    cv.waitKey(0)
+    ref = captureObject.captureImage(colPath)
+    partList = ["Top", "Left", "Bottom", "Right"]
+    processingObject = imageProcessing(masks, ref, ref, partList)
     #-------------------------------------------------------------------------------------------#
     
     while True:
-        captureObject.autoCapture("Test.jpg", photoDirectoryName, station100ProcessingObject) 
-        capturedImages = captureObject.autoCapture("Test.jpg", photoDirectoryName, station100ProcessingObject) 
-        transferToPLC("OP100", capturedImages)
+        img = captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject) 
+        
+        processingObject.setTestImg(img)   
+        error = processingObject.compareImage()
+         
+        transferToPLC("OP100", RESULTARRAYTBD)
         
         # # for i in range(len(result)):
         # for object in station100ProcessingObjectArray:

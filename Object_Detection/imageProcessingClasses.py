@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
+
 from imagePredictionClass import Prediction
-from imageSlicingClasses import imageSlicing, input_number
 
 def mse(img1, img2):
     # height, width = img1.shape
@@ -18,32 +18,20 @@ myArray1 = []
 myArray2 = []
 myArray3 = []
 
-
-
-
-input_number_array = []
-input_number(input_number_array)
-
 class imageProcessing:
-    def __init__(self, station, maskArray, refArray, testArray) -> None:
-
-        self.station = station
-        self.parts = ["Top", "Left", "Bottom", "Right"]
+    def __init__(self, maskArray, ref, test, partList) -> None:
 
         self.masks = maskArray
-        self.refs = refArray  
-        self.tests = testArray 
-        
-        #needs to be fixed
-        self.MSEResults = [0]*4
-        self.height = 2160
-        self.width = 3840
+        self.ref = ref  
+        self.test = test
+        self.MSEResults = []
+        self.parts = partList
 
-    def setTestImg(self, array) -> None:
-        self.tests = array
+    def setTestImg(self, img) -> None:
+        self.test = img
 
-    def setRefImg(self, array) -> None:
-        self.refs = array
+    def setRefImg(self, img) -> None:
+        self.ref = img
 
     def setMaskImg(self, array) -> None:
         self.masks = array
@@ -51,31 +39,17 @@ class imageProcessing:
     def compareImage(self):
         
         # return a result array
-        i = 0
-        while i < 4:
-            ref = cv.bitwise_and(self.refs[i], self.refs[i], mask = self.masks[i])
-            test = cv.bitwise_and(self.tests[i], self.tests[i], mask = self.masks[i])
+        errors = []
+    
+        for i in range(len(self.masks)):
+            ref = cv.bitwise_and(self.ref, self.ref, mask = self.masks[i])
+            test = cv.bitwise_and(self.test, self.test, mask = self.masks[i])
             error = mse(test, ref)
 
-            self.MSEResults[i] = error
-            if i == 0:
-                myArray0.append(self.MSEResults[i])
-            elif i == 1:
-                myArray1.append(self.MSEResults[i])
-            elif i == 2:
-                myArray2.append(self.MSEResults[i])
-            else:
-                myArray3.append(self.MSEResults[i])
-            i += 1
-        
-    def sliceStation100(self, img) ->None:
-        
-        self.slicedTestImgs = imageSlicing(self.testImg, [1, 2, 3, 4]).slice_image()
-        
-        # self.slicedTestImgs[0] = self.testImg[:self.height//2, :self.width] # top
-        # self.slicedTestImgs[1] = self.testImg[:self.height, :self.width//2] # left
-        # self.slicedTestImgs[2] = self.testImg[self.height//2:, :self.width] # bottom
-        # self.slicedTestImgs[3] = self.testImg[:self.height, :self.width//2] # right
+            errors.append(error)
+
+        self.MSEResults = errors
+        return errors
     
     def displayResultPosition(self):
         

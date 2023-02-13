@@ -78,12 +78,12 @@ class imageCapture:
     def autoCapture(self, imgName, directoryName, processingObject):
         capture = time.time()
 
-        stationSuccess = False #img updated condition
+        imgCaptured = False #img updated condition
         error = 0
         tolerance = 0
         resultArray = []
 
-        while not stationSuccess:
+        while not imgCaptured:
             inRgb = self.qRgb.tryGet() 
             
             if imgName == "Test":
@@ -94,7 +94,6 @@ class imageCapture:
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
                 
-                # get the result display to frame
                 processingObject.setTestImg(frame)
                 frame = processingObject.displayResultPosition()
                 
@@ -104,14 +103,9 @@ class imageCapture:
                 
             if self.qStill.has():
                 path
-                with open(path, "wb") as f:
-                    f.write(self.qStill.get().getData())
-
-                    img = cv.imread(path)
-                    processingObject.setTestImg(img)
-                    
-                    processingObject.sliceStation100()
-                    processingObject.compareImage()
+                with open(path, "wb") as img:
+                    img.read(self.qStill.get().getData())
+                    return img
                     
             key = cv.waitKey(1)
             if (time.time() - capture) > 0.3:
@@ -120,8 +114,6 @@ class imageCapture:
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
         
-        return resultArray
-
     def captureImage(self, path):
     
         imgUpdated = False
