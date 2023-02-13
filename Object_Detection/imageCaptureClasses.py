@@ -4,10 +4,8 @@ import depthai as dai
 import os
 import time
 from imageProcessingClasses import imageProcessing
-from imageSlicingClasses import imageSlicing, input_number
 
 
-# Make sure the value don't go out of the range
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
 

@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 from imagePredictionClass import Prediction
+from imageSlicingClasses import imageSlicing, input_number
 
 def mse(img1, img2):
     # height, width = img1.shape
@@ -17,6 +18,11 @@ myArray1 = []
 myArray2 = []
 myArray3 = []
 
+
+
+
+input_number_array = []
+input_number(input_number_array)
 
 class imageProcessing:
     def __init__(self, maskImg, refImg, testImg, station) -> None:
@@ -87,15 +93,9 @@ class imageProcessing:
                 myArray3.append(self.MSEResults[i])
             i += 1
         
-            
-        
-
     def sliceStation100(self) ->None:
-        # slice the images in four parts 
-        self.slicedTestImgs[0] = self.testImg[:self.height//2, :self.width] # top
-        self.slicedTestImgs[1] = self.testImg[:self.height, :self.width//2] # left
-        self.slicedTestImgs[2] = self.testImg[self.height//2:, :self.width] # bottom
-        self.slicedTestImgs[3] = self.testImg[:self.height, :self.width//2] # right
+        
+        self.slicedTestImgs = imageSlicing(self.testImg, [1, 2, 3, 4]).slice_image()
         
         # self.slicedTestImgs[0] = self.testImg[:self.height//2, :self.width] # top
         # self.slicedTestImgs[1] = self.testImg[:self.height, :self.width//2] # left
