@@ -131,7 +131,6 @@ class imageProcessing:
         # self.slicedTestImgs[1] = self.testImg[:self.height, :self.width//2] # left
         # self.slicedTestImgs[2] = self.testImg[self.height//2:, :self.width] # bottom
         # self.slicedTestImgs[3] = self.testImg[:self.height, :self.width//2] # right
-        
     
     def displayResultPosition(self):
         
