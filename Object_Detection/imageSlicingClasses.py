@@ -21,8 +21,6 @@ def input_number(input_number) -> None:
         else:
             print("Invalid input. Enter a number from 1 to 4 or enter 'p' to end inputting numbers.")
 
-    
-    
 class imageSlicing:
     def __init__(self, img, input_number):
 
@@ -66,13 +64,9 @@ class imageSlicing:
                     non_chosen_images = [quadrant_map[1], quadrant_map[3]]
                     result.append(cv2.vconcat(non_chosen_images))
                         
-                # Get aspect ratio of the quadrant
+                #Resize the combined image to have the same aspect ratio as the quadrant but different width to fit everything
                 aspect_ratio = height / width
-
-                # Get height of combined image
                 combined_height = int(result[0].shape[1] * aspect_ratio)
-
-                # Resize the combined image to have the same aspect ratio as the quadrant but different width to fit everything
                 result[0] = cv2.resize(result[0], (result[0].shape[1], combined_height),
                                 interpolation=cv2.INTER_CUBIC)
 
@@ -86,7 +80,6 @@ class imageSlicing:
             
             return result
 
-        
     def show_cut_images(self, result) -> None:
         #Use cv.imshow to output the result
         for i, res in enumerate(result):
@@ -98,7 +91,6 @@ class imageSlicing:
         
         cv2.waitKey(0)
         cv2.destroyAllWindows()
-
 
 #How to call script:
 
