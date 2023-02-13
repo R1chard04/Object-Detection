@@ -23,89 +23,63 @@ def input_number(input_number) -> None:
 
 class imageSlicing:
     def __init__(self, img, input_number):
+
         self.img = img
         self.input_number = input_number
     
-    def imageSlicing(self) -> any:
-            
-        # Get image height and width
-        img = self.img
-
-        height = img.shape[0]
-        width = img.shape[1]
-
-        #Slice image into 4 quadrants
-        width_cutoff = width // 2
-        height_cutoff = height // 2
-        image_topleft = img[:height_cutoff, :width_cutoff]
-        image_topright = img[:height_cutoff, width_cutoff:]
-        image_bottomleft = img[height_cutoff:, :width_cutoff]
-        image_bottomright = img[height_cutoff:, width_cutoff:]
-
-        # Assign a quadrant to each number 1 to 4
-        quadrant_map = {
-            1: image_topleft,
-            2: image_topright,
-            3: image_bottomleft,
-            4: image_bottomright,
-        }
-
-        # Convert user input to result
-        result = []
-        non_chosen_images = []
-        for i in range(1, 5):
-            if i in self.input_number:
-                result.append(quadrant_map[i])
-            else:
-                if i == 1:
-                    non_chosen_image = img[:height_cutoff, :width_cutoff]
-                elif i == 2:
-                    non_chosen_image = img[:height_cutoff, width_cutoff:]
-                elif i == 3:
-                    non_chosen_image = img[height_cutoff:, :width_cutoff]
-                else:
-                    non_chosen_image = img[height_cutoff:, width_cutoff:]
-                non_chosen_images.append(non_chosen_image)
-
-        # Combine non-chosen images
-        if len(non_chosen_images) == 2:
-            if 1 in self.input_number and 2 in self.input_number:
-                result.append(cv2.hconcat(non_chosen_images))
-            elif 3 in self.input_number and 4 in self.input_number:
-                result.append(cv2.hconcat(non_chosen_images))
-            elif 1 in self.input_number and 3 in self.input_number:
-                result.append(cv2.vconcat(non_chosen_images))
-            elif 2 in self.input_number and 4 in self.input_number:
-                result.append(cv2.vconcat(non_chosen_images))
-                    
-            # Get aspect ratio of the quadrant
-            aspect_ratio = height / width
-
-            # Get height of combined image
-            combined_height = int(result[0].shape[1] * aspect_ratio)
-
-            # Resize the combined image to have the same aspect ratio as the quadrant but different width to fit everything
-            result[0] = cv2.resize(result[0], (result[0].shape[1], combined_height),
-                            interpolation=cv2.INTER_CUBIC)
-
-
-        if self.input_number and self.input_number [0] == 5 and 6:
-            result.append(cv2.vconcat([image_topleft, image_bottomleft]))
-            result.append(cv2.vconcat([image_topright, image_bottomright]))
-            result.append(cv2.hconcat([image_topleft, image_topright]))
-            result.append(cv2.hconcat([image_bottomleft, image_bottomright]))
-            
-        elif self.input_number and self.input_number[0] == 5:
-            result.append(cv2.vconcat([image_topleft, image_bottomleft]))
-            result.append(cv2.vconcat([image_topright, image_bottomright]))
+    def slice_image(self) -> any:
                 
-        elif self.input_number and self.input_number [0] == 6:
-            result.append(cv2.hconcat([image_topleft, image_topright]))
-            result.append(cv2.hconcat([image_bottomleft, image_bottomright]))
-            
-        return result
+            # Get image height and width
+            img = self.img
+            height, width = img.shape[:2]
 
-        
+            #Slice image into 4 quadrants
+            width_cutoff = width // 2
+            height_cutoff = height // 2
+            quadrant_map = {
+                1: img[:height_cutoff, :width_cutoff],
+                2: img[:height_cutoff, width_cutoff:],
+                3: img[height_cutoff:, :width_cutoff],
+                4: img[height_cutoff:, width_cutoff:],
+            }
+
+            # Convert user input to result
+            result = []
+            for i in range(1, 5):
+                if i in self.input_number:
+                    result.append(quadrant_map[i])
+            
+            # Combine non-chosen images
+            if len(result) == 2:
+                if 1 in self.input_number and 2 in self.input_number:
+                    non_chosen_images = [quadrant_map[3], quadrant_map[4]]
+                    result.append(cv2.hconcat(non_chosen_images))
+                elif 3 in self.input_number and 4 in self.input_number:
+                    non_chosen_images = [quadrant_map[1], quadrant_map[2]]
+                    result.append(cv2.hconcat(non_chosen_images))
+                elif 1 in self.input_number and 3 in self.input_number:
+                    non_chosen_images = [quadrant_map[2], quadrant_map[4]]
+                    result.append(cv2.vconcat(non_chosen_images))
+                elif 2 in self.input_number and 4 in self.input_number:
+                    non_chosen_images = [quadrant_map[1], quadrant_map[3]]
+                    result.append(cv2.vconcat(non_chosen_images))
+                        
+                #Resize the combined image to have the same aspect ratio as the quadrant but different width to fit everything
+                aspect_ratio = height / width
+                combined_height = int(result[0].shape[1] * aspect_ratio)
+                result[0] = cv2.resize(result[0], (result[0].shape[1], combined_height),
+                                interpolation=cv2.INTER_CUBIC)
+
+            if self.input_number and 5 in self.input_number:
+                result.append(cv2.vconcat([quadrant_map[1], quadrant_map[3]]))
+                result.append(cv2.vconcat([quadrant_map[2], quadrant_map[4]]))
+                
+            if self.input_number and 6 in self.input_number:
+                result.append(cv2.hconcat([quadrant_map[1], quadrant_map[2]]))
+                result.append(cv2.hconcat([quadrant_map[3], quadrant_map[4]]))
+            
+            return result
+
     def show_cut_images(self, result) -> None:
         #Use cv.imshow to output the result
         for i, res in enumerate(result):
@@ -114,6 +88,24 @@ class imageSlicing:
             cv2.namedWindow(f"Quadrant {i+1}", cv2.WINDOW_NORMAL)
             cv2.resizeWindow(f"Quadrant {i+1}", window_width, window_height)
             cv2.imshow(f"Quadrant {i+1}", res)
+        
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
+#How to call script:
+
+#from imageSlicingClasses import imageSlicing, input_number
+#import cv2 as cv
+    
+#input_number_array = []
+#input_number(input_number_array)
+
+# Put above outside of the loop
+
+#frame = cv.imread("./Quadrant1.jpg")
+#img_slicer = imageSlicing(frame, input_number_array)
+#result = img_slicer.slice_image()
+#img_slicer.show_cut_images(result)
                 
 
 
