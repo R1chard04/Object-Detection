@@ -17,36 +17,6 @@ myArray1 = []
 myArray2 = []
 myArray3 = []
 
-def switch_case(case_value, error):
-    switcher = {
-        0: myArray0.append(error),
-        1: myArray1.append(error),
-        2: myArray2.append(error),
-        3: myArray3.append(error)         
-    }
-    return switcher.get(case_value)
-
-# calculuate the mean square errors 
-# def mse(img1, img2):
-#     # img1 is the reference mask
-#     # img2 is the test mask
-#     height, width, channels = img1.shape
-#     diffImg = cv.absdiff(img1, img2)
-#     err = np.sum(diffImg**2)
-#     # divide the error by the total white pixels of the mask image
-#     # convert reference mask image into grayscale
-#     gray = cv.cvtColor(img1, cv.COLOR_BGR2GRAY)
-
-#     # Threshold the image to get only the white pixels
-#     _, thresh = cv.threshold(gray, 250, 255, cv.THRESH_BINARY)
-    
-#     # Find the coordinates of all the white pixels
-#     coords = np.column_stack(np.where(thresh == 255))
-
-#     # Get the proportion between the error and the white pixels
-#     ans = err/float(coords.shape[0])
-
-#     return ans
 
 class imageProcessing:
     def __init__(self, maskImg, refImg, testImg, station) -> None:
