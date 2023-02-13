@@ -3,9 +3,11 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import random
 import time
+from random import randint
+from time import sleep
 
 #Records timing of fail/pass to help determine which station is over/under in producing parts.
-#Requires completion of prediction classes array to become fully implemented. Works on made up arrays.
+#Requires completion of prediction classes array to become fully implemented. Works on made up arrays and intervals.
 
 class Prediction:
     def __init__(self, errors, responses):
@@ -34,8 +36,9 @@ class Prediction:
         
         prev_timestamp = datetime.datetime.now()
         for i in range(len(predictions)):
+            # Wait for a random amount of time before making the prediction
+            time.sleep(random.uniform(0, 5))
             curr_timestamp = datetime.datetime.now()
-            
             time_elapsed = (curr_timestamp - prev_timestamp).total_seconds()
             result = {
                 "time_elapsed": time_elapsed,
@@ -70,4 +73,6 @@ for i in range(new_errors.shape[0]):
     time.sleep(random.uniform(0, 5))
     result = prediction_model.prediction(new_errors[i].reshape(-1, 1), myRegr)
     results.append(result)
+    # Print the results
     print(results)
+
