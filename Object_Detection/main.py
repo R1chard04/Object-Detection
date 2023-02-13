@@ -16,7 +16,7 @@ from PLCUpdate import transferToPLC
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
-photosPath = "Object_Detection\Photos\Masking\INIT"
+photosPath = "Object_Detection\Photos\Init"
 
 #-----------------------------------------Main Loop-----------------------------------------#
 needCalibrate = False
@@ -50,41 +50,37 @@ with dai.Device(pipeline) as device:
 
      #Set Brightness, Focal
     brightness, lensPos = captureObject.setParameters()
-    # myCalibration = imageCalibration(initImgPath)
-    # myCalibration.imageCalibration()
-
-    
 
 #----------------------Inputs for station100, hardcoded for now---------------------#
 
-    topMask = cv.cvtColor(cv.imread("Photos\MASKS\\topPartM.jpg"), cv.COLOR_BGR2GRAY)
-    bottomMask = cv.cvtColor(cv.imread("Photos\MASKS\\bottomPartM.jpg"), cv.COLOR_BGR2GRAY)
-    rightMask = cv.cvtColor(cv.imread("Photos\MASKS\\rightPartM.jpg"), cv.COLOR_BGR2GRAY)
-    leftMask = cv.cvtColor(cv.imread("Photos\MASKS\leftPartM.jpg"), cv.COLOR_BGR2GRAY)
+    maskObject = recalibrate()
 
-    topRef =cv.imread("Photos\STD\\topPart.jpg")
-    leftRef =cv.imread("Photos\STD\leftPart.jpg")
-    bottomRef =cv.imread("Photos\STD\\bottomPart.jpg")
-    rightRef =cv.imread("Photos\STD\\rightPart.jpg")
+    maskDir = "Object_Detection\Photos\Masks"
+    masks = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
 
-    masks=[topMask,leftMask, bottomMask, rightMask]
-    ref = cv.imread("Photos\STD\STD.jpg")
-    refs =[topRef, leftRef, bottomRef,rightRef]
+    refDir = "Object_Detection\Photos\Refs"
+    refs = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
 
-    # for i in range(4):
-    #     object = imageProcessing(masks[i], refs[i], initImg)
-    #     station100ProcessingObjectArray.append(object)
+    colDir = "Object_Detection\Photos\Col"
+    cols = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
+
+    for i in range(len(refs)):
+        refPath = os.path.join(refDir, refs[i])
+        colPath = os.path.join(colDir, cols[i])
+        maskPath = os.path.join(maskDir, masks[i])
+
+        print("Load " + masks[i])
+        cv.waitKey(0)
+        refs[i] = captureObject.captureImage(refPath)
+        print("Change to colour")
+        cv.waitKey(0)
+        cols[i] = captureObject.captureImage(colPath)
+
+        mask = recalibrate.createMask(refs[i], cols[i], maskPath)
+        masks[i] = mask
         
     station100ProcessingObject = imageProcessing(masks, refs, ref,"station100")
     
-    #-----------------------------------------Calibrate-----------------------------------------#
-  
-    maskObject = recalibrate(captureObject, station100ProcessingObject, brightness, lensPos)
-
-    # #gen mask
-    # maskObject.setStandards()
-    # maskObject.setNones()
-    # maskObject.createMask()
     #-------------------------------------------------------------------------------------------#
     
     while True:

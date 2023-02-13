@@ -90,8 +90,6 @@ class imageCapture:
                 imgName = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
             
             path = os.path.join(directoryName,imgName)
-            # Where the subtracted image is being saved
-            diffPath = os.path.join("Object_Detection\Photos\DIFF", imgName)
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
@@ -112,14 +110,9 @@ class imageCapture:
                     img = cv.imread(path)
                     processingObject.setTestImg(img)
                     
-                    # slice the testImg in four, hardcoded for now
                     processingObject.sliceStation100()
                     processingObject.compareImage()
                     
-                    # cv.imwrite(diffPath,diffImg)
-                    # if error < tolerance:
-                    #     resultArray[i] = 1
-
             key = cv.waitKey(1)
             if (time.time() - capture) > 0.3:
                 capture = time.time()

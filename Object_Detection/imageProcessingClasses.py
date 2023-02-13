@@ -25,63 +25,38 @@ input_number_array = []
 input_number(input_number_array)
 
 class imageProcessing:
-    def __init__(self, maskImg, refImg, testImg, station) -> None:
-        # in station, we indicate which station this object is
-        
-        self.station = station
-        # self.parts = ""
-        # if station == "station100":
-        self.parts = ["Top", "Left", "Bottom", "Right"]
-        
-        # convert maskImg to grayscale
-        self.maskImg = maskImg
+    def __init__(self, station, maskArray, refArray, testArray) -> None:
 
-        self.slicedRef = refImg  # array type variable
-        self.testImg = testImg 
-        # ['top.jpg', 'left.jpg', 'bottom.jpg', 'right.jpg']
-        # self.slicedRef = [refImg, refImg, refImg, refImg]
-        self.slicedTestImgs = [refImg, refImg, refImg, refImg] 
-        # self.slicedTestImgs = ["imagePath"]* len(parts) # initialize a empty list w num of parts ""
+        self.station = station
+        self.parts = ["Top", "Left", "Bottom", "Right"]
+
+        self.masks = maskArray
+        self.refs = refArray  
+        self.tests = testArray 
         
+        #needs to be fixed
         self.MSEResults = [0]*4
         self.height = 2160
         self.width = 3840
 
-    def setTestImg(self, img) -> None:
-        self.testImg = img
+    def setTestImg(self, array) -> None:
+        self.tests = array
 
-    def setRefImg(self, img) -> None:
-        self.refImg = img
-        # slice the ref images depending on which station it is
-        
-        # if self.station == "station100":
-        #     tmp = [img,img,img,img]
-        #     self.refImg = img
-        #     tmp[0] = self.refImg[:self.height//2, :self.width] # top
-        #     tmp[1] = self.refImg[:self.height, :self.width//2] # left
-        #     tmp[2] = self.refImg[self.height//2:, :self.width] # bottom
-        #     tmp[3] = self.refImg[:self.height, :self.width//2] # right
-        #     self.refImg = tmp
-        
-    def setMaskImg(self, img) -> None:
-        self.maskImg = img
+    def setRefImg(self, array) -> None:
+        self.refs = array
 
-    def setFrame(self, img) -> None:
-        # call the slicing method, slice the pic and save it to the array
-        pass
+    def setMaskImg(self, array) -> None:
+        self.masks = array
     
     def compareImage(self):
         
         # return a result array
         i = 0
-        
-
-        
-        # comparing all the parts individually
         while i < 4:
-            ref = cv.bitwise_and(self.slicedRef[i], self.slicedRef[i], mask = self.maskImg[i])
-            test = cv.bitwise_and(self.slicedTestImgs[i], self.slicedTestImgs[i], mask = self.maskImg[i])
+            ref = cv.bitwise_and(self.refs[i], self.refs[i], mask = self.masks[i])
+            test = cv.bitwise_and(self.tests[i], self.tests[i], mask = self.masks[i])
             error = mse(test, ref)
+
             self.MSEResults[i] = error
             if i == 0:
                 myArray0.append(self.MSEResults[i])
@@ -93,7 +68,7 @@ class imageProcessing:
                 myArray3.append(self.MSEResults[i])
             i += 1
         
-    def sliceStation100(self) ->None:
+    def sliceStation100(self, img) ->None:
         
         self.slicedTestImgs = imageSlicing(self.testImg, [1, 2, 3, 4]).slice_image()
         

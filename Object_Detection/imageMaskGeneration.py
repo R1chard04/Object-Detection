@@ -65,24 +65,15 @@ def floodFill(imgThresh):
 #------------------------------------------------------------------------------------------------#
 
 class recalibrate:
-  def __init__(self, captureObject, processingObject, brightness, focalLength) -> None:
-
-    self.captureObject = captureObject
-    self.processingObject = processingObject
-    self.brightness = brightness
-    self.focalLength = focalLength
     
-  def createMask(self,stdPath, nonePath, maskPath):
-    #Reading in images
-    std = cv.imread(stdPath)
-    colour = cv.imread(nonePath)
+  def createMask(std, col, maskPath):
 
     #Creating ref image
     ref = cv.cvtColor(std, cv.COLOR_BGR2GRAY)
     ref[ref != 0] = 0
 
     #Image subtraction
-    diff = cv.subtract(std, colour)
+    diff = cv.subtract(std, col)
 
     #Denoising
     denoise = np.float32(diff) / 255.0
@@ -114,7 +105,7 @@ class recalibrate:
 
     mask = repair
     cv.imwrite(maskPath, mask)
-    return
+    return mask
 
       
 
