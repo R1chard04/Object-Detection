@@ -65,7 +65,8 @@ def createMask(std, col):
     gray = cv.cvtColor(denoise, cv.COLOR_BGR2GRAY)
 
     #Convert to binary
-    kernel = np.ones((5, 5), np.uint8)
+    kernel = np.ones((7, 7), np.uint8)
+
     opening = cv.morphologyEx(gray, cv.MORPH_OPEN, kernel)
     __, binary = cv.threshold(opening, 0, 255, cv.THRESH_TRIANGLE)
 
@@ -76,11 +77,13 @@ def createMask(std, col):
     cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 7)
 
     #Reparing contoured
-    repair = fillByLine(ref, "V")
+    dilate = cv.dilate(ref, kernel, iterations = 1)
+    repair = fillByLine(dilate, "V")
     repair = fillByLine(repair, "H")
     repair = floodFill(repair)
+    erode = cv.erode(repair, kernel, iterations = 1)
 
-    mask = repair
+    mask = erode
     return mask
 
 

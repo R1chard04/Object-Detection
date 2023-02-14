@@ -91,14 +91,40 @@ with dai.Device(pipeline) as device:
     #     cv.imshow("mask", mask)
     #     cv.waitKey(0)
     #     masks[i] = mask
+
     #-------------------------------------------------------------------------------------------#
+
+    print("Load " + "bottom")
+    cv.waitKey(0)
+    refs = captureObject.captureImage("Object_Detection\Photos\Refs\\bottom.jpg")
+
+    cv.destroyAllWindows()
+    
+    print("Change to colour")
+    cv.waitKey(0)
+
+    # pdb.set_trace()
+    cols= captureObject.captureImage("Object_Detection\Photos\Col\\bottom.jpg")
+
+    cv.destroyAllWindows()
+
+    cv.imshow("ref", refs)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
+
+    mask = recalibrate.createMask(refs, cols, "Object_Detection\Photos\Masks\\bottom.jpg")
+    cv.imshow("mask", mask)
+    cv.waitKey(0)
+
+    #-------------------------------------------------------------------------------------------#
+
     print("Load all parts")
     cv.waitKey(0)
     ref = captureObject.captureImage(os.path.join(photosPath, "STD.jpg"))
-    top = cv.imread("Object_Detection\Photos\Masks/top.jpg")
-    left = cv.imread("Object_Detection\Photos\Masks/left.jpg")
-    bottom=cv.imread("Object_Detection\Photos\Masks/bottom.jpg")
-    right = cv.imread("Object_Detection\Photos\Masks/right.jpg")
+    top = cv.imread("Object_Detection\Photos\Masks/top.jpg", 0)
+    left = cv.imread("Object_Detection\Photos\Masks/left.jpg", 0)
+    bottom=cv.imread("Object_Detection\Photos\Masks/bottom.jpg", 0)
+    right = cv.imread("Object_Detection\Photos\Masks/right.jpg", 0)
     masks = [top,left,bottom,right]    
     partList = ["Top", "Left", "Bottom", "Right"]
     processingObject = imageProcessing(masks, ref, ref, partList)

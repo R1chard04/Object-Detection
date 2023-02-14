@@ -16,14 +16,17 @@ class imageProcessing:
 
         self.masks = maskArray
         self.masksWhitePixels = []
-        for i in len(partList):
+        self.parts = partList
+
+        for i in range(len(partList)):
+            print(i)
             whitePixels = np.sum(maskArray[i] == 255)
             self.masksWhitePixels.append(whitePixels)
 
         self.ref = ref  
         self.test = test
         self.MSEResults = [0]*4
-        self.parts = partList
+        
 
     def setTestImg(self, img) -> None:
         self.test = img
@@ -40,7 +43,7 @@ class imageProcessing:
         errors = []
     
         for i in range(len(self.masks)):
-            pdb.set_trace()
+            # pdb.set_trace()
             ref = cv.bitwise_and(self.ref, self.ref, mask = self.masks[i])
             
             test = cv.bitwise_and(self.test, self.test, mask = self.masks[i])
