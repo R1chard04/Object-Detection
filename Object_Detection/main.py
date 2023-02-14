@@ -7,6 +7,7 @@ from cameraInitialisationClass import initialise
 from imageProcessingClasses import imageProcessing
 from imageCaptureClasses import imageCapture
 from imageMaskGeneration import recalibrate
+from imagePredictionClass import MSEStabilization, getPassRef
 import time
 import os
 import pdb
@@ -132,11 +133,20 @@ with dai.Device(pipeline) as device:
     
     while True:
         img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject))
-        
         processingObject.setTestImg(img)   
         error = processingObject.compareImage()
-        print(error)
-         
+        passref = getPassRef(error)
+        key = cv.waitKey(0)
+        if key == ord('c'):
+            break
+            
+    while True:
+        img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject))
+        processingObject.setTestImg(img)   
+        error = processingObject.compareImage()
+        prediction = MSEStabilization(error, passref)
+        print(prediction)
+        
     #     transferToPLC("OP100", RESULTARRAYTBD)
         
         # # for i in range(len(result)):

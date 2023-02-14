@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
+import pdb
 
 # declare arrays to store the errors for top, left, bottom, right
 myArray0 = []
@@ -28,8 +29,9 @@ def getPassRef(errors) -> list:
 
 # for live video
 class MSEStabilization:
-    def __init__(self, errors) -> None:
+    def __init__(self, errors, passRef) -> None:
         self.errors = errors
+        self.passRef = passRef
     
     def result(self) -> list:
         # declare the result to store the string "pass" or "fail"
@@ -38,17 +40,15 @@ class MSEStabilization:
         resultBottom = []
         resultRight = []
         totalResult = [resultTop, resultLeft, resultBottom, resultRight]
-        for i in range(len(totalArray)):
+        for i in range(4):
             totalArray[i].append(self.errors[i])
-            ans = self.errors[i] - getPassRef(self.errors)[i]
-            if ans >= 0:
+            ans = self.errors[i] - self.passRef[i]
+            if ans <= 0:
                 totalResult[i].append("PASS")
             else:
                 totalResult[i].append("FAIL")
         return totalResult
-        
     
-
              
 
         
