@@ -13,6 +13,7 @@ class imageTiming:
         
         prev_timestamp = datetime.datetime.now()
         for i in range(len(self.responses)):
+            #random waittime for test
             wait = random.uniform(1, 5)
             time.sleep(wait)
             curr_timestamp = datetime.datetime.now()
@@ -31,7 +32,7 @@ class imageTiming:
         
         return results
     
-    
+#random pass or fail inputs for test    
 responses = [1, 1, 0]
 # Create an instance of the class
 timing = imageTiming(responses)
