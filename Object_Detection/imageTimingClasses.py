@@ -25,10 +25,10 @@ class imageTiming:
 
             results.append(result)
             prev_timestamp = curr_timestamp
-        
+         
         with open('recording_results.txt', 'a') as f:
             for i in range(len(self.responses)):
-                f.write(str(self.timestamps[i]) + ',' + str(int(self.responses[i])) + ',' + str(results[i]["time_elapsed"]) + '\n')
+                f.write('DateTime: ' + str(self.timestamps[i]) + ', ' + str("pass" if int(self.responses[i]) == 1 else "fail") + ', Time Elapsed: ' + str(results[i]["time_elapsed"]) + ' seconds' + '\n')
         
         return results
     
