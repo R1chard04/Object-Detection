@@ -57,7 +57,7 @@ class Prediction:
         regr = LinearRegression()
 
         # Fit the linear regression model to the data
-        regr.fit(sorted_errors, self.response)
+        regr.fit(np.array(self.errors).reshape(-1, 1), np.array(self.response).reshape(-1, 1))
 
         return regr
     
