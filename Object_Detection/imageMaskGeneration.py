@@ -79,7 +79,7 @@ class recalibrate:
     contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     contours = sorted(contours, key=cv.contourArea, reverse=True)
     largest_contour = contours[0]
-    cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 5)
+    cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 7)
 
     #Reparing contoured
     repair = fillByLine(ref, "V")

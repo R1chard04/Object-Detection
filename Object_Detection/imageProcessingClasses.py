@@ -1,27 +1,25 @@
 import cv2 as cv
 import numpy as np
-import pdb
-from imagePredictionClass import Prediction
 
-def mse(img1, img2):
+# from imagePredictionClass import Prediction
+
+def mse(img1, img2, numWhitePixels):
     # height, width = img1.shape
     diffImg = cv.absdiff(img1, img2)
     err = np.sum(diffImg**2)
-    ans = err/(float(2160*3840))  
+    ans = err/ float(numWhitePixels)
     #Closer to 0 is better
     return ans
-
-# a list of response to compare with the errors
-response = []
-myArray0 = []
-myArray1 = []
-myArray2 = []
-myArray3 = []
 
 class imageProcessing:
     def __init__(self, maskArray, ref, test, partList) -> None:
 
         self.masks = maskArray
+        self.masksWhitePixels = []
+        for i in len(partList):
+            whitePixels = np.sum(maskArray[i] == 255)
+            self.masksWhitePixels.append(whitePixels)
+
         self.ref = ref  
         self.test = test
         self.MSEResults = [0]*4
@@ -46,7 +44,7 @@ class imageProcessing:
             ref = cv.bitwise_and(self.ref, self.ref, mask = self.masks[i])
             
             test = cv.bitwise_and(self.test, self.test, mask = self.masks[i])
-            error = mse(test, ref)
+            error = mse(test, ref, self.masksWhitePixels[i])
 
             errors.append(error)
 
