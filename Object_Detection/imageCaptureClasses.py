@@ -108,6 +108,10 @@ class imageCapture:
                     return path
                     
             key = cv.waitKey(1)
+            
+            if key == ord("c"):
+                return False
+
             if (time.time() - capture) > 0.3:
                 capture = time.time()
                 ctrl = dai.CameraControl()

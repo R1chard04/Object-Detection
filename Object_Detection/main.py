@@ -54,49 +54,54 @@ with dai.Device(pipeline) as device:
 
 #----------------------Mask Init---------------------#
 
-    maskObject = recalibrate()
+    # maskObject = recalibrate()
 
-    maskDir = "Object_Detection\Photos\Masks"
-    masks = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
+    # maskDir = "Object_Detection\Photos\Masks"
+    # masks = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
 
-    refDir = "Object_Detection\Photos\Refs"
-    refs = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
+    # refDir = "Object_Detection\Photos\Refs"
+    # refs = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
 
-    colDir = "Object_Detection\Photos\Col"
-    cols = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
+    # colDir = "Object_Detection\Photos\Col"
+    # cols = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
 
-    for i in range(len(refs)):
-        refPath = os.path.join(refDir, refs[i])
-        colPath = os.path.join(colDir, cols[i])
-        maskPath = os.path.join(maskDir, masks[i])
+    # for i in range(len(refs)):
+    #     refPath = os.path.join(refDir, refs[i])
+    #     colPath = os.path.join(colDir, cols[i])
+    #     maskPath = os.path.join(maskDir, masks[i])
 
-        print("Load " + masks[i])
-        cv.waitKey(0)
-        refs[i] = captureObject.captureImage(refPath)
+    #     print("Load " + masks[i])
+    #     cv.waitKey(0)
+    #     refs[i] = captureObject.captureImage(refPath)
 
-        cv.destroyAllWindows()
+    #     cv.destroyAllWindows()
         
-        print("Change to colour")
-        cv.waitKey(0)
+    #     print("Change to colour")
+    #     cv.waitKey(0)
 
-        # pdb.set_trace()
-        cols[i] = captureObject.captureImage(colPath)
+    #     # pdb.set_trace()
+    #     cols[i] = captureObject.captureImage(colPath)
 
-        cv.destroyAllWindows()
+    #     cv.destroyAllWindows()
 
-        cv.imshow("ref", refs[i])
-        cv.waitKey(0)
-        cv.destroyAllWindows()
+    #     cv.imshow("ref", refs[i])
+    #     cv.waitKey(0)
+    #     cv.destroyAllWindows()
 
-        mask = recalibrate.createMask(refs[i], cols[i], maskPath)
-        cv.imshow("mask", mask)
-        cv.waitKey(0)
-        masks[i] = mask
+    #     mask = recalibrate.createMask(refs[i], cols[i], maskPath)
+    #     cv.imshow("mask", mask)
+    #     cv.waitKey(0)
+    #     masks[i] = mask
 
+    top = cv.imread("Object_Detection\Photos\Masks/top.jpg", 0)
+    left = cv.imread("Object_Detection\Photos\Masks/left.jpg", 0)
+    bottom = cv.imread("Object_Detection\Photos\Masks/bottom.jpg", 0)
+    right = cv.imread("Object_Detection\Photos\Masks/right.jpg", 0)
+    
+    masks = [top,left,bottom,right]    
+
+    # masks = [cv.imread("Object_Detection\Photos\Masks\\top.jpg",0), cv.imread("Object_Detection\Photos\Masks\left.jpg",0),cv.imread("Object_Detection\Photos\Masks\\bottom.jpg",0), cv.imread("Object_Detection\Photos\Masks\\right.jpg",0)]
     #-------------------------------------------------------------------------------------------#
-
-    print("Load all parts")
-    cv.waitKey(0)
 
     tempRef = captureObject.captureImage(os.path.join(photosPath, "STD.jpg"))
     partList = ["Top", "Left", "Bottom", "Right"]
@@ -104,38 +109,38 @@ with dai.Device(pipeline) as device:
 
     errDir = "Object_Detection\Photos\Err"
 
-    while True:
-        captureObject.autoCapture("Test", errDir, processingObject)
-        key = cv.waitKey(1)
-        if key == ord('c'):
-            ref = captureObject.captureImage(os.path.join(photosPath, "STD.jpg"))
-            processingObject.setRefImg(ref)
-            break
+    print("Load all parts")
+    cv.waitKey(0)
 
-    for image in os.list.dir(errDir):
-        path = os.join.path(errDir, image)
+    while captureObject.autoCapture("Test", errDir, processingObject):
+        pass
+        
+    print("here")
+    ref = captureObject.captureImage(os.path.join(photosPath, "STD.jpg"))
+    processingObject.setRefImg(ref)
+
+    passRef = [0,0,0,0] #for now
+
+    for image in os.listdir(errDir):
+        print("here1")
+        path = os.path.join(errDir, image)
         img = cv.imread(path)
 
         processingObject.setTestImg(img)   
         error = processingObject.compareImage()
-        passref = getPassRef(error)
+        passref = getPassRef(error, passRef)
+        print(passref)
     
-    # top = cv.imread("Object_Detection\Photos\Masks/top.jpg", 0)
-    # left = cv.imread("Object_Detection\Photos\Masks/left.jpg", 0)
-    # bottom = cv.imread("Object_Detection\Photos\Masks/bottom.jpg", 0)
-    # right = cv.imread("Object_Detection\Photos\Masks/right.jpg", 0)
-    
-    # masks = [top,left,bottom,right]    
-    
-   
+
     #-------------------------------------------------------------------------------------------#
 
     while True:
-        img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject))
+        img = cv.imread(captureObject.autoCapture("Test", photoDirectoryName, processingObject))
         processingObject.setTestImg(img)   
         error = processingObject.compareImage()
         prediction = MSEStabilization(error, passref)
-        print(prediction)
+        
+        print(prediction.result())
 
 
 
