@@ -42,7 +42,7 @@ class imageCapture:
                     img = cv.imread(fName)
 
             key = cv.waitKey(1)
-            # focal length adjestment
+            # focal length adjustment
             if key in [ord(','), ord('.')]:
                 if key == ord(','):
                     lensPos -= LENS_STEP
@@ -86,38 +86,32 @@ class imageCapture:
         while not imgCaptured:
             inRgb = self.qRgb.tryGet() 
             
-            if imgName == "Test":
-                imgName = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
+            # if imgName == "Test":
+            #     imgName = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
             
             path = os.path.join(directoryName,imgName)
+
+            
 
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
                 
-                processingObject.setTestImg(frame)
-                error = processingObject.compareImage()
-                frame = processingObject.displayResultPosition()
-                
-                frame = cv.pyrDown(frame)
-                frame = cv.pyrDown(frame)
-                cv.imshow("captured", frame)
-                
             if self.qStill.has():
                 with open(path, "wb") as img:
                     img.write(self.qStill.get().getData())
-                
-                    # img = cv.imread(path)
-                    # processingObject.setTestImg(img)   
-                    # processingObject.compareImage()
+                    return path
+
+                    
                     
             key = cv.waitKey(1)
 
-            if (time.time() - capture) > 0.3:
+            if (time.time() - capture) > 0.5:
+                print("Jamie wants this here")
                 capture = time.time()
                 ctrl = dai.CameraControl()
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
-        
+
     def captureImage(self, path):
     
         imgUpdated = False

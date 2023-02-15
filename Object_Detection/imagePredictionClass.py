@@ -36,8 +36,3 @@ class MSEStabilization:
             else:
                 totalResult[i].append("FAIL")
         return totalResult
-    
-             
-
-        
-    
