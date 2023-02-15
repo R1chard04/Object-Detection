@@ -103,7 +103,6 @@ with dai.Device(pipeline) as device:
 
 
     #Post-processing of captured images for MSE threshold creation
-    passRef = [0,0,0,0] #for now
 
     for image in os.listdir(errDir):
         path = os.path.join(errDir, image)
@@ -144,4 +143,3 @@ with dai.Device(pipeline) as device:
         #     # if error < tolerance:
         #     #     resultArray[i] = 1
         # # updatePLC(errorArray)
-        
