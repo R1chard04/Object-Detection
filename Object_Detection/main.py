@@ -14,15 +14,15 @@ import pdb
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
-photosPath = "Object_Detection/Photos/Init" #This is where all the images are being saved
+photosPath = "Object_Detection\Photos\Init" #This is where all the images are being saved
 
 #Mask Paths
-refDir = "Object_Detection/Photos/Refs" #This is where the reference photos for each part at one station are being saved
-colDir = "Object_Detection/Photos/Col" #This is where the alternate colour reference photos for each part at one station are being saved
-maskDir = "Object_Detection/Photos/Masks" #This is where the generated masks are being saved
+refDir = "Object_Detection\Photos\Refs" #This is where the reference photos for each part at one station are being saved
+colDir = "Object_Detection\Photos\Col" #This is where the alternate colour reference photos for each part at one station are being saved
+maskDir = "Object_Detection\Photos\Masks" #This is where the generated masks are being saved
 
 #MSE Initialisation Photos Path
-errDir = "Object_Detection/Photos/Err"
+errDir = "Object_Detection\Photos\Err"
 
 #Part List
 partList = ["Top", "Left", "Bottom", "Right"]
@@ -74,21 +74,20 @@ with dai.Device(pipeline) as device:
     #     print("Mask generated")
     #     masks[i] = mask
 
-    top = cv.imread('Object_Detection/Photos/Masks/top.jpg', 0)
-    left = cv.imread("Object_Detection/Photos/Masks/left.jpg", 0)
-    bottom = cv.imread("Object_Detection/Photos/Masks/bottom.jpg", 0)
-    right = cv.imread("Object_Detection/Photos/Masks/right.jpg", 0)
+    top = cv.imread("Object_Detection\Photos\Masks/top.jpg", 0)
+    left = cv.imread("Object_Detection\Photos\Masks/left.jpg", 0)
+    bottom = cv.imread("Object_Detection\Photos\Masks/bottom.jpg", 0)
+    right = cv.imread("Object_Detection\Photos\Masks/right.jpg", 0)
     
     masks = [top,left,bottom,right]    
 
     #----------------------Error Algorithm and Image Processing Initialisation---------------------#
-    tempRef = captureObject.captureOne(os.path.join(refDir, 'STD.jpg'), brightness, lensPos) #Creating a stand-in initialisation picture
+    tempRef = captureObject.captureImage(os.path.join(refDir, "STD.jpg")) #Creating a stand-in initialisation picture
     processingObject = imageProcessing(masks, tempRef, tempRef, partList) #Initialisation of the processing object
 
     print("Load all parts then press any key")
     cv.waitKey(0)
 
-    
     #After loading all parts, camera begins capturing reference photos
     for i in range(10):
         # captureObject.autoCapture("Test", errDir, processingObject)
@@ -99,13 +98,13 @@ with dai.Device(pipeline) as device:
     ref = captureObject.captureOne(os.path.join(refDir, "STD.jpg"), brightness, lensPos)
     processingObject.setRefImg(ref)
 
-
     #Post-processing of captured images for MSE threshold creation
     passRef = [0,0,0,0] #for now
 
     for image in os.listdir(errDir):
         path = os.path.join(errDir, image)
         img = cv.imread(path)
+
         processingObject.setTestImg(img)   
         error = processingObject.compareImage()
         passref = getPassRef(error, passRef)
