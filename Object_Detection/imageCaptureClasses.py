@@ -95,6 +95,7 @@ class imageCapture:
                 frame = inRgb.getCvFrame()
                 
                 processingObject.setTestImg(frame)
+                error = processingObject.compareImage()
                 frame = processingObject.displayResultPosition()
                 
                 frame = cv.pyrDown(frame)
@@ -102,15 +103,14 @@ class imageCapture:
                 cv.imshow("captured", frame)
                 
             if self.qStill.has():
-                path
                 with open(path, "wb") as img:
                     img.write(self.qStill.get().getData())
-                    return path
+                
+                    # img = cv.imread(path)
+                    # processingObject.setTestImg(img)   
+                    # processingObject.compareImage()
                     
             key = cv.waitKey(1)
-            
-            if key == ord("c"):
-                return False
 
             if (time.time() - capture) > 0.3:
                 capture = time.time()
@@ -146,5 +146,33 @@ class imageCapture:
                 ctrl = dai.CameraControl()
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
+
+    def captureOne(self, path):
+    
+        imgUpdated = False
+        img = 1
+
+        while not imgUpdated:
+            inRgb = self.qRgb.tryGet() 
+            
+            if inRgb is not None:
+                frame = inRgb.getCvFrame()
+                frame = cv.pyrDown(frame)
+                frame = cv.pyrDown(frame)
+                cv.imshow("captured", frame)     
+            
+
+            if self.qStill.has():
+                with open(path, "wb") as f:
+                    f.write(self.qStill.get().getData())
+                    imgUpdated = True
+
+                    img = cv.imread(path)
+                    return img
+
+            cv.waitKey(1)  
+            ctrl = dai.CameraControl()
+            ctrl.setCaptureStill(True)
+            self.qControl.send(ctrl)
         
                 

@@ -52,7 +52,6 @@ class imageProcessing:
             errors.append(error)
 
         self.MSEResults = errors
-        return errors
     
     def displayResultPosition(self):
         

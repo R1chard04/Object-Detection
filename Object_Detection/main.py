@@ -16,81 +16,64 @@ import pdb
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
-photosPath = "Object_Detection\Photos\Init"
+photosPath = "Object_Detection\Photos\Init" #This is where all the images are being saved
 
-#-----------------------------------------Main Loop-----------------------------------------#
-needCalibrate = False
+#Mask Paths
+refDir = "Object_Detection\Photos\Refs" #This is where the reference photos for each part at one station are being saved
+colDir = "Object_Detection\Photos\Col" #This is where the alternate colour reference photos for each part at one station are being saved
+maskDir = "Object_Detection\Photos\Masks" #This is where the generated masks are being saved
 
+#MSE Initialisation Photos Path
+errDir = "Object_Detection\Photos\Err"
+
+#Part List
+partList = ["Top", "Left", "Bottom", "Right"]
+
+#-----------------------------------------Camera Initialisation-----------------------------------------#
 initialisationObject = initialise(photosPath)
 photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill, pipeline_1 = initialisationObject.initialise()
 
 for device in dai.Device.getAllAvailableDevices():
     print(f"{device.getMxId()} {device.state}")
 
-#device_info = dai.DeviceBootloader(dai.DeviceInfo("1944301051766E1300"), allowFlashingBootloader = True)
 device_info = dai.DeviceInfo("19443010A137DE1200")
 device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
 device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 
-# device_info_1 = dai.DeviceInfo("19443010613C6E1300")
-# device_info_1.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
-# device_info_1.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
-
-# total_device_info = [device_info]
-# total_pipeline = [pipeline]
-
-# for myDevice, myPipeline in total_device_info, total_pipeline:
-
-#----------------------Capture Init---------------------#
+#----------------------Camera Capture Initialisation---------------------#
 with dai.Device(pipeline) as device:
     
     captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                 device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                 device.getInputQueue(name="control"))
 
-    #Set Brightness, Focal
+    #Camera frame and brightness setup window
     brightness, lensPos = captureObject.setParameters()
     cv.destroyAllWindows()
 
-#----------------------Mask Init---------------------#
+#----------------------Mask Initialisation---------------------#
 
-    # maskObject = recalibrate()
-
-    # maskDir = "Object_Detection\Photos\Masks"
-    # masks = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
-
-    # refDir = "Object_Detection\Photos\Refs"
-    # refs = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
-
-    # colDir = "Object_Detection\Photos\Col"
-    # cols = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]
+    # maskObject = recalibrate() #Instantiation of the mask object
+    # refs, cols, masks = ["top.jpg", "left.jpg", "bottom.jpg", "right.jpg"]  
 
     # for i in range(len(refs)):
     #     refPath = os.path.join(refDir, refs[i])
     #     colPath = os.path.join(colDir, cols[i])
     #     maskPath = os.path.join(maskDir, masks[i])
 
-    #     print("Load " + masks[i])
+    #     print("Load " + partList[i])
     #     cv.waitKey(0)
     #     refs[i] = captureObject.captureImage(refPath)
-
     #     cv.destroyAllWindows()
         
     #     print("Change to colour")
     #     cv.waitKey(0)
-
-    #     # pdb.set_trace()
     #     cols[i] = captureObject.captureImage(colPath)
-
     #     cv.destroyAllWindows()
 
-    #     cv.imshow("ref", refs[i])
-    #     cv.waitKey(0)
-    #     cv.destroyAllWindows()
-
+    #     print("creating a mask, this may take a couple minutes.")
     #     mask = recalibrate.createMask(refs[i], cols[i], maskPath)
-    #     cv.imshow("mask", mask)
-    #     cv.waitKey(0)
+    #     print("Mask generated")
     #     masks[i] = mask
 
     top = cv.imread("Object_Detection\Photos\Masks/top.jpg", 0)
@@ -100,46 +83,41 @@ with dai.Device(pipeline) as device:
     
     masks = [top,left,bottom,right]    
 
-    # masks = [cv.imread("Object_Detection\Photos\Masks\\top.jpg",0), cv.imread("Object_Detection\Photos\Masks\left.jpg",0),cv.imread("Object_Detection\Photos\Masks\\bottom.jpg",0), cv.imread("Object_Detection\Photos\Masks\\right.jpg",0)]
-    #-------------------------------------------------------------------------------------------#
+    #----------------------Error Algorithm and Image Processing Initialisation---------------------#
+    tempRef = captureObject.captureImage(os.path.join(refDir, "STD.jpg")) #Creating a stand-in initialisation picture
+    processingObject = imageProcessing(masks, tempRef, tempRef, partList) #Initialisation of the processing object
 
-    tempRef = captureObject.captureImage(os.path.join(photosPath, "STD.jpg"))
-    partList = ["Top", "Left", "Bottom", "Right"]
-    processingObject = imageProcessing(masks, tempRef, tempRef, partList)
-
-    errDir = "Object_Detection\Photos\Err"
-
-    print("Load all parts")
+    print("Load all parts then press any key")
     cv.waitKey(0)
 
-    while captureObject.autoCapture("Test", errDir, processingObject):
-        pass
-        
-    print("here")
-    ref = captureObject.captureImage(os.path.join(photosPath, "STD.jpg"))
+    #After loading all parts, camera begins capturing reference photos
+    for i in range(25):
+        captureObject.captureOne("Test", errDir, processingObject)
+
+    # Taking a standard image
+    ref = captureObject.captureOne(os.path.join(refDir, "STD.jpg"))
     processingObject.setRefImg(ref)
 
+    #Post-processing of captured images for MSE threshold creation
     passRef = [0,0,0,0] #for now
 
     for image in os.listdir(errDir):
-        print("here1")
         path = os.path.join(errDir, image)
         img = cv.imread(path)
 
         processingObject.setTestImg(img)   
         error = processingObject.compareImage()
         passref = getPassRef(error, passRef)
-        print(passref)
+        print(error, passref)
     
 
     #-------------------------------------------------------------------------------------------#
 
     while True:
         img = cv.imread(captureObject.autoCapture("Test", photoDirectoryName, processingObject))
-        processingObject.setTestImg(img)   
-        error = processingObject.compareImage()
-        prediction = MSEStabilization(error, passref)
         
+
+        prediction = MSEStabilization(error, passref) #Generates PASS/FAIL array
         print(prediction.result())
 
 
