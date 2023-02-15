@@ -7,8 +7,7 @@ def mse(img1, img2, numWhitePixels):
     # height, width = img1.shape
     diffImg = cv.absdiff(img1, img2)
     err = np.sum(diffImg**2)
-    # ans = err/ float(numWhitePixels)
-    ans = err/ float(2160*3840)
+    ans = err/ float(numWhitePixels)
     #Closer to 0 is better
     return ans
 
@@ -53,7 +52,6 @@ class imageProcessing:
             errors.append(error)
 
         self.MSEResults = errors
-        return self.MSEResults
     
     def displayResultPosition(self):
         

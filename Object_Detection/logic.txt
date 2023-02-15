@@ -1,0 +1,17 @@
+[0,0,0,0]
+none
+all
+
+lr
+tb
+
+
+all
+
+if (no top) and (no bottom):
+    mse (lr, test)
+    update the least errors
+else if (no top):
+    mse (lbr, test)
+else if (no bottom):
+    mse (tlr, test)

@@ -89,7 +89,7 @@ with dai.Device(pipeline) as device:
     cv.waitKey(0)
 
     #After loading all parts, camera begins capturing reference photos
-    for i in range(80):
+    for i in range(5):
         # captureObject.autoCapture("Test", errDir, processingObject)
         testImg = captureObject.captureOne(os.path.join(errDir, "Test " + str(i) + ".jpg"), brightness, lensPos)
         time.sleep(0.5)
@@ -118,15 +118,21 @@ with dai.Device(pipeline) as device:
         
         processingObject.setTestImg(img)  
         frame = processingObject.displayResultPosition()
-        error = processingObject.compareImage()
+        error = processingObject.compareImage() # compare w all the parts
+        
+        prediction = MSEStabilization(error, passref) #Generates PASS/FAIL array
+
+        # if top is there, compare w tlr or tlbr
+        # if top is not there, compare w lbr or lr
+        
+        print(prediction.result())
 
         frame = cv.pyrDown(frame)
         frame = cv.pyrDown(frame)
         cv.imshow("errors", frame)
         cv.waitKey(1)
         
-        prediction = MSEStabilization(error, passref) #Generates PASS/FAIL array
-        print(prediction.result())
+        
 
 
 
