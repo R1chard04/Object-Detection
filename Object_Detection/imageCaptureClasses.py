@@ -75,7 +75,7 @@ class imageCapture:
                 return brightness, lensPos
                 
     # Capture images every 0.3 secs and process it
-    def autoCapture(self, imgName, directoryName, processingObject):
+    def autoCapture(self, imgName, directoryName, processingObject, brightness, lensPos):
         capture = time.time()
 
         imgCaptured = False #img updated condition
@@ -97,6 +97,15 @@ class imageCapture:
                 frame = inRgb.getCvFrame()
                 
             if self.qStill.has():
+
+                ctrl = dai.CameraControl()
+                ctrl.setBrightness(brightness)
+                self.qControl.send(ctrl) 
+
+                ctrl = dai.CameraControl()
+                ctrl.setManualFocus(lensPos)
+                self.qControl.send(ctrl)
+
                 with open(path, "wb") as img:
                     img.write(self.qStill.get().getData())
                     return path
@@ -141,7 +150,7 @@ class imageCapture:
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
 
-    def captureOne(self, path):
+    def captureOne(self, path, brightness, lensPos):
     
         imgUpdated = False
         img = 1
@@ -157,6 +166,15 @@ class imageCapture:
             
 
             if self.qStill.has():
+
+                ctrl = dai.CameraControl()
+                ctrl.setBrightness(brightness)
+                self.qControl.send(ctrl) 
+
+                ctrl = dai.CameraControl()
+                ctrl.setManualFocus(lensPos)
+                self.qControl.send(ctrl)
+
                 with open(path, "wb") as f:
                     f.write(self.qStill.get().getData())
                     imgUpdated = True

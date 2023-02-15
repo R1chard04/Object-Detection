@@ -1,5 +1,3 @@
-#main.py
-
 import cv2 as cv
 import time
 import depthai as dai
@@ -84,7 +82,7 @@ with dai.Device(pipeline) as device:
     masks = [top,left,bottom,right]    
 
     #----------------------Error Algorithm and Image Processing Initialisation---------------------#
-    tempRef = captureObject.captureOne(os.path.join(refDir, 'STD.jpg')) #Creating a stand-in initialisation picture
+    tempRef = captureObject.captureOne(os.path.join(refDir, 'STD.jpg'), brightness, lensPos) #Creating a stand-in initialisation picture
     processingObject = imageProcessing(masks, tempRef, tempRef, partList) #Initialisation of the processing object
 
     print("Load all parts then press any key")
@@ -92,13 +90,13 @@ with dai.Device(pipeline) as device:
 
     
     #After loading all parts, camera begins capturing reference photos
-    for i in range(100):
+    for i in range(10):
         # captureObject.autoCapture("Test", errDir, processingObject)
-        testImg = captureObject.captureOne(os.path.join(errDir, "Test " + str(i) + ".jpg"))
+        testImg = captureObject.captureOne(os.path.join(errDir, "Test " + str(i) + ".jpg"), brightness, lensPos)
         time.sleep(0.5)
 
     # Taking a standard image
-    ref = captureObject.captureOne(os.path.join(refDir, "STD.jpg"))
+    ref = captureObject.captureOne(os.path.join(refDir, "STD.jpg"), brightness, lensPos)
     processingObject.setRefImg(ref)
 
 
@@ -117,12 +115,13 @@ with dai.Device(pipeline) as device:
     #-------------------------------------------------------------------------------------------#
 
     while True:
-        img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject))
+        img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject, brightness, lensPos))
         
         processingObject.setTestImg(img)  
         frame = processingObject.displayResultPosition()
         error = processingObject.compareImage()
 
+        frame = cv.pyrDown(frame)
         frame = cv.pyrDown(frame)
         cv.imshow("errors", frame)
         cv.waitKey(1)
