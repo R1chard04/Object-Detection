@@ -53,6 +53,7 @@ class imageProcessing:
             errors.append(error)
 
         self.MSEResults = errors
+        return self.MSEResults
     
     def displayResultPosition(self):
         

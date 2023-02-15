@@ -91,16 +91,16 @@ class imageCapture:
             
             path = os.path.join(directoryName,imgName)
 
-            if inRgb is not None:
-                frame = inRgb.getCvFrame()
+            # if inRgb is not None:
+            #     frame = inRgb.getCvFrame()
                 
-                processingObject.setTestImg(frame)
-                error = processingObject.compareImage()
-                frame = processingObject.displayResultPosition()
+            #     processingObject.setTestImg(frame)
+            #     error = processingObject.compareImage()
+            #     frame = processingObject.displayResultPosition()
                 
-                frame = cv.pyrDown(frame)
-                frame = cv.pyrDown(frame)
-                cv.imshow("captured", frame)
+            #     frame = cv.pyrDown(frame)
+            #     frame = cv.pyrDown(frame)
+            #     cv.imshow("captured", frame)
                 
             if self.qStill.has():
 
@@ -115,7 +115,8 @@ class imageCapture:
                 with open(path, "wb") as img:
                     img.write(self.qStill.get().getData())
                 
-                    # img = cv.imread(path)
+                    img = cv.imread(path)
+                    return path
                     # processingObject.setTestImg(img)   
                     # processingObject.compareImage()
                     
