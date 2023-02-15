@@ -42,7 +42,7 @@ class imageCapture:
                     img = cv.imread(fName)
 
             key = cv.waitKey(1)
-            # focal length adjustment
+            # focal length adjestment
             if key in [ord(','), ord('.')]:
                 if key == ord(','):
                     lensPos -= LENS_STEP
@@ -75,7 +75,7 @@ class imageCapture:
                 return brightness, lensPos
                 
     # Capture images every 0.3 secs and process it
-    def autoCapture(self, imgName, directoryName, processingObject):
+    def autoCapture(self, imgName, directoryName, processingObject, brightness, lensPos):
         capture = time.time()
 
         imgCaptured = False #img updated condition
@@ -86,32 +86,48 @@ class imageCapture:
         while not imgCaptured:
             inRgb = self.qRgb.tryGet() 
             
-            # if imgName == "Test":
-            #     imgName = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
+            if imgName == "Test":
+                imgName = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
             
             path = os.path.join(directoryName,imgName)
 
-            
-
-            if inRgb is not None:
-                frame = inRgb.getCvFrame()
+            # if inRgb is not None:
+            #     frame = inRgb.getCvFrame()
+                
+            #     processingObject.setTestImg(frame)
+            #     error = processingObject.compareImage()
+            #     frame = processingObject.displayResultPosition()
+                
+            #     frame = cv.pyrDown(frame)
+            #     frame = cv.pyrDown(frame)
+            #     cv.imshow("captured", frame)
                 
             if self.qStill.has():
+
+                ctrl = dai.CameraControl()
+                ctrl.setBrightness(brightness)
+                self.qControl.send(ctrl) 
+
+                ctrl = dai.CameraControl()
+                ctrl.setManualFocus(lensPos)
+                self.qControl.send(ctrl)
+
                 with open(path, "wb") as img:
                     img.write(self.qStill.get().getData())
+                
+                    img = cv.imread(path)
                     return path
-
-                    
+                    # processingObject.setTestImg(img)   
+                    # processingObject.compareImage()
                     
             key = cv.waitKey(1)
 
-            if (time.time() - capture) > 0.5:
-                print("Jamie wants this here")
+            if (time.time() - capture) > 0.3:
                 capture = time.time()
                 ctrl = dai.CameraControl()
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
-
+        
     def captureImage(self, path):
     
         imgUpdated = False
@@ -141,7 +157,7 @@ class imageCapture:
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
 
-    def captureOne(self, path):
+    def captureOne(self, path, brightness, lensPos):
     
         imgUpdated = False
         img = 1
@@ -157,6 +173,15 @@ class imageCapture:
             
 
             if self.qStill.has():
+
+                ctrl = dai.CameraControl()
+                ctrl.setBrightness(brightness)
+                self.qControl.send(ctrl) 
+
+                ctrl = dai.CameraControl()
+                ctrl.setManualFocus(lensPos)
+                self.qControl.send(ctrl)
+
                 with open(path, "wb") as f:
                     f.write(self.qStill.get().getData())
                     imgUpdated = True
