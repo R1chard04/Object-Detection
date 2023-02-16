@@ -3,13 +3,13 @@ import numpy as np
 
 # from imagePredictionClass import Prediction
 
-def mse(img1, img2, numWhitePixels):
+def mse(img1, img2, pixels):
     # height, width = img1.shape
     diffImg = cv.absdiff(img1, img2)
     err = np.sum(diffImg**2)
-    ans = err/ float(numWhitePixels)
+    ans = err/ float(pixels)
     #Closer to 0 is better
-    return ans
+    return round(ans,0)
 
 class imageProcessing:
     def __init__(self, maskArray, ref, test, partList) -> None:
@@ -20,8 +20,8 @@ class imageProcessing:
 
         for i in range(len(partList)):
             print(i)
-            whitePixels = np.sum(maskArray[i] == 255)
-            self.masksWhitePixels.append(whitePixels)
+            pixels = np.sum(maskArray[i])
+            self.maskPixels.append(pixels)
 
         self.ref = ref  
         self.test = test
@@ -47,7 +47,7 @@ class imageProcessing:
             ref = cv.bitwise_and(self.ref, self.ref, mask = self.masks[i])
             
             test = cv.bitwise_and(self.test, self.test, mask = self.masks[i])
-            error = mse(test, ref, self.masksWhitePixels[i])
+            error = mse(test, ref, self.maskPixels[i])
 
             errors.append(error)
 
