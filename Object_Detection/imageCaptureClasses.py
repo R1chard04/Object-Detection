@@ -44,6 +44,7 @@ class imageCapture:
             key = cv.waitKey(1)
             # focal length adjestment
             if key in [ord(','), ord('.')]:
+                print("hi")
                 if key == ord(','):
                     lensPos -= LENS_STEP
                 elif key == ord('.'):
