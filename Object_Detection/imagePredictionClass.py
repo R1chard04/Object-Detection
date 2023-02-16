@@ -37,7 +37,9 @@ class MSEStabilization:
                 totalResult[i].append("FAIL")
         return totalResult
     
-             
+def doubleCheck(pre, post):
+    result = pre + post
+    
 
         
     
