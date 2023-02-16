@@ -104,13 +104,15 @@ class imageCapture:
                 
             if self.qStill.has():
 
-                ctrl = dai.CameraControl()
-                ctrl.setBrightness(brightness)
-                self.qControl.send(ctrl) 
+                # ctrl = dai.CameraControl()
+                # ctrl.setBrightness(brightness)
+                # self.qControl.send(ctrl) 
 
-                ctrl = dai.CameraControl()
-                ctrl.setManualFocus(lensPos)
-                self.qControl.send(ctrl)
+                # ctrl = dai.CameraControl()
+                # ctrl.setManualFocus(lensPos)
+                # self.qControl.send(ctrl)
+
+                # time.sleep(3)
 
                 with open(path, "wb") as img:
                     img.write(self.qStill.get().getData())

@@ -74,10 +74,28 @@ with dai.Device(pipeline) as device:
     #     print("Mask generated")
     #     masks[i] = mask
 
+
+    # print("Load " + "right")
+    # refPath = "Object_Detection\Photos\Refs\\right1.jpg"
+    # cv.waitKey(0)
+    # ref = captureObject.captureImage(refPath)
+    # cv.destroyAllWindows()
+    
+    # print("Change to colour")
+    # cv.waitKey(0)
+    # colPath = "Object_Detection\Photos\Col\\right1.jpg"
+    # col = captureObject.captureImage(colPath)
+    # cv.destroyAllWindows()
+
+    # print("creating a mask, this may take a couple minutes.")
+    # maskPath = "Object_Detection\Photos\Masks\\right1.jpg"
+    # mask = recalibrate.createMask(ref, col, maskPath)
+    # print("Mask generated")
+
     top = cv.imread("Object_Detection\Photos\Masks/top.jpg", 0)
-    left = cv.imread("Object_Detection\Photos\Masks/left.jpg", 0)
+    left = cv.imread("Object_Detection\Photos\Masks/left1.jpg", 0)
     bottom = cv.imread("Object_Detection\Photos\Masks/bottom.jpg", 0)
-    right = cv.imread("Object_Detection\Photos\Masks/right.jpg", 0)
+    right = cv.imread("Object_Detection\Photos\Masks/right1.jpg", 0)
     
     masks = [top,left,bottom,right]    
 
@@ -89,7 +107,7 @@ with dai.Device(pipeline) as device:
     cv.waitKey(0)
 
     #After loading all parts, camera begins capturing reference photos
-    for i in range(50):
+    for i in range(30):
         # captureObject.autoCapture("Test", errDir, processingObject)
         testImg = captureObject.captureOne(os.path.join(errDir, "Test " + str(i) + ".jpg"), brightness, lensPos)
         time.sleep(0.5)

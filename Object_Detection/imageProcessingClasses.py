@@ -9,18 +9,18 @@ def mse(img1, img2, pixels):
     err = np.sum(diffImg**2)
     ans = err/ float(pixels)
     #Closer to 0 is better
-    return round(ans,0)
+    return ans
 
 class imageProcessing:
     def __init__(self, maskArray, ref, test, partList) -> None:
 
         self.masks = maskArray
-        self.masksWhitePixels = []
+        self.maskPixels = []
         self.parts = partList
 
         for i in range(len(partList)):
             print(i)
-            pixels = np.sum(maskArray[i])
+            pixels = np.sum(self.masks)
             self.maskPixels.append(pixels)
 
         self.ref = ref  
@@ -49,7 +49,7 @@ class imageProcessing:
             test = cv.bitwise_and(self.test, self.test, mask = self.masks[i])
             error = mse(test, ref, self.maskPixels[i])
 
-            errors.append(error)
+            errors.append(error*100)
 
         self.MSEResults = errors
         return self.MSEResults
@@ -83,15 +83,15 @@ class imageProcessing:
         frame = cv.putText(frame, "RESULTS", (text_x + shift_x, title_y), font, partsFontScale, blue, partsFontthickness+3)
         frame = cv.line(frame, (box_x1 + 20, line_y), (box_x2-20, line_y), blue, 3)
         frame = cv.putText(frame, "Right: ", (text_x + shift_x, text_y + gap*4), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, str(self.MSEResults[3]), (text_x + shift_x + shift_x_error, text_y + gap*4), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, str(round(self.MSEResults[3], 3)), (text_x + shift_x + shift_x_error, text_y + gap*4), font, partsFontScale, blue, partsFontthickness)
         
         frame = cv.putText(frame, "Bottom: ", (text_x + shift_x, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, str(self.MSEResults[2]), (text_x + shift_x + shift_x_error, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, str(round(self.MSEResults[2], 3)), (text_x + shift_x + shift_x_error, text_y + gap*3), font, partsFontScale, blue, partsFontthickness)
         
         frame = cv.putText(frame, "Left: ", (text_x + shift_x, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, str(self.MSEResults[1]), (text_x + shift_x + shift_x_error, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, str(round(self.MSEResults[1], 3)), (text_x + shift_x + shift_x_error, text_y + gap*2), font, partsFontScale, blue, partsFontthickness)
         
         frame = cv.putText(frame, "Top: ", (text_x + shift_x, text_y + gap), font, partsFontScale, blue, partsFontthickness)
-        frame = cv.putText(frame, str(self.MSEResults[0]), (text_x + shift_x + shift_x_error, text_y + gap), font, partsFontScale, blue, partsFontthickness)
+        frame = cv.putText(frame, str(round(self.MSEResults[0], 3)), (text_x + shift_x + shift_x_error, text_y + gap), font, partsFontScale, blue, partsFontthickness)
         
         return frame
