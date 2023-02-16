@@ -9,7 +9,7 @@ def mse(img1, img2, pixels):
     err = np.sum(diffImg**2)
     ans = err/ float(pixels)
     #Closer to 0 is better
-    return ans
+    return round(ans,0)
 
 class imageProcessing:
     def __init__(self, maskArray, ref, test, partList) -> None:
