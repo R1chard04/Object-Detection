@@ -13,7 +13,7 @@ totalArray = [myArray0, myArray1, myArray2, myArray3]
 def getPassRef(error, final):
     for i in range(len(error)):
         if final[i] < error[i]:
-            final[i] = error[i] * 3.25
+            final[i] = error[i] * 3.5
     return final
 # for live video
 class MSEStabilization:
