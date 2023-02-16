@@ -52,6 +52,7 @@ class imageProcessing:
             errors.append(error)
 
         self.MSEResults = errors
+        return self.MSEResults
     
     def displayResultPosition(self):
         
@@ -94,4 +95,3 @@ class imageProcessing:
         frame = cv.putText(frame, str(self.MSEResults[0]), (text_x + shift_x + shift_x_error, text_y + gap), font, partsFontScale, blue, partsFontthickness)
         
         return frame
-    

@@ -89,7 +89,7 @@ with dai.Device(pipeline) as device:
     cv.waitKey(0)
 
     #After loading all parts, camera begins capturing reference photos
-    for i in range(5):
+    for i in range(50):
         # captureObject.autoCapture("Test", errDir, processingObject)
         testImg = captureObject.captureOne(os.path.join(errDir, "Test " + str(i) + ".jpg"), brightness, lensPos)
         time.sleep(0.5)
