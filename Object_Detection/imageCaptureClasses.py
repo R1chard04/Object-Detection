@@ -17,10 +17,13 @@ class imageCapture:
         self.MSEresults = 0
 
     def setParameters(self):
-        lensPos = 150
-        brightness = 0
+        lensPos = 108
+        brightness = -1
         BRIGHT_STEP = 1
         LENS_STEP = 3
+        awb_lock = False
+        ae_lock = False
+
         img = 1
         imgUpdated = False
         
@@ -44,7 +47,6 @@ class imageCapture:
             key = cv.waitKey(1)
             # focal length adjestment
             if key in [ord(','), ord('.')]:
-                print("hi")
                 if key == ord(','):
                     lensPos -= LENS_STEP
                 elif key == ord('.'):
@@ -65,6 +67,18 @@ class imageCapture:
                 print("Brightness:", brightness)
                 ctrl = dai.CameraControl()
                 ctrl.setBrightness(brightness)
+                self.qControl.send(ctrl) 
+            elif key == ord('1'):
+                awb_lock = not awb_lock
+                print("Auto white balance lock:", awb_lock)
+                ctrl = dai.CameraControl()
+                ctrl.setAutoWhiteBalanceLock(awb_lock)
+                self.qControl.send(ctrl) 
+            elif key == ord('2'):
+                ae_lock = not ae_lock
+                print("Auto exposure lock:", ae_lock)
+                ctrl = dai.CameraControl()
+                ctrl.setAutoExposureLock(ae_lock)
                 self.qControl.send(ctrl) 
             
             if key == ord("q"):
@@ -105,13 +119,9 @@ class imageCapture:
                 
             if self.qStill.has():
 
-                # ctrl = dai.CameraControl()
-                # ctrl.setBrightness(brightness)
-                # self.qControl.send(ctrl) 
-
-                # ctrl = dai.CameraControl()
-                # ctrl.setManualFocus(lensPos)
-                # self.qControl.send(ctrl)
+                ctrl = dai.CameraControl()
+                ctrl.setBrightness(brightness)
+                self.qControl.send(ctrl) 
 
                 # time.sleep(3)
 

@@ -19,7 +19,7 @@ def writePLC(ok, station, resultError):
             Feature_all = comm.Write("Camera_Output.1", resultError)
             print(Feature_all.TagName, Feature_all.Value, Feature_all.Status)
             # print(station)
-            print("Transsfer done")
+            print("Transfer done")
     else:
         print("Transfer fail - result unvalid")
 

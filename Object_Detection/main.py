@@ -9,8 +9,8 @@ from imagePredictionClass import MSEStabilization, getPassRef
 import time
 import os
 import pdb
-# from pylogix import PLC
-# from PLCUpdate import transferToPLC
+from pylogix import PLC
+from PLCUpdate import transferToPLC
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path
@@ -107,7 +107,7 @@ with dai.Device(pipeline) as device:
     cv.waitKey(0)
 
     #After loading all parts, camera begins capturing reference photos
-    for i in range(3):
+    for i in range(10):
         # captureObject.autoCapture("Test", errDir, processingObject)
         testImg = captureObject.captureOne(os.path.join(errDir, "Test " + str(i) + ".jpg"), brightness, lensPos)
         time.sleep(0.5)
@@ -133,8 +133,10 @@ with dai.Device(pipeline) as device:
     #-------------------------------------------------------------------------------------------#
 
     while True:
-        img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject, brightness, lensPos))
+
         
+        img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject, brightness, lensPos))
+            
         processingObject.setTestImg(img)  
         frame = processingObject.displayResultPosition()
         error = processingObject.compareImage() # compare w all the parts
@@ -146,18 +148,21 @@ with dai.Device(pipeline) as device:
         result = prediction.result()
         print(result)
 
+        transferToPLC("OP100", result)
+
         frame = cv.pyrDown(frame)
         frame = cv.pyrDown(frame)
         cv.imshow("errors", frame)
+        
+        
+        
         cv.waitKey(1)
-        
-        
 
 
 
 
         
-    #     transferToPLC("OP100", RESULTARRAYTBD)
+
         
         # # for i in range(len(result)):
         # for object in station100ProcessingObjectArray:

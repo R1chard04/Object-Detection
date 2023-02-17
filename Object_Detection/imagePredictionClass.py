@@ -28,9 +28,9 @@ class MSEStabilization:
         for i in range(self.numParts):
             ans = self.errors[i] - self.passRef[i]
             if ans <= 0:
-                totalResultBool.append(True)
+                totalResultBool.append(1)
             else:
-                totalResultBool.append(False)
+                totalResultBool.append(0)
                 
         return totalResultBool
     
