@@ -5,7 +5,7 @@ import os
 import time
 from imageProcessingClasses import imageProcessing
 
-
+# A function to ensure lens and brightness adjestment does not go out of range
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
 
@@ -16,6 +16,7 @@ class imageCapture:
         self.qControl = qControl
         self.MSEresults = 0
 
+    # Camera calibration
     def setParameters(self):
         lensPos = 108
         brightness = -1
@@ -23,28 +24,20 @@ class imageCapture:
         LENS_STEP = 3
         awb_lock = False
         ae_lock = False
-
-        img = 1
-        imgUpdated = False
         
         while True:
     
             inRgb = self.qRgb.tryGet() 
 
+            # streaming the frame
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
-                cv.imshow("rgb", cv.resize(frame,(0,0), fx = 0.2, fy = 0.2))
-            
-            if self.qStill.has():
-                dirName = "Object_Detection\Photos\STD"
-                fName = f"{dirName}/{int(time.time() * 1000)}.jpg"
-                with open(fName, "wb") as f:
-                    f.write(self.qStill.get().getData())
-                    print('Image saved to', fName)
-                    imgUpdated = True
-                    img = cv.imread(fName)
+                frame = cv.pyrDown(frame)
+                frame = cv.pyrDown(frame)
+                cv.imshow("frame", frame)
 
             key = cv.waitKey(1)
+            
             # focal length adjestment
             if key in [ord(','), ord('.')]:
                 if key == ord(','):
@@ -68,12 +61,16 @@ class imageCapture:
                 ctrl = dai.CameraControl()
                 ctrl.setBrightness(brightness)
                 self.qControl.send(ctrl) 
+                
+            # lock/unlock auto white balance
             elif key == ord('1'):
                 awb_lock = not awb_lock
                 print("Auto white balance lock:", awb_lock)
                 ctrl = dai.CameraControl()
                 ctrl.setAutoWhiteBalanceLock(awb_lock)
                 self.qControl.send(ctrl) 
+                
+            # lock/unlock auto exposure
             elif key == ord('2'):
                 ae_lock = not ae_lock
                 print("Auto exposure lock:", ae_lock)
@@ -82,56 +79,25 @@ class imageCapture:
                 self.qControl.send(ctrl) 
             
             if key == ord("q"):
-                
-                # ctrl = dai.CameraControl()
-                # ctrl.setCaptureStill(True)
-                # self.qControl.send(ctrl)
-                # print("Sent 'still' event to the camera!")
                 return brightness, lensPos
                 
-    # Capture images every 0.3 secs and process it
-    def autoCapture(self, imgName, directoryName, processingObject, brightness, lensPos):
+    def autoCapture(self, imgName, directoryName):
         capture = time.time()
-
         imgCaptured = False #img updated condition
-        error = 0
-        tolerance = 0
-        resultArray = []
 
         while not imgCaptured:
-            inRgb = self.qRgb.tryGet() 
             
             if imgName == "Test":
                 imgName = str(round(float(((str(datetime.datetime.now()).replace("-","")).replace(" ","")).replace(":",""))))+".jpg"
             
             path = os.path.join(directoryName,imgName)
-
-            # if inRgb is not None:
-            #     frame = inRgb.getCvFrame()
-                
-            #     processingObject.setTestImg(frame)
-            #     error = processingObject.compareImage()
-            #     frame = processingObject.displayResultPosition()
-                
-            #     frame = cv.pyrDown(frame)
-            #     frame = cv.pyrDown(frame)
-            #     cv.imshow("captured", frame)
                 
             if self.qStill.has():
-
-                ctrl = dai.CameraControl()
-                ctrl.setBrightness(brightness)
-                self.qControl.send(ctrl) 
-
-                # time.sleep(3)
-
                 with open(path, "wb") as img:
                     img.write(self.qStill.get().getData())
                 
                     img = cv.imread(path)
                     return path
-                    # processingObject.setTestImg(img)   
-                    # processingObject.compareImage()
                     
             key = cv.waitKey(1)
 
@@ -194,7 +160,7 @@ class imageCapture:
                 ctrl = dai.CameraControl()
                 ctrl.setManualFocus(lensPos)
                 self.qControl.send(ctrl)
-
+                
                 with open(path, "wb") as f:
                     f.write(self.qStill.get().getData())
                     imgUpdated = True

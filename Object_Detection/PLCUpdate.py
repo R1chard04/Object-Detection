@@ -13,13 +13,11 @@ def readPLC(camTagName):
 # send one for pass and zero for fail for each feature, Run when it requires to write the value
 def writePLC(ok, station, resultError):
     if ok == True :
-        with PLC("10.110.50.201") as comm:
-
-            
+        with PLC("10.110.50.201") as comm:       
             Feature_all = comm.Write("Camera_Output.1", resultError)
-            print(Feature_all.TagName, Feature_all.Value, Feature_all.Status)
+            # print(Feature_all.TagName, Feature_all.Value, Feature_all.Status)
             # print(station)
-            print("Transfer done")
+            # print("Transfer done")
     else:
         print("Transfer fail - result unvalid")
 
@@ -31,7 +29,7 @@ def verifyResult(station, result):
 
     for i in range(len(BT1XXStation)):
         if station == BT1XXStation[i]:
-            print(stationResult[i])
+            # print(stationResult[i])
             verified = True
    
     return verified, station, result

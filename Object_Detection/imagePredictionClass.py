@@ -1,17 +1,14 @@
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
-import pdb
 
 # declare arrays to store the errors for top, left, bottom, right
-
-totalArray = []
-
 def getPassRef(error, final):
     for i in range(len(error)):
         if final[i] < error[i]:
-            final[i] = error[i] * 3.5
+            final[i] = error[i] * 3
     return final
+
 # for live video
 class MSEStabilization:
     def __init__(self, errors, passRef, numParts) -> None:
@@ -33,10 +30,7 @@ class MSEStabilization:
                 totalResultBool.append(0)
                 
         return totalResultBool
-    
-def doubleCheck(pre, post):
-    result = pre + post
-    
+
 
         
     

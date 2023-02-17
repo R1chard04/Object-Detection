@@ -45,7 +45,12 @@ with dai.Device(pipeline) as device:
                                 device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                 device.getInputQueue(name="control"))
 
-    #Camera frame and brightness setup window
+    #Camera frame and brightness setup window 
+    print("press ,/. to adjust focal length")
+    print("press k/l to adjust birghtness")
+    print("press 1 to turn on/off auto white balance lock")
+    print("press 2 to turn on/off auto exposure lock")
+    print("press q to finish settings")
     brightness, lensPos = captureObject.setParameters()
     cv.destroyAllWindows()
 
@@ -108,7 +113,6 @@ with dai.Device(pipeline) as device:
 
     #After loading all parts, camera begins capturing reference photos
     for i in range(10):
-        # captureObject.autoCapture("Test", errDir, processingObject)
         testImg = captureObject.captureOne(os.path.join(errDir, "Test " + str(i) + ".jpg"), brightness, lensPos)
         time.sleep(0.5)
     # Taking a standard image
@@ -133,18 +137,18 @@ with dai.Device(pipeline) as device:
     #-------------------------------------------------------------------------------------------#
 
     while True:
-
         
-        img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName, processingObject, brightness, lensPos))
+        # capture a test image
+        img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName))
             
         processingObject.setTestImg(img)  
+        # display the result on the frame
         frame = processingObject.displayResultPosition()
-        error = processingObject.compareImage() # compare w all the parts
-        
-        prediction = MSEStabilization(error, passref, 4) #Generates PASS/FAIL array
+        # get the mse error
+        error = processingObject.compareImage() 
+        #Generates PASS/FAIL array
+        prediction = MSEStabilization(error, passref, 4) 
 
-        # if top is there, compare w tlr or tlbr
-        # if top is not there, compare w lbr or lr
         result = prediction.result()
         print(result)
 
@@ -153,23 +157,4 @@ with dai.Device(pipeline) as device:
         frame = cv.pyrDown(frame)
         frame = cv.pyrDown(frame)
         cv.imshow("errors", frame)
-        
-        
-        
         cv.waitKey(1)
-
-
-
-
-        
-
-        
-        # # for i in range(len(result)):
-        # for object in station100ProcessingObjectArray:
-        #     object.setTestImg()
-        #     error, diffImg = object.compareImage()
-        #     print("Image " + i+ ": " +error)
-        #     # if error < tolerance:
-        #     #     resultArray[i] = 1
-        # # updatePLC(errorArray)
-        
