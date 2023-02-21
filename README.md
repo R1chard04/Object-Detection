@@ -5,7 +5,7 @@
 ## This is a work term project using camera with machine learning to develop an AI system detects the presence of objects inside a frame, which is connected to a PLC and shown on UI.
 
 ### Our process:
-+ Installing two different cameras to get different perspective of the same object.
++ Installing multiple cameras to get different perspective of the same object.
 + Using algorithms to generate two images from two point of view.
 + Using openCV's calibration method to undistort all the distortions of the images.
 + Using stitching method to find the overlapped part of two images, then combine them into one image.
