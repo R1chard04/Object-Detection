@@ -18,6 +18,7 @@ def getPipeline(stereo):
     else:
         cam_rgb.setPreviewSize(1920, 1080)
     cam_rgb.setBoardSocket(dai.CameraBoardSocket.RGB)
+    cam_rgb.setFps(3)
     cam_rgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
     cam_rgb.setInterleaved(False)
 
@@ -79,11 +80,14 @@ with contextlib.ExitStack() as stack:
     while camera:
         for i in camera_list:
             for name, queue in queues.items():
-                q = queue.getOutputQueue(name="out")
+                # q = queue.getOutputQueue(name="out")
                 if queue.has() and name == i:
-                    imgFrame = q.get()
+                    stamp = queue.get()
                     # Latency in miliseconds 
-                    latencyMs = (dai.Clock.now() - imgFrame.getTimestamp()).total_seconds() * 1000
+                    frame = queue.get().getCvFrame()
+                    latencyMs = (dai.Clock.now() - stamp.getTimestamp()).total_seconds() * 1000
+                    print('Latency: {:.2f} ms'.format(latencyMs))
+                    # print(name)
                     cv2.imshow(name, queue.get().getCvFrame())
                     
                 # else:
@@ -94,5 +98,5 @@ with contextlib.ExitStack() as stack:
         # cv2.imshow(chosenCamera, chosenCamera.get().getCvFrame())
         if cv2.waitKey(1) == ord('q'):
             break
-
+# 169.254.1.202
 print('Devices closed')
