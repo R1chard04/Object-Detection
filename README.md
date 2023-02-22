@@ -1,3 +1,9 @@
+```diff
+- Shubham, a controls engineer so bright,
+- Guiding co-op students with all his might,
+- Object detection, his current fight.
+```
+
 # Winter Workterm - Parts Present Detection Project (2023)
 
 ## Contributors = [Eren Yilmaz, Henrique Rodrigues, Jamie Yen, Kent Tran, Leo You]
