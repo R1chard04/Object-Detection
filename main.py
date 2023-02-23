@@ -8,12 +8,11 @@ from imageMaskGeneration import createMask
 from imagePredictionClass import MSEStabilization, getPassRef
 import time
 import os
-import pdb
 import json
 # from pylogix import PLC
 # from PLCUpdate import transferToPLC
 
-#-----------------------------------------Creating folders and part list-----------------------------------------#
+#-----------------------------------------Directories-----------------------------------------#
 #Photos Path
 photosPath = "Photos\Init" #This is where all the images are being saved
 
@@ -24,6 +23,10 @@ errDir = "Photos\Err" #This is whered the difference images can be saved; they a
 refDir = "Photos\Refs" #This is where the reference photos for each part at one station are being saved
 colDir = "Photos\Col" #This is where the alternate colour reference photos for each part at one station are being saved
 maskDir = "Photos\Masks" #This is where the generated masks are being saved
+
+#IPs
+IPString = "169.254.1."
+IPEndpoint = 200
 
 #Part List
 with open(r'parts.json') as f:
@@ -40,9 +43,9 @@ for i in range(len(partsLayered)):
     temp = [item for sub_list in partsLayered[i] for item in sub_list]
     partsPerStation.append(temp)
 
-#----------------------Mask Initialisation---------------------#
+#----------------------Initialisation---------------------#
 
-def maskSetup(selected, captureObject, recalibrate):
+def maskSetup(selected, captureObject, recalibrate, brightness, lensPos):
     refs, cols, masks = []
 
     if recalibrate == True:
@@ -151,58 +154,59 @@ def errorSetup(selected, captureObject, processingObject, recalibrate, brightnes
 
     return ref, passref
 
+#-----------------------------------------Main Loop-----------------------------------------#
+def mainloop(selected, recalibrate):
+    #-----------------------------------------Camera Initialisation-----------------------------------------#
+    IP = IPEndpoint + selected
+    IP = IPString + str(IP)
 
-#-----------------------------------------Camera Initialisation-----------------------------------------#
+    initialisationObject = initialise(photosPath)
+    photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill = initialisationObject.initialise()
 
-#This needs to be set up for multiple cameras and IPS need to be added to a dict with the stations
-initialisationObject = initialise(photosPath)
-photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill, pipeline_1 = initialisationObject.initialise()
+    for device in dai.Device.getAllAvailableDevices():
+        print(f"{device.getMxId()} {device.state}")
 
-for device in dai.Device.getAllAvailableDevices():
-    print(f"{device.getMxId()} {device.state}")
+    device_info = dai.DeviceInfo(IP)
+    device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
+    device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 
-device_info = dai.DeviceInfo("19443010A137DE1200")
-device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
-device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+    #----------------------Camera Capture Initialisation---------------------#
+    #This needs to be setup for multiple cameras
+    with dai.Device(pipeline) as device:
+        
+        captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
+                                    device.getOutputQueue(name="still", maxSize=30, blocking=True), 
+                                    device.getInputQueue(name="control"))
 
-#----------------------Camera Capture Initialisation---------------------#
-selected = 1
-recalibrate = False
-#This needs to be setup for multiple cameras
-with dai.Device(pipeline[selected]) as device:
-    
-    captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
-                                device.getOutputQueue(name="still", maxSize=30, blocking=True), 
-                                device.getInputQueue(name="control"))
+        brightness, lensPos = paramsSetup(selected, captureObject, recalibrate)
+        masks = maskSetup(selected, captureObject, recalibrate, brightness, lensPos)
+        tempRef = controlSetup(selected, captureObject, recalibrate, brightness, lensPos)
+        
+        processingObject = imageProcessing(masks, tempRef, tempRef, partsPerStation[selected]) #Initialisation of the processing object
 
-    brightness, lensPos = paramsSetup(selected, captureObject, recalibrate)
-    masks = maskSetup(selected, captureObject, recalibrate, brightness, lensPos)
-    tempRef = controlSetup(selected, captureObject, recalibrate, brightness, lensPos)
-    
-    processingObject = imageProcessing(masks, tempRef, tempRef, partsPerStation[selected]) #Initialisation of the processing object
+        ref, passref = errorSetup(selected, captureObject, processingObject, recalibrate, brightness, lensPos)
+        processingObject.setRefImg(ref)
 
-    ref, passref = errorSetup(selected, captureObject, processingObject, recalibrate, brightness, lensPos)
-    processingObject.setRefImg(ref)
+    #-------------------------------------------------------------------------------------------#   
+        while True:
+            # capture a test image
+            img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName)) #returns a path that can be read. For some reason this prevents the return of a corrupted image
+                
+            processingObject.setTestImg(img)  
+            # display the result on the frame
+            frame = processingObject.displayResultPosition()
+            # get the mse error
+            error = processingObject.compareImage() 
+            #Generates PASS/FAIL array
+            prediction = MSEStabilization(error, passref, 4) 
 
-#-------------------------------------------------------------------------------------------#   
-    while True:
-        # capture a test image
-        img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName)) #returns a path that can be read. For some reason this prevents the return of a corrupted image
-            
-        processingObject.setTestImg(img)  
-        # display the result on the frame
-        frame = processingObject.displayResultPosition()
-        # get the mse error
-        error = processingObject.compareImage() 
-        #Generates PASS/FAIL array
-        prediction = MSEStabilization(error, passref, 4) 
+            result = prediction.result()
+            print(result)
 
-        result = prediction.result()
-        print(result)
+            # transferToPLC("OP100", result)
 
-        transferToPLC("OP100", result)
+            frame = cv.pyrDown(frame)
+            frame = cv.pyrDown(frame)
+            cv.imshow("errors", frame)
+            cv.waitKey(1)
 
-        frame = cv.pyrDown(frame)
-        frame = cv.pyrDown(frame)
-        cv.imshow("errors", frame)
-        cv.waitKey(1)
