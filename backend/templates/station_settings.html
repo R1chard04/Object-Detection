@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>
+   <h1>Station {{ station_number }}</h1>
+  </title>
+  <body>
+   <div>
+    <h2>Settings manuals for station {{ station_number }}</h2>
+   </div>
+   <div>
+    <form action="{{ url_for('change_settings', station_number=station_number) }}" method="POST">
+     <div>
+      <ul>
+       <li>
+        <label for="focal_length_increase">Press "." to increase the focal length</label><br>
+        <label for="focal_length_decrease">Press "," to decrease the focal length</label><br>
+        <!-- Create a bar indicator to indicate the event when the user click either of the keys -->
+        <label for="focal_length_setting">You can also input the focal length setting manually</label>
+        <input type="text" name="focal_length_setting_input"/>
+       </li>
+       <li>
+        <label for="brightness_increase">Press "l" to increase the brightness of the camera</label><br>
+        <label for="brightness_decrease">Press "k" to decrease the brightness of the camera</label><br>
+        <!-- Create a bar indicator to indicate the event when the user click either of the keys  -->
+        <label for="brightness_setting">You can also input the brightness setting manually</label>
+        <input type="text" name="brightness_setting"/>
+       </li>
+       <li>
+        <label for="white_balance_lock">Press "1" to turn on/off white balance lock</label>
+        <!-- Create an indicator to indicate the current state of the white balance lock -->
+       </li>
+       <li>
+        <label for="auto_exposure_lock">Press "2" to turn on/off auto exposure lock</label>
+        <!-- Create an indicator to indicate the current state of the auto exposure lock -->
+       </li>
+      </ul>
+      <div>
+       <p>Click here (or press q) to save all the settings</p>
+       <input type="submit" name="Save"/>
+      </div>
+     </div>
+    </form>
+   </div>
+  </body>
+ </head>
+</html>
