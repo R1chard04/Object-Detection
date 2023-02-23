@@ -8,5 +8,5 @@ recalibrate = False
 
 if __name__ == '__main__':    
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        executor.map(mainloop, selected, recalibrate)
+        executor.map(mainloop, selected) 
 

@@ -17,7 +17,7 @@ class imageCapture:
         self.MSEresults = 0
 
     # Camera calibration
-    def setParameters(self):
+    def setParameters(self, name):
         lensPos = 108
         brightness = -1
         BRIGHT_STEP = 1
@@ -34,7 +34,7 @@ class imageCapture:
                 frame = inRgb.getCvFrame()
                 frame = cv.pyrDown(frame)
                 frame = cv.pyrDown(frame)
-                cv.imshow("frame", frame)
+                cv.imshow(name, frame)
 
             key = cv.waitKey(1)
             

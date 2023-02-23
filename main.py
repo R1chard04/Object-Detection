@@ -9,6 +9,8 @@ from imagePredictionClass import MSEStabilization, getPassRef
 import time
 import os
 import json
+import pdb
+
 # from pylogix import PLC
 # from PLCUpdate import transferToPLC
 
@@ -45,7 +47,7 @@ for i in range(len(partsLayered)):
 
 #----------------------Initialisation---------------------#
 
-def maskSetup(selected, captureObject, recalibrate, brightness, lensPos):
+def maskSetup(selected, captureObject, recalibrate, brightness, lensPos, name):
     refs, cols, masks = []
 
     if recalibrate == True:
@@ -90,7 +92,7 @@ def maskSetup(selected, captureObject, recalibrate, brightness, lensPos):
     
         return masks
 
-def paramsSetup(selected, captureObject, recalibrate):
+def paramsSetup(selected, captureObject, recalibrate, name):
     #Station prameters
     with open(r'params.json') as f:
         paramsList = json.load(f)
@@ -102,7 +104,7 @@ def paramsSetup(selected, captureObject, recalibrate):
         print("press 1 to turn on/off auto white balance lock")
         print("press 2 to turn on/off auto exposure lock")
         print("press q to finish settings")
-        brightness, lensPos = captureObject.setParameters()
+        brightness, lensPos = captureObject.setParameters(name)
 
         paramsList[stations[selected]]['brightness'] = brightness
         paramsList[stations[selected]]['lensPos'] = lensPos
@@ -155,31 +157,35 @@ def errorSetup(selected, captureObject, processingObject, recalibrate, brightnes
     return ref, passref
 
 #-----------------------------------------Main Loop-----------------------------------------#
-def mainloop(selected, recalibrate):
+def mainloop(selected):
+    print("here")
     #-----------------------------------------Camera Initialisation-----------------------------------------#
     IP = IPEndpoint + selected
     IP = IPString + str(IP)
+    recalibrate = True
 
     initialisationObject = initialise(photosPath)
+    print("here1")
     photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill = initialisationObject.initialise()
 
     for device in dai.Device.getAllAvailableDevices():
         print(f"{device.getMxId()} {device.state}")
-
+    print(IP)
     device_info = dai.DeviceInfo(IP)
     device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
     device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 
     #----------------------Camera Capture Initialisation---------------------#
     #This needs to be setup for multiple cameras
-    with dai.Device(pipeline) as device:
-        
+    with dai.Device(pipeline, device_info) as device:
+        print("here3")
         captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
                                     device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                     device.getInputQueue(name="control"))
+        print("here4")
 
-        brightness, lensPos = paramsSetup(selected, captureObject, recalibrate)
-        masks = maskSetup(selected, captureObject, recalibrate, brightness, lensPos)
+        brightness, lensPos = paramsSetup(selected, captureObject, recalibrate, IP)
+        masks = maskSetup(selected, captureObject, recalibrate, brightness, lensPos, IP)
         tempRef = controlSetup(selected, captureObject, recalibrate, brightness, lensPos)
         
         processingObject = imageProcessing(masks, tempRef, tempRef, partsPerStation[selected]) #Initialisation of the processing object
@@ -189,6 +195,7 @@ def mainloop(selected, recalibrate):
 
     #-------------------------------------------------------------------------------------------#   
         while True:
+            print("here5")
             # capture a test image
             img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName)) #returns a path that can be read. For some reason this prevents the return of a corrupted image
                 
