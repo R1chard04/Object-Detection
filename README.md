@@ -1,9 +1,3 @@
-```diff
-- Shubham, a controls engineer so bright,
-- Guiding co-op students with all his might,
-- Object detection, his current fight.
-```
-
 # Winter Workterm - Parts Present Detection Project (2023)
 
 ## Contributors = [Eren Yilmaz, Henrique Rodrigues, Jamie Yen, Kent Tran, Leo You]
@@ -45,7 +39,3 @@ $ npm install
 # Start local host server
 $ npm start
 ```
-
-![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)
-![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)
-![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)
