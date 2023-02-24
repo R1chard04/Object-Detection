@@ -6,6 +6,8 @@ from imageProcessingClasses import imageProcessing
 from imageCaptureClasses import imageCapture
 from imageMaskGeneration import recalibrate
 from imagePredictionClass import MSEStabilization, getPassRef
+from imageRenamingClasses import BinaryNameAssigner
+from imageTimingClasses import imageTiming
 import time
 import os
 import pdb
@@ -151,6 +153,14 @@ with dai.Device(pipeline) as device:
 
         result = prediction.result()
         print(result)
+        
+        #Assign a name
+        bna = BinaryNameAssigner(result)
+        assigned_names = bna.assign()
+        
+        #Create file with records
+        timing = imageTiming(result, assigned_names) 
+        timing.record() 
 
         transferToPLC("OP100", result)
 
