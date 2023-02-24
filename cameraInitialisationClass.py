@@ -13,7 +13,6 @@ class initialise:
         #Camera initialisation
         pipeline = dai.Pipeline()
 
-
         # pipeline
         camRgb = pipeline.create(dai.node.ColorCamera)
         # specify which board socket to use
