@@ -108,7 +108,7 @@ def paramsSetup(selected, captureObject, recalibrate, name):
 
         paramsList[stations[selected]]['brightness'] = brightness
         paramsList[stations[selected]]['lensPos'] = lensPos
-        cv.destroyAllWindows()
+        # cv.destroyAllWindows()
     else:
         brightness = paramsList[stations[selected]]['brightness']
         lensPos = paramsList[stations[selected]]['lensPos']
