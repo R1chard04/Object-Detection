@@ -39,7 +39,3 @@ $ npm install
 # Start local host server
 $ npm start
 ```
-
-![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)
-![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)
-![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)![Test Image 1](https://github.com/Kenttrann2302/Object-Detection/blob/main/GB5JR7Q.png)
