@@ -1,0 +1,374 @@
+/* Creating styling for the focal length input field */
+.focal_length_setting {
+ font-size: 16px;
+ font-weight: bold;
+ margin-right: 10px;
+ margin-top: 2rem;
+}
+
+input[type="number"] {
+ font-size: 16px;
+ padding: 5px;
+ border-radius: 5px;
+ border: 1px solid #ccc;
+ width: 80px;
+ margin-right: 10px;
+ margin-top: 5px;
+}
+
+input[type="number"]:focus {
+ border-color: #3b88fd;
+ box-shadow: 0 0 5px rgba(59, 136, 253, 0.5);
+}
+
+/* Style the 2 instruction labels for focal length */
+.focal-length-li {
+ text-align: center;
+}
+
+.focal-length-increase {
+ font-family: 'Montserrat', sans-serif;
+ font-size: 18px;
+ line-height: 1.6;
+ color: #333;
+ background-image: linear-gradient(
+  -225deg,
+  #231557 0%,
+  #44107a 29%,
+  #ff1361 67%,
+  #fff800 100%
+ );
+ background-size: auto auto;
+ background-clip: border-box;
+ background-size: 200% auto;
+ color: #fff;
+ background-clip: text;
+ -webkit-text-fill-color: transparent;
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ animation: textclip 2s linear infinite;
+ display: inline-block;
+}
+
+.focal-length-decrease {
+ margin-top: -10px;
+ font-family: 'Montserrat', sans-serif;
+ font-size: 18px;
+ line-height: 1.6;
+ color: #333;
+ background-image: linear-gradient(
+  -225deg,
+  #231557 0%,
+  #44107a 29%,
+  #ff1361 67%,
+  #fff800 100%
+ );
+ background-size: auto auto;
+ background-clip: border-box;
+ background-size: 200% auto;
+ color: #fff;
+ background-clip: text;
+ -webkit-text-fill-color: transparent;
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ animation: textclip 2s linear infinite;
+ display: inline-block;
+}
+
+@keyframes textclip {
+ to {
+  background-position: 200% center;
+ }
+}
+
+.focal-length-increase:hover {
+ transform: 0.5;
+}
+
+.focal-length-decrease:hover {
+ transform: 0.5;
+}
+
+/* Creating styling for the focal length indicator bar */
+.focal-length {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ margin-top: 20px;
+}
+
+.indicator {
+ position: relative;
+ width: 200px;
+ height: 20px;
+ background-color: black;
+ border-radius: 10px;
+ box-shadow: inset 0px 0px 5px #bfbfbb;
+ overflow: hidden;
+ transition: all 0.3s ease-in-out;
+}
+
+.indicator .bar  {
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: 100%;
+ width: 100%;
+ background-color: #007bff;
+}
+
+.focal-length:hover {
+ transform: 0.5;
+}
+
+.indicator .thumb {
+ position: absolute;
+ top: -5px;
+ left: 50%;
+ transform: translateX(-50%);
+ width: 10px;
+ height: 10px;
+ border-radius: 50%;
+ background-color: white;
+ box-shadow: 0px 0px 5px #007bff;
+ cursor: pointer;
+}
+
+.focal-length .label {
+ margin-top: 10px;
+ font-size: 16px;
+ color: blue;
+}
+
+#focal-length-value {
+ font-weight: bold;
+}
+
+/* Creating styling for brightness input field */
+.brightness_setting {
+ font-size: 16px;
+ font-weight: bold;
+ margin-right: 10px;
+ margin-top: 2rem;
+}
+
+input[type="number"] {
+ font-size: 16px;
+ padding: 5px;
+ border-radius: 5px;
+ border: 1px solid #ccc;
+ width: 80px;
+ margin-right: 10px;
+ margin-top: 5px;
+}
+
+input[type="number"] {
+ border-color: #3b88fd;
+ box-shadow: 0 0 5px rgba(59, 136, 253, 0.5);
+}
+
+/* Style 2 instructions labels for brightness */
+.brightness-li {
+ margin-top: 5rem;
+ text-align: center;
+}
+
+#brightness-increase {
+ font-family: 'Montserrat', sans-serif;
+ font-size: 18px;
+ line-height: 1.6;
+ color: #333;
+ background-image: linear-gradient(
+  -225deg,
+  #231557 0%,
+  #44107a 29%,
+  #ff1361 67%,
+  #fff800 100%
+ );
+ background-size: auto auto;
+ background-clip: border-box;
+ background-size: 200% auto;
+ color: #fff;
+ background-clip: text;
+ -webkit-text-fill-color: transparent;
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ animation: textclip 2s linear infinite;
+ display: inline-block;
+}
+
+#brightness-decrease {
+ margin-top: -10px;
+ font-family: 'Montserrat', sans-serif;
+ font-size: 18px;
+ line-height: 1.6;
+ color: #333;
+ background-image: linear-gradient(
+  -225deg,
+  #231557 0%,
+  #44107a 29%,
+  #ff1361 67%,
+  #fff800 100%
+ );
+ background-size: auto auto;
+ background-clip: border-box;
+ background-size: 200% auto;
+ color: #fff;
+ background-clip: text;
+ -webkit-text-fill-color: transparent;
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ animation: textclip 2s linear infinite;
+ display: inline-block;
+}
+
+@keyframes textclip {
+ to {
+  background-position: 200% center;
+ }
+}
+
+#brightness-increase:hover {
+ transform: 0.5;
+}
+
+#brightness-decrease:hover {
+ transform: 0.5;
+}
+
+/* Creating brightness for brightness indicator bar */
+.brightness {
+ display: flex;
+ flex-direction: column;
+ margin-top: 20px;
+ align-items: center;
+}
+
+.brightness .indicator-brightness {
+ position: relative;
+ width: 200px;
+ height: 20px;
+ background-color: black;
+ border-radius: 10px;
+ box-shadow: inset 0px 0px 5px #bfbfbb;
+ overflow: hidden;
+ transition: all 0.3s ease-in-out;
+}
+
+.indicator-brightness  {
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: 100%;
+ width: 100%;
+ background-color: yellow;
+}
+
+.indicator-brightness .thumb-brightness {
+ position: absolute;
+ top: -5px;
+ left: 50%;
+ transform: translateX(-50%);
+ width: 10px;
+ height: 10px;
+ border-radius: 50%;
+ background-color: white;
+ box-shadow: 0px 0px 5px yellowgreen;
+ cursor: pointer;
+}
+
+.indicator-brightness .bar-brightness {
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: 100%;
+ width: 100%;
+ background-color: orange;
+}
+
+.brightness .label {
+ margin-top: 10px;
+ font-size: 16px;
+ color: red;
+}
+
+#brightness-value {
+ font-weight: bold;
+}
+
+/* Setting up the switch indicator for white balance lock */
+.switch {
+ position: relative;
+ display: inline-block;
+ width: 100px;
+ height: 26px;
+ margin: 10px;
+}
+
+.switch input[type="checkbox"] {
+ opacity: 0;
+ width: 0;
+ height: 0;
+}
+
+.slider {
+ position: absolute;
+ cursor: pointer;
+ top: 0;
+ left: 0;
+ right: 0;
+ bottom: 0;
+ background-color: gray;
+ -webkit-transition: 0.4s;
+ transition: .4s;
+ border-radius: 34px;
+}
+
+.slider::before {
+ position: absolute;
+ content: "";
+ height: 19px;
+ width: 18px;
+ left: 3px;
+ bottom: 4px;
+ background-color: white;
+ -webkit-transition: .4s;
+ transition: .4s;
+ border-radius: 50%;
+}
+
+input:checked + .slider {
+ background-color: #2196f3;
+}
+
+input:checked + .slider::before {
+ -webkit-transform: translateX(76px);
+ -ms-transform: translateX(76px);
+ transform: translateX(76px);
+}
+
+/* rounded sliders */
+.slider.round {
+ border-radius: 34px;
+}
+
+.slider.round::before {
+ border-radius: 50%;
+}
+
+/* Setting up the fade-in and rectangular border for each session */
+.focal-length-li {
+ border: 5px solid black;
+ padding: 10px;
+ transition: opacity 0.5s ease-in-out;
+}
+
+.brightness-li {
+ border: 5px solid black;
+ padding: 10px;
+ transition: opacity 0.5s ease-in-out;
+}
+
+
+
+
