@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>
+   Station {{ station_number }}
+  </title>
+  <script type="text/javascript" src="{{ url_for('serve_static_js', filename = 'station_settings.js' )}}"></script>
+  <link rel="stylesheet" href="{{ url_for('serve_static_css', filename = 'station_settings.css') }}">
+  <body>
+   <div>
+    <h2>Settings manuals for station {{ station_number }}</h2>
+   </div>
+   <div>
+    <form action="{{ url_for('change_settings', station_number=station_number) }}" method="POST">
+     <div>
+      <ul>
+       <li class="focal-length-li">
+        <label class = "focal-length-increase" for="focal_length_increase">Press "." to increase the focal length</label><br>
+        <label class = "focal-length-decrease" for="focal_length_decrease">Press "," to decrease the focal length</label><br>
+        <div class="focal-length">
+         <div class="indicator">
+          <div class="bar"></div>
+          <div class="thumb"></div>
+         </div>
+         <div class="label">Focal Length: <span id="focal-length-value">100</span></div>
+        </div>
+        <!-- Create a bar indicator to indicate the event when the user click either of the keys -->
+        <label class = "focal_length_setting" for="focal_length_setting">You can also input the focal length setting manually</label>
+        <input type="number" id = "focal_length_setting_input" min = "0" max = "200" value="100" name="focal_length_setting_input"/>
+       </li>
+       <li class="brightness-li">
+        <label id="brightness-increase" for="brightness_increase">Press "l" to increase the brightness of the camera</label><br>
+        <label id="brightness-decrease" for="brightness_decrease">Press "k" to decrease the brightness of the camera</label><br>
+        <!-- Create a bar indicator to indicate the event when the user click either of the keys  -->
+        <div class="brightness">
+         <div class="indicator-brightness">
+          <div class="bar-brightness"></div>
+          <div class="thumb-brightness"></div>
+         </div>
+         <div class="label">Brightness: <span id="brightness-value">0</span></div>
+        </div>
+        <label class="brightness_setting" for="brightness_setting">You can also input the brightness setting manually</label>
+        <input type="number" id="brightness-input" min="-100" max="100" value="0" name="brightness_setting_input"/>
+       </li>
+       <li>
+        <label for="white_balance_lock">Press "1" to turn on/off white balance lock</label>
+        <!-- Create an indicator to indicate the current state of the white balance lock -->
+        <div>
+         <label class="switch">
+          <input type="checkbox" id="white_balance_lock" checked>
+          <span class="slider"></span>
+         </label>  
+        </div> 
+       </li>
+       <li>
+        <label for="auto_exposure_lock">Press "2" to turn on/off auto exposure lock</label>
+        <!-- Create an indicator to indicate the current state of the auto exposure lock -->
+       </li>
+      </ul>
+      <div>
+       <p>Click here (or press q) to save all the settings</p>
+       <input type="submit" name="Save"/>
+      </div>
+     </div>
+    </form>
+   </div>
+  </body>
+ </head>
+</html>

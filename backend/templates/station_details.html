@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+ <title>
+  Station {{ station_number }} 
+ </title>
+ <body>
+  <div>
+   <h1>Welcome to station {{ station_number }}</h1>
+   <h2>Please see the below for station {{ station_number }} details</h2>
+  </div>
+  <div>
+   <p>
+    Station {{ station_number }} manuals
+   </p>
+   <ul>
+    <li>
+     <a href="{{ url_for('station_settings', station_number=station_number) }}">Station {{ station_number }} settings</a>
+    </li>
+   </ul>
+  </div>
+ </body>
+</html>
