@@ -11,6 +11,7 @@ pipeline.setXLinkChunkSize(0)
 camRgb = pipeline.create(dai.node.ColorCamera)
 camRgb.setFps(1)
 camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_4_K)
+camRgb.setPreviewSize(1920, 1080)
 
 xout = pipeline.create(dai.node.XLinkOut)
 xout.setStreamName("out")
