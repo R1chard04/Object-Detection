@@ -9,5 +9,10 @@
     {
         "top":["left", "right"],
         "bottom": []
+    },
+    "station10":
+    {
+        "top":["left", "right"],
+        "bottom": []
     }
 }

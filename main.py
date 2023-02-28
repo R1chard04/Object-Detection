@@ -28,7 +28,7 @@ maskDir = "Photos\Masks" #This is where the generated masks are being saved
 
 #IPs
 IPString = "169.254.1."
-IPEndpoint = 200
+IPEndpoint = 203
 
 #Part List
 with open(r'parts.json') as f:
@@ -45,33 +45,55 @@ for i in range(len(partsLayered)):
     temp = [item for sub_list in partsLayered[i] for item in sub_list]
     partsPerStation.append(temp)
 
+#Folders:
+for i in range(len(stations)):
+    refFolder = os.path.join(refDir, stations[i])
+    colFolder = os.path.join(colDir, stations[i])
+    maskFolder = os.path.join(maskDir, stations[i])
+    errFolder = os.path.join(errDir, stations[i])
+
+    if not os.path.isdir(refFolder): 
+        os.mkdir(refFolder)
+    if not os.path.isdir(colFolder): 
+        os.mkdir(colFolder)
+    if not os.path.isdir(maskFolder): 
+        os.mkdir(maskFolder)
+    if not os.path.isdir(errFolder): 
+        os.mkdir(errFolder)
+
 #----------------------Initialisation---------------------#
 
 def maskSetup(selected, captureObject, recalibrate, brightness, lensPos, name):
-    refs, cols, masks = []
-
+    refs = []
+    cols = []
+    masks = []    
+    print("entered mask")
     if recalibrate == True:
+
+        refFolder = os.path.join(refDir, stations[selected])
+        colFolder = os.path.join(colDir, stations[selected])
+        maskFolder = os.path.join(maskDir, stations[selected])
+
         for i in range(len(partsLayered[selected])):
             for j in range(len(partsLayered[selected][i])):
-                refPath = os.path.join(refDir, stations[selected], partsLayered[j] + ".jpg")
-                colPath = os.path.join(colDir, stations[selected], partsLayered[j] + ".jpg")
-                maskPath = os.path.join(maskDir, stations[selected], partsLayered[j] + ".jpg")
+                refPath = os.path.join(refFolder, str(partsPerStation[selected][j]) + ".jpg")
+                colPath = os.path.join(colFolder, str(partsPerStation[selected][j]) + ".jpg")
+                maskPath = os.path.join(maskFolder, str(partsPerStation[selected][j]) + ".jpg")
 
                 messageRef = "Load "
                 if i == 0:
-                    messageRef += partsLayered[j] + " part. Press `C`` to continue."
+                    messageRef += str(partsPerStation[selected][j]) + " part. Press `C`` to continue."
                 else:
-                    for k in range(len(partsLayered[0])):
-                        messageRef += partsLayered[0][k] + " part, "
-                    messageRef += "and " + partsLayered[j] +"part. Press `C` to continue."
+                    for k in range(len(partsLayered[selected][1])):
+                        messageRef += str(partsLayered[selected][k]) + " part, "
+                    messageRef += "and " + str(partsPerStation[selected][j]) +" part. Press `C` to continue."
 
                 print(messageRef)
                 cv.waitKey(0)
-
                 refs.append(captureObject.captureOne(refPath, brightness, lensPos))
                 cv.destroyAllWindows()
 
-                messageCol = "Change " + partsLayered[j] + " part to coloured part. Press `C` to capture."
+                messageCol = "Change " + str(partsPerStation[selected][j]) + " part to coloured part. Press `C` to capture."
                 print(messageCol)
                 cv.waitKey(0)
                 cols.append(captureObject.captureOne(colPath, brightness, lensPos))
@@ -90,7 +112,7 @@ def maskSetup(selected, captureObject, recalibrate, brightness, lensPos, name):
                 if temp[i] == (partsPerStation[j] + ".jpg"):
                     masks[j] = cv.imread(temp[i])
     
-        return masks
+    return masks
 
 def paramsSetup(selected, captureObject, recalibrate, name):
     #Station prameters
@@ -108,7 +130,7 @@ def paramsSetup(selected, captureObject, recalibrate, name):
 
         paramsList[stations[selected]]['brightness'] = brightness
         paramsList[stations[selected]]['lensPos'] = lensPos
-        # cv.destroyAllWindows()
+        cv.destroyAllWindows()
     else:
         brightness = paramsList[stations[selected]]['brightness']
         lensPos = paramsList[stations[selected]]['lensPos']
@@ -129,7 +151,7 @@ def errorSetup(selected, captureObject, processingObject, recalibrate, brightnes
     with open(r'errors.json') as f:
         passref = json.load(f)
 
-    if recalibrate:
+    if recalibrate is True:
         for i in range(10):
             testImg = captureObject.captureOne(os.path.join(errDir, stations[selected],"Test " + str(i) + ".jpg"), brightness, lensPos)
             time.sleep(0.5)
@@ -174,9 +196,11 @@ def mainloop(selected):
     device_info = dai.DeviceInfo(IP)
     device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
     device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+    
 
     #----------------------Camera Capture Initialisation---------------------#
     #This needs to be setup for multiple cameras
+    
     with dai.Device(pipeline, device_info) as device:
         print("here3")
         captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
@@ -185,7 +209,12 @@ def mainloop(selected):
         print("here4")
 
         brightness, lensPos = paramsSetup(selected, captureObject, recalibrate, IP)
+       
+        print("done params")
+        pdb.set_trace()
         masks = maskSetup(selected, captureObject, recalibrate, brightness, lensPos, IP)
+   
+        print("done masks")
         tempRef = controlSetup(selected, captureObject, recalibrate, brightness, lensPos)
         
         processingObject = imageProcessing(masks, tempRef, tempRef, partsPerStation[selected]) #Initialisation of the processing object

@@ -148,7 +148,7 @@ class imageCapture:
                 frame = inRgb.getCvFrame()
                 frame = cv.pyrDown(frame)
                 frame = cv.pyrDown(frame)
-                cv.imshow("captured", frame)     
+                cv.imshow("capture one", frame)     
             
 
             if self.qStill.has():
@@ -165,12 +165,12 @@ class imageCapture:
                     f.write(self.qStill.get().getData())
                     imgUpdated = True
 
-                    img = cv.imread(path)
-                    return img
-
             cv.waitKey(1)  
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             self.qControl.send(ctrl)
+    
+        img = cv.imread(path)
+        return img
         
                 
