@@ -18,7 +18,8 @@ class initialise:
         # specify which board socket to use
         camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
         # set sensor resolution
-        camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_4_K)
+        camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
+        camRgb.setFps(2)
         # camRgb.initialControl.setManualFocus(100)
 
         # pipeline

@@ -68,6 +68,7 @@ def maskSetup(selected, captureObject, recalibrate, brightness, lensPos, name):
     cols = []
     masks = []    
     print("entered mask")
+    
     if recalibrate == True:
 
         refFolder = os.path.join(refDir, stations[selected])
@@ -88,14 +89,14 @@ def maskSetup(selected, captureObject, recalibrate, brightness, lensPos, name):
                         messageRef += str(partsLayered[selected][k]) + " part, "
                     messageRef += "and " + str(partsPerStation[selected][j]) +" part. Press `C` to continue."
 
-                print(messageRef)
-                cv.waitKey(0)
+                ans = input(messageRef)               
+                # cv.waitKey(0)
                 refs.append(captureObject.captureOne(refPath, brightness, lensPos))
                 cv.destroyAllWindows()
 
                 messageCol = "Change " + str(partsPerStation[selected][j]) + " part to coloured part. Press `C` to capture."
-                print(messageCol)
-                cv.waitKey(0)
+                ans = input(messageCol)
+                # cv.waitKey(0)
                 cols.append(captureObject.captureOne(colPath, brightness, lensPos))
                 cv.destroyAllWindows()
 
@@ -148,6 +149,7 @@ def controlSetup(selected, captureObject, recalibrate, brightness, lensPos):
     return tempRef
 
 def errorSetup(selected, captureObject, processingObject, recalibrate, brightness, lensPos):
+    # pdb.set_trace()
     with open(r'errors.json') as f:
         passref = json.load(f)
 
@@ -157,9 +159,8 @@ def errorSetup(selected, captureObject, processingObject, recalibrate, brightnes
             time.sleep(0.5)
         # Taking a standard image
         ref = captureObject.captureOne(os.path.join(refDir, stations[selected],"STD.jpg"), brightness, lensPos)
-
         #Post-processing of captured images for MSE threshold creation
-        passRef = [None] * len(stations[selected])
+        passRef = [0] * len(passref[stations[selected]])
 
         for image in os.listdir(os.path.join(errDir, stations[selected])):
             path = os.path.join(errDir, stations[selected], image)
@@ -167,15 +168,12 @@ def errorSetup(selected, captureObject, processingObject, recalibrate, brightnes
 
             processingObject.setTestImg(img)   
             error = processingObject.compareImage()
-            passref = getPassRef(error, passRef)
-            print(error, passref)
-        
-        passref[stations[selected]] = passref
-        cv.destroyAllWindows()
+            passRef = getPassRef(error, passRef)
+            print(error, passRef)
+        passref[stations[selected]] = passRef
 
     else:
         ref = cv.imread(os.path.join(refDir, stations[selected],"STD.jpg"))
-
     return ref, passref
 
 #-----------------------------------------Main Loop-----------------------------------------#
@@ -211,20 +209,24 @@ def mainloop(selected):
         brightness, lensPos = paramsSetup(selected, captureObject, recalibrate, IP)
        
         print("done params")
-        pdb.set_trace()
+
         masks = maskSetup(selected, captureObject, recalibrate, brightness, lensPos, IP)
-   
+
         print("done masks")
         tempRef = controlSetup(selected, captureObject, recalibrate, brightness, lensPos)
-        
+        print("done control setup")
         processingObject = imageProcessing(masks, tempRef, tempRef, partsPerStation[selected]) #Initialisation of the processing object
+        print("processing object initialized")
 
         ref, passref = errorSetup(selected, captureObject, processingObject, recalibrate, brightness, lensPos)
+        print("errorsetup")
         processingObject.setRefImg(ref)
+        print("refsetup")
 
     #-------------------------------------------------------------------------------------------#   
         while True:
             print("here5")
+            pdb.set_trace()
             # capture a test image
             img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName)) #returns a path that can be read. For some reason this prevents the return of a corrupted image
                 
@@ -234,7 +236,7 @@ def mainloop(selected):
             # get the mse error
             error = processingObject.compareImage() 
             #Generates PASS/FAIL array
-            prediction = MSEStabilization(error, passref, 4) 
+            prediction = MSEStabilization(error, passref, len(passref[stations[selected]])) 
 
             result = prediction.result()
             print(result)

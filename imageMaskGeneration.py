@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import os
+import pdb
 
 
 #------------------------------------------------------------------------------------------------#
@@ -51,7 +52,7 @@ def floodFill(imgThresh):
 
     
 def createMask(std, col, maskPath):
-
+  
   #Creating ref image
   ref = cv.cvtColor(std, cv.COLOR_BGR2GRAY)
   ref[ref != 0] = 0

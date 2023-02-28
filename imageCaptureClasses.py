@@ -113,13 +113,13 @@ class imageCapture:
         img = 1
 
         while not imgUpdated:
-            inRgb = self.qRgb.tryGet() 
+            # inRgb = self.qRgb.tryGet() 
             
-            if inRgb is not None:
-                frame = inRgb.getCvFrame()
-                frame = cv.pyrDown(frame)
-                frame = cv.pyrDown(frame)
-                cv.imshow("captured", frame)     
+            # if inRgb is not None:
+            #     frame = inRgb.getCvFrame()
+            #     frame = cv.pyrDown(frame)
+            #     frame = cv.pyrDown(frame)
+            #     cv.imshow("captured", frame)     
             
 
             if self.qStill.has():
@@ -142,13 +142,13 @@ class imageCapture:
         img = 1
 
         while not imgUpdated:
-            inRgb = self.qRgb.tryGet() 
+            # inRgb = self.qRgb.tryGet() 
             
-            if inRgb is not None:
-                frame = inRgb.getCvFrame()
-                frame = cv.pyrDown(frame)
-                frame = cv.pyrDown(frame)
-                cv.imshow("capture one", frame)     
+            # if inRgb is not None:
+            #     frame = inRgb.getCvFrame()
+            #     frame = cv.pyrDown(frame)
+            #     frame = cv.pyrDown(frame)
+            #     cv.imshow("capture one", frame)     
             
 
             if self.qStill.has():
