@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.schema import CheckConstraint
 from datetime import datetime
 from sqlalchemy import inspect
+import pdb
 
 db = SQLAlchemy()
 
@@ -41,10 +42,11 @@ class Users(db.Model):
 
   # adding arguments constraints for users table
   __table_args__ = (
-      CheckConstraint("(LENGTH(username) >= 8 AND username NOT LIKE '%@martinrea.com') OR (username LIKE '%@martinrea.com')", name='username_check'),
-      CheckConstraint("LENGTH(password) >= 8 AND password != username", name='password_check'),
-      CheckConstraint("password REGEXP '[A-Z]' AND password REGEXP '[/|@|#|\$|\%|\^|\&|\*]' AND password REGEXP '[0-9]'", name='password_complexity_check'),
-      {'sqlite_autoincrement': True}
+  #   pdb.set_trace(),
+   CheckConstraint("(LENGTH(username) >= 8 AND username NOT LIKE '%@martinrea.com') OR (username LIKE '%@martinrea.com')", name='username_check'),
+    # CheckConstraint("LENGTH(password) >= 8 AND password != username", name='password_check'),
+    # CheckConstraint("password REGEXP '[A-Z]' AND password REGEXP '[/|@|#|\$|\%|\^|\&|\*]' AND password REGEXP '[0-9]'", name='password_complexity_check'),
+    # {'sqlite_autoincrement': True}
   )
 
   def __repr__(self) -> str:

@@ -3,14 +3,20 @@ from sqlalchemy import create_engine, MetaData, inspect
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
 from sqlalchemy.orm import scoped_session, sessionmaker
+from hashlib import sha256
 from pyignite import Client
-from database_model.models import db, Station, Users
 import os
 import sys
 import asyncio
 import websockets
 from flask_socketio import SocketIO, emit
 import pdb
+from flask_migrate import Migrate
+import secrets
+
+# import files
+from database_model.models import db, Station, Users
+from helper_functions.validate_users import validate_users, validate_username, validate_password, check_session_expiry
 # import the modules
 # main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # sys.path.append(main_directory)
@@ -24,15 +30,49 @@ app.config['SERVER_NAME'] = '127.0.0.1:5000'
 app.config['APPLICATION_ROOT'] = '/'
 app.config['PREFERRED_URL_SCHEME'] = 'http'
 
-# Create SQLALCHEMY database object
-db.init_app(app)
-# create all the tables based on the models if they didn't exist yet
-with app.app_context():
-  inspector = inspect(db.engine)
-  if not inspector.has_table('station') and not inspector.has_table('users'):
-    
-    db.create_all()
+# generate a 32-character hexadecimal secret key for users to login their session
+app.secret_key = secrets.token_hex(16)
+migrate = Migrate(app, db)
 
+
+# Create SQLALCHEMY database object
+def create_tables():
+  with app.app_context():
+    db.init_app(app)
+    # create all the tables based on the models if they didn't exist yet
+    with app.app_context():
+      inspector = inspect(db.engine)
+      if not inspector.has_table('station') and not inspector.has_table('users'):
+        db.create_all()
+
+create_tables()
+
+# insert into users table
+def insert_users() -> None:
+  with app.app_context():
+    # create a list of non-encoded username and passwords
+    usernames = 'kent.tran@martinrea.com'
+    passwords = 'Kenttran2302$'
+    # validate the username and password constraints before hashing it and put it into the database
+    if validate_username(usernames):
+      hashed_password = validate_password(usernames, passwords)
+      # create an instance to insert rows into user table
+      new_users = [
+        Users(id=1, username=usernames, password=hashed_password, is_admin=True)
+      ]
+
+    # insert the new user into the session
+    for user in new_users:
+      try:
+        db.session.add(user)
+        # commit the changes to the database
+        db.session.commit()
+        print(f"User {user.username} added successfully!")
+      except:
+        db.session.rollback()
+        print(f"User {user.username} already exists in the database!")
+
+insert_users()
 # app.config['SECRET_KEY'] = 'secret!'
 # socketio = SocketIO(app)
 # db.init_app(app)
@@ -100,13 +140,21 @@ def serve_static_photos(filename):
 # render the homepage
 @app.route('/bt1xx/home/')
 def homepage():
- return render_template("home.html")
+  if 'username' in session:
+    return render_template("home.html")
+  else:
+    return redirect(url_for('login'))
+ 
 
 ####################### STATION DETAILS #####################
 # render the station details depends on the click event 
 @app.route('/bt1xx/station/<int:station_number>/')
 def station_detail(station_number):
-  return render_template("station_details.html", station_number=station_number)
+  if 'username' in session:
+    return render_template("station_details.html", station_number=station_number)
+  else:
+    return redirect(url_for('login'))
+  
 
 ###################### STATION SETTINGS ######################
 # render the station settings:
@@ -176,10 +224,46 @@ def login():
 # authenticate the users login
 @app.route('/bt1xx/authentication/', methods=['POST', 'GET'])
 def authentication():
-  username = request.form['username']
-  password = request.form['password']
-  
-  return redirect(url_for('homepage'))
+  if request.method == 'POST':
+    try:
+      username = request.form['username']
+      password = request.form['password']
+      # initiate an error dictionary to catch any error
+      errors = {}
+
+      # validate the user's input before sending as a POST request
+      if len(username) == 0:
+        errors['username'] = f"Please enter your username!"
+
+      if len(password) == 0:
+        errors['password'] = f"Please enter your password!"
+
+      # encryted the password when the user send it as a POST request
+      hashed_password = sha256(password.encode('utf-8')).hexdigest()
+
+      # Query the database for the user with the specified username and password
+      user = Users.query.filter_by(username=username, password=hashed_password).first()
+
+      # validate the users using the helper function
+      if(validate_users(user_info=user, username=username)):
+        # handle the post request if all the fields are validated
+        return redirect(url_for('homepage'))
+
+    except ValueError:
+      errors['username'] = f"Sorry! You are not authorized for this program!"
+      return render_template('login.html', errors=errors)
+
+# If the user chooses to log out the program
+@app.route('/bt1xx/logout/')
+def logout():
+  session.pop('username', None)
+  return redirect(url_for('login'))
+
+# Check session expiration
+@app.before_request
+def checkExpiration():
+  if(check_session_expiry()):
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
  app.run(debug=True)
