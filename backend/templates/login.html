@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>BT1XX Program Sign In</title>
+ </head>
+ <body>
+  <div>
+   <h1>
+    Welcome to BT1XX Program! 
+   </h1>
+   <h2>
+    Please login using your username(email) and password:
+   </h2>
+  </div>
+  <div>
+   <form action="{{ url_for() }}">
+    <label for="username">Username(Email):</label><br>
+    <input type="text" name="username" id="username"/><br>
+    <label for="password">Password:</label><br>
+    <input type="text" name="password" id="password"/><br>
+    <input type="submit" value="Sign In" name="login"/>
+   </form>
+  </div>
+ </body>
+</html>

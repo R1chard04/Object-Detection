@@ -1,3 +1,6 @@
+// Create a new WebSocket connection to the Python server
+// var socket = io.connect('http://127.0.0.1:5000/bt1xx/station/<int:station_number>/settings');
+
 document.addEventListener('DOMContentLoaded', function() {
   // Update the value of the focal length in real-time when the users drag the thumb
  const indicator = document.querySelector('.indicator');
@@ -31,7 +34,12 @@ document.addEventListener('DOMContentLoaded', function() {
    const deltaX = event.clientX - startX;
    const deltaFocalLength = Math.round(deltaX / indicator.clientWidth * (maxFocalLength - minFocalLength));
    focalLength = Math.max(minFocalLength, Math.min(startFocalLength + deltaFocalLength));
+   if(focalLength > maxFocalLength){
+    focalLength = maxFocalLength;
+    valueSpan.textContent = focalLength;
+   }
    updateIndicator();
+   inputField.value = focalLength;
   }
 
   function handleMouseUp() {
@@ -47,10 +55,20 @@ document.addEventListener('DOMContentLoaded', function() {
   if(event.key == ','){
    focalLength = Math.max(minFocalLength, focalLength-1);
    updateIndicator();
+   inputField.value = focalLength;
+    // send the key code to the python server
+    socket.send(event.key.toString());
   } // decrease the focal length
   else if (event.key == '.'){
    focalLength = Math.max(minFocalLength, focalLength+1);
+   if(focalLength > maxFocalLength){
+    focalLength = maxFocalLength;
+    valueSpan.textContent = focalLength;
+   }
    updateIndicator();
+   inputField.value = focalLength;
+    // send the key code to the python server
+    socket.send(event.key.toString());
   }
  });
 
@@ -96,7 +114,12 @@ document.addEventListener('DOMContentLoaded', function() {
    const deltaX_brightness = event.clientX - startX_brightness;
    const deltaBrightness = Math.round(deltaX_brightness / brightness_indicator.clientWidth * (maxBrightness - minBrightness));
    brightness = Math.max(minBrightness, Math.min(startBrightnessLength + deltaBrightness));
+   if(brightness > maxBrightness){
+    brightness = maxBrightness;
+    valueSpan_brightness.textContent = brightness;
+   }
    updateBrightnessIndicator();
+   inputField_brightness.value = brightness;
   }
 
   function handleMouseUp() {
@@ -111,11 +134,21 @@ document.addEventListener('DOMContentLoaded', function() {
  document.addEventListener('keydown', (event) => {
   if(event.key == 'k'){
    brightness = Math.max(minBrightness, brightness-1);
-   updateBrightnessIndicator();
+   updateBrightnessIndicator(); 
+   inputField_brightness.value = brightness;  
+   // send the key code to the python server
+   socket.send(event.key.toString());
   } // decrease the focal length
   else if (event.key == 'l'){
    brightness = Math.max(minBrightness, brightness+1);
+   if(brightness > maxBrightness){
+    brightness = maxBrightness;
+    valueSpan_brightness.textContent = brightness;
+   }
    updateBrightnessIndicator();
+   inputField_brightness.value = brightness;
+   // send the key code to the python server
+   socket.send(event.key.toString());
   }
  });
 
@@ -128,4 +161,102 @@ document.addEventListener('DOMContentLoaded', function() {
    updateBrightnessIndicator();
   }
  });
+
+ // listen to the input event when the user click 1
+ const switchCheckBox = document.querySelector('.switch input[type="checkbox"]');
+ let switchCheckBox_input = document.getElementById('white_balance_lock_input');
+  if(switchCheckBox.value == 'on'){
+    switchCheckBox_input.value = 1;
+    switchCheckBox_input.value = !!(switchCheckBox_input.value)
+  }
+  else {
+    switchCheckBox_input.value = 0;
+    switchCheckBox_input.value = !!(switchCheckBox_input.value)
+  }
+
+ document.addEventListener('keydown', event => {
+  if(event.key == '1') {
+    switchCheckBox.checked = !switchCheckBox.checked;
+    if(switchCheckBox.value == 'on'){
+      switchCheckBox_input.value = 1;
+      switchCheckBox_input.value = !!(switchCheckBox_input.value)
+    }
+    else {
+      switchCheckBox_input.value = 0;
+      switchCheckBox_input.value = !!(switchCheckBox_input.value)
+    }
+  }
+ });
+
+ // listen to the input event when the user click 2
+ const lock = document.querySelector('.lock');
+ const unlock = document.querySelector('.unlock');
+
+ let isLocked = true;
+  document.getElementById("auto_exposure_lock_input").value = isLocked;
+
+ function toggleLock() {
+  isLocked = !isLocked;
+  if(isLocked) {
+    lock.classList.remove('unlock');
+    unlock.style.display = 'none';
+  } else {
+    lock.classList.add('unlock');
+    unlock.style.display = 'block';
+  }
+ }
+
+ lock.addEventListener('click', toggleLock);
+ unlock.addEventListener('click', toggleLock);
+ document.addEventListener('keydown', (event) => {
+  if(event.key == '2') {
+    toggleLock();
+    document.getElementById("auto_exposure_lock_input").value = isLocked;
+  }
+ });
+
+ // event for the saving button
+ let btn = document.querySelector('.button');
+
+  btn.addEventListener("click", active);
+
+  function active() {
+    btn.classList.toggle('is_active');
+  }
+
+  // event for the logo
+  var logo = document.getElementById('logo');
+  const stationElement = document.querySelector('#station');
+  // cut out the station number in the url
+  const stationNumber = stationElement.textContent.trim();
+  const numberPattern = /\d+/; // match one or more digits
+  const matches = stationNumber.match(numberPattern);
+  const stationNumberOnly = matches ? matches[0] : null;
+
+  function goToSettingPage() {
+    window.location.href = "http://127.0.0.1:5000/bt1xx/station/" + stationNumberOnly.toString();
+  }
+
+  logo.addEventListener("click", function() {
+    goToSettingPage();
+  });
+
+  // hamburger
+  const hamburger = document.querySelector('.hamburger');
+  const navLinks = document.querySelector('ul');
+  const bars = document.querySelectorAll('.bar');
+
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+    bars.forEach(bar => {
+      bar.classList.toggle('closed');
+    });
+  });
+
+  // after the users submit the form
+  document.querySelector("#form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    // send all the input fields to the database when the users hit submit button
+    document.querySelector("#form").submit()
+  })
 });
