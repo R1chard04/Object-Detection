@@ -28,7 +28,7 @@ maskDir = "Photos\Masks" #This is where the generated masks are being saved
 
 #IPs
 IPString = "169.254.1."
-IPEndpoint = 203
+IPEndpoint = 202
 
 #Part List
 with open(r'parts.json') as f:
@@ -51,6 +51,7 @@ for i in range(len(stations)):
     colFolder = os.path.join(colDir, stations[i])
     maskFolder = os.path.join(maskDir, stations[i])
     errFolder = os.path.join(errDir, stations[i])
+    initFolder = os.path.join(photosPath, stations[i])
 
     if not os.path.isdir(refFolder): 
         os.mkdir(refFolder)
@@ -60,6 +61,8 @@ for i in range(len(stations)):
         os.mkdir(maskFolder)
     if not os.path.isdir(errFolder): 
         os.mkdir(errFolder)
+    if not os.path.isdir(initFolder): 
+        os.mkdir(initFolder)
 
 #----------------------Initialisation---------------------#
 
@@ -80,14 +83,15 @@ def maskSetup(selected, captureObject, recalibrate, brightness, lensPos, name):
                 refPath = os.path.join(refFolder, str(partsPerStation[selected][j]) + ".jpg")
                 colPath = os.path.join(colFolder, str(partsPerStation[selected][j]) + ".jpg")
                 maskPath = os.path.join(maskFolder, str(partsPerStation[selected][j]) + ".jpg")
-
+                
                 messageRef = "Load "
-                if i == 0:
-                    messageRef += str(partsPerStation[selected][j]) + " part. Press `C`` to continue."
-                else:
-                    for k in range(len(partsLayered[selected][1])):
-                        messageRef += str(partsLayered[selected][k]) + " part, "
-                    messageRef += "and " + str(partsPerStation[selected][j]) +" part. Press `C` to continue."
+                messageRef += str(partsPerStation[selected][j]) + " part. Press `C`` to continue."
+                # if i == 0:
+                    
+                # else:
+                #     for k in range(len(partsLayered[selected][0])):
+                #         messageRef += str(partsLayered[selected][k]) + " part, "
+                #     messageRef += "and " + str(partsPerStation[selected][j]) +" part. Press `C` to continue."
 
                 ans = input(messageRef)               
                 # cv.waitKey(0)
@@ -101,7 +105,7 @@ def maskSetup(selected, captureObject, recalibrate, brightness, lensPos, name):
                 cv.destroyAllWindows()
 
                 print("Creating a mask, this may take a minute.")
-                masks.append(createMask(refs[i], cols[i], maskPath))
+                masks.append(createMask(refs[j], cols[j], maskPath))
                 print("Mask generated")
     else:
         temp = []
@@ -206,7 +210,9 @@ def mainloop(selected):
                                     device.getInputQueue(name="control"))
         print("here4")
 
-        brightness, lensPos = paramsSetup(selected, captureObject, recalibrate, IP)
+        # brightness, lensPos = paramsSetup(selected, captureObject, recalibrate, IP)
+        brightness = -1
+        lensPos = 108
        
         print("done params")
 
@@ -225,26 +231,25 @@ def mainloop(selected):
 
     #-------------------------------------------------------------------------------------------#   
         while True:
-            print("here5")
-            pdb.set_trace()
+            # print("here5")
+
             # capture a test image
-            img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName)) #returns a path that can be read. For some reason this prevents the return of a corrupted image
-                
+            img = captureObject.captureOne(os.path.join(photosPath, stations[selected],"Test.jpg"), brightness, lensPos)
             processingObject.setTestImg(img)  
             # display the result on the frame
             frame = processingObject.displayResultPosition()
             # get the mse error
             error = processingObject.compareImage() 
             #Generates PASS/FAIL array
-            prediction = MSEStabilization(error, passref, len(passref[stations[selected]])) 
+            prediction = MSEStabilization(error, passref[stations[selected]], len(passref[stations[selected]])) 
 
             result = prediction.result()
-            print(result)
+            # print(result)
 
             # transferToPLC("OP100", result)
-
-            frame = cv.pyrDown(frame)
-            frame = cv.pyrDown(frame)
-            cv.imshow("errors", frame)
             cv.waitKey(1)
+            frame = cv.pyrDown(frame)
+            frame = cv.pyrDown(frame)
+            cv.imshow(IP, frame)
+            
 

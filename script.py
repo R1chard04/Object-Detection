@@ -3,7 +3,7 @@ import time
 from main import mainloop
 
 # selected, recalibrate  = fromplc()
-selected = [1]
+selected = [0,1]
 
 if __name__ == '__main__':    
     with concurrent.futures.ThreadPoolExecutor() as executor:
