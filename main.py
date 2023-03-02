@@ -29,7 +29,7 @@ maskDir = "Photos\Masks" #This is where the generated masks are being saved
 
 #IPs
 IPString = "169.254.1."
-IPEndpoint = 199
+IPEndpoint = 201
 
 #Part List
 with open(r'parts.json') as f:
@@ -187,16 +187,11 @@ def errorSetup(selected, captureObject, processingObject, recalibrate, brightnes
     return ref, passref
 
 #-----------------------------------------Main Loop-----------------------------------------#
-def mainloop(selected):
-    print("here")
+def mainloop(IP,selected):
+    print(IP)
+    print(selected)
     #-----------------------------------------Camera Initialisation-----------------------------------------#
-    time.sleep(selected+0.1)
-    IP = IPEndpoint + selected
     
-    
-    IP = IPString + str(IP)
-    
-    recalibrate = True
 
     initialisationObject = initialise(photosPath)
     print("here1")
@@ -238,13 +233,14 @@ def mainloop(selected):
         # print("refsetup")
 
     #-------------------------------------------------------------------------------------------#   
-        # while True:
-            # print("here5")
+        while True:
+            print("here5")
 
             # capture a test image
-        captureObject.captureOne(os.path.join(photosPath, stations[selected],"Test.jpg"), brightness, lensPos, IP)
-            # cv.waitKey(1)
-            # time.sleep(0.5)
+            img = captureObject.captureOne(os.path.join(photosPath, stations[selected],"Test.jpg"), brightness, lensPos, IP)
+            cv.imshow(IP, img)
+            cv.waitKey(1)
+            time.sleep(0.5)
             # processingObject.setTestImg(img)  
             # # display the result on the frame
             # frame = processingObject.displayResultPosition()
