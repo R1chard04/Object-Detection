@@ -136,41 +136,41 @@ class imageCapture:
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
 
-    def captureOne(self, path, brightness, lensPos):
+    def captureOne(self, path, brightness, lensPos, IP):
     
         imgUpdated = False
         img = 1
 
         while not imgUpdated:
-            # inRgb = self.qRgb.tryGet() 
+            inRgb = self.qRgb.tryGet() 
             
-            # if inRgb is not None:
-            #     frame = inRgb.getCvFrame()
-            #     frame = cv.pyrDown(frame)
-            #     frame = cv.pyrDown(frame)
-            #     cv.imshow("capture one", frame)     
+            if inRgb is not None:
+                frame = inRgb.getCvFrame()
+                frame = cv.pyrDown(frame)
+                frame = cv.pyrDown(frame)
+                cv.imshow(IP, frame)     
             
 
-            if self.qStill.has():
+            # if self.qStill.has():
 
-                ctrl = dai.CameraControl()
-                ctrl.setBrightness(brightness)
-                self.qControl.send(ctrl) 
+            #     ctrl = dai.CameraControl()
+            #     ctrl.setBrightness(brightness)
+            #     self.qControl.send(ctrl) 
 
-                ctrl = dai.CameraControl()
-                ctrl.setManualFocus(lensPos)
-                self.qControl.send(ctrl)
+            #     ctrl = dai.CameraControl()
+            #     ctrl.setManualFocus(lensPos)
+            #     self.qControl.send(ctrl)
                 
-                with open(path, "wb") as f:
-                    f.write(self.qStill.get().getData())
-                    imgUpdated = True
+            #     with open(path, "wb") as f:
+            #         f.write(self.qStill.get().getData())
+            #         imgUpdated = True
 
             cv.waitKey(1)  
             ctrl = dai.CameraControl()
             ctrl.setCaptureStill(True)
             self.qControl.send(ctrl)
     
-        img = cv.imread(path)
-        return img
+        # img = cv.imread(path)
+        # return img
         
                 
