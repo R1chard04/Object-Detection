@@ -232,6 +232,7 @@ def mainloop(selected):
     #-------------------------------------------------------------------------------------------#   
         while True:
             # print("here5")
+            
 
             # capture a test image
             img = captureObject.captureOne(os.path.join(photosPath, stations[selected],"Test.jpg"), brightness, lensPos)
