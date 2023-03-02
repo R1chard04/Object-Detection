@@ -1,7 +1,7 @@
 import cv2 as cv
 import time
 import depthai as dai
-from cameraInitialisationClass import initialise
+from main.cameraInitialisationClass import initialise
 from imageProcessingClasses import imageProcessing
 from imageCaptureClasses import imageCapture
 from imageMaskGeneration import recalibrate
@@ -12,7 +12,7 @@ import time
 import os
 import pdb
 from pylogix import PLC
-from PLCUpdate import transferToPLC
+from main.PLCUpdate import transferToPLC
 
 #-----------------------------------------Importing folders, images-----------------------------------------#
 #Photos Path

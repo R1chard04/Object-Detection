@@ -136,19 +136,19 @@ class imageCapture:
                 ctrl.setCaptureStill(True)
                 self.qControl.send(ctrl)
 
-    def captureOne(self, path, brightness, lensPos):
+    def captureOne(self, path, brightness, lensPos, IP):
     
         imgUpdated = False
         img = 1
 
         while not imgUpdated:
-            # inRgb = self.qRgb.tryGet() 
+            inRgb = self.qRgb.tryGet() 
             
             # if inRgb is not None:
             #     frame = inRgb.getCvFrame()
             #     frame = cv.pyrDown(frame)
             #     frame = cv.pyrDown(frame)
-            #     cv.imshow("capture one", frame)     
+            #     cv.imshow(IP, frame)     
             
 
             if self.qStill.has():
