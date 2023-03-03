@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, session
+from quart import Quart, render_template_string
 from sqlalchemy import create_engine, MetaData, inspect
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
@@ -13,10 +14,18 @@ from flask_socketio import SocketIO, emit
 import pdb
 from flask_migrate import Migrate
 import secrets
+import depthai as dai
+import requests
+import aiohttp
+import asyncio
 
 # import files
 from database_model.models import db, Station, Users
 from helper_functions.validate_users import validate_users, validate_username, validate_password, check_session_expiry
+from helper_functions.insert_camera_info import insert_camera_info, cameraInitialisation
+from main.cameraInitialisationClass import initialise
+from main.imageCaptureClasses import imageCapture
+
 # import the modules
 # main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # sys.path.append(main_directory)
@@ -34,6 +43,7 @@ app.config['PREFERRED_URL_SCHEME'] = 'http'
 app.secret_key = secrets.token_hex(16)
 migrate = Migrate(app, db)
 
+# IP Address for each camera
 
 # Create SQLALCHEMY database object
 def create_tables():
@@ -134,7 +144,7 @@ def serve_static_css(filename):
 # add the photos files path towards the html
 def serve_static_photos(filename):
   root_dir = os.path.dirname(os.getcwd())
-  return send_from_directory(os.path.join(root_dir, 'backend/Photos'), filename)
+  return send_from_directory(os.path.join(root_dir, 'backend/Logos'), filename)
 
 ####################### HOMEPAGE ##########################
 # render the homepage
@@ -159,22 +169,70 @@ def station_detail(station_number):
 ###################### STATION SETTINGS ######################
 # render the station settings:
 @app.route('/bt1xx/station/<int:station_number>/settings')
-def station_settings(station_number):
-  # # import capture function from imageCaptureClasses
-  # captureObject = main.captureObject
+async def station_settings(station_number):
+  # get the IP address of the connected device depends on the station number by calling the helper function
+  name, IP = insert_camera_info(station_number=station_number)
 
-  # # import paramSetup function to set the focal length and the brightness of the camera (camera settings)
-  # result = main.paramsSetup(station_selected, captureObject, recalibrate=True)
+  # render the template asynchronously while connecting to the device
+  async with aiohttp.ClientSession() as session:
+    async with session.get('station_settings.html') as resp:
+      template = await resp.text()
+      rendered_template = render_template_string(template, station_number = station_number)
 
-  return render_template("station_settings.html", station_number=station_number)
+  # opening the frames for users to see their changes in focal length and brightness
+  try:
+    
+    pipeline = cameraInitialisation()
+
+    device_info = dai.DeviceInfo(IP)
+    device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
+    device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+
+    for device in dai.Device.getAllAvailableDevices():
+      print(f"{device.getMxId()} {device.state}")
+
+    with dai.Device(pipeline, device_info) as device:
+      captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
+                                  device.getOutputQueue(name="still", maxSize=30, blocking=True), 
+                                  device.getInputQueue(name="control"))
+      
+      # import paramSetup function to set the focal length and the brightness of the camera (camera settings)
+      # brightness, lensPos = paramsSetup(station_number, captureObject, recalibrate=True, name=IP)
+      brightness, lensPos = captureObject.setParameters(name=IP)
+
+      return {
+        "XLINK_NAME" : name,
+        "IP_address" : IP,
+        "camera_brightness" : brightness,
+        "camera_lensPos" : lensPos      
+      }
+
+  except:
+    print(f"There is an error connecting to the device!")
+    redirect(url_for('station_detail', station_number=station_number))
 
 ###################### STATION CHANGE SETTINGS #################
 # retrieve the data from the form
-@app.route('/bt1xx/station/<int:station_number>/changeSettings', methods=['POST'])
+@app.route('/bt1xx/station/<int:station_number>/changeSettings', methods=['POST', 'GET'])
 def change_settings(station_number):
+  # create a url to get the json object 
+  station_number = str(station_number)
+  url = '/bt1xx/station/' + station_number + '/settings'
+  # make a get request to the url
+  response = request.get(url)
+
+  # if response status is 200 then get the json data
+  if response.status_code == 200:
+    json_data = response.json()
+  else:
+    print(f"Cannot retrieve data!")
+  
+  # get the name of the connected device and the IP address
+  device_name = json_data["XLINK_NAME"]
+  device_IP = json_data["IP_address"]
+
   if request.method == 'POST':
     try:
-      pdb.set_trace()
       # insert into the station detail table
       station_selected = station_number
       focal_length_settings = request.form['focal_length_setting_input']
@@ -184,7 +242,7 @@ def change_settings(station_number):
 
       # create a list of new setting instance
       new_settings = [
-        Station(station_number=station_selected, station_focalLength=focal_length_settings,station_brightness=brightness_setting,white_balance_lock=white_balance_lock_data, auto_exposure_lock = auto_exposure_lock_data)
+        Station(name=device_name, IP_address = device_IP, station_number=station_selected, station_focalLength=focal_length_settings,station_brightness=brightness_setting,white_balance_lock=white_balance_lock_data, auto_exposure_lock = auto_exposure_lock_data)
       ]
 
       # add new setting into the station model
@@ -214,6 +272,12 @@ def change_settings(station_number):
       return redirect(url_for('station_settings', station_number=station_selected))
   
   # return render_template("successful.html", station_number=station_number)
+
+####################### STATION MASKS SETTINGS ###############
+# render the url for station mask setup
+@app.route('/bt1xx/station/<int:station_number>/masksetup')
+def station_mask_setup(station_number):
+  return render_template("station_masksetup.html", station_number=station_number)
 
 ################################# LOG IN PAGE #############################
 # render the login page
