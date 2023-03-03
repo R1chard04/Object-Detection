@@ -1,0 +1,18 @@
+{
+    "station100":
+    { 
+        "top":["top", "bottom"],
+        "bottom":["left", "right"]
+    },
+
+    "station5":
+    {
+        "top":["left", "right"],
+        "bottom": []
+    },
+    "station10":
+    {
+        "top":["left", "right"],
+        "bottom": []
+    }
+}

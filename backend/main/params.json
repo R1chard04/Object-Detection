@@ -1,0 +1,19 @@
+{
+    "station100":
+    { 
+        "brightness": -1,
+        "lensPos": 108
+    },
+
+    "station5":
+    {
+        "brightness": -1,
+        "lensPos": 108
+    },
+
+    "station10":
+    {
+        "brightness": -1,
+        "lensPos": 108
+    }
+}

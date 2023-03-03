@@ -21,3 +21,6 @@ Here is a list of things need to be done for the BT1XX Program Website
 
 2. API and URLs: 
   + GET request towards 
+
+# redo the url to mask setup
+# import main and photos againnnnnnnnnnnnnnnnnn into backend
