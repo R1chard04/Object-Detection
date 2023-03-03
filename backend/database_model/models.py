@@ -12,6 +12,8 @@ class Station(db.Model):
   __tablename__ = 'station'
 
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  name = db.Column(db.String(100), nullable=False)
+  IP_address = db.Column(db.Integer, nullable=False)
   station_number = db.Column(db.Integer, nullable=False)
   station_focalLength = db.Column(db.Integer, nullable=False)
   station_brightness = db.Column(db.Integer, nullable=False)

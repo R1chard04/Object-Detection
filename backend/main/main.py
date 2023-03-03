@@ -1,11 +1,11 @@
 import cv2 as cv
 import time
 import depthai as dai
-from cameraInitialisationClass import initialise
-from imageProcessingClasses import imageProcessing
-from imageCaptureClasses import imageCapture
-from imageMaskGeneration import createMask
-from imagePredictionClass import MSEStabilization, getPassRef
+from main.cameraInitialisationClass import initialise
+from main.imageProcessingClasses import imageProcessing
+from main.imageCaptureClasses import imageCapture
+from main.imageMaskGeneration import createMask
+from main.imagePredictionClass import MSEStabilization, getPassRef
 import time
 import os
 import json
