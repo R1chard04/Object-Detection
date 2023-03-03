@@ -54,3 +54,5 @@ def insert_camera_info(station_number) -> tuple:
   IP = "169.254.1.203"
   return name, IP
  
+
+ 

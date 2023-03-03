@@ -7,9 +7,9 @@ selected = [0,1]
 
 if __name__ == '__main__':    
 
-    process1 = multiprocessing.Process(target=mainloop, args = 0)
-    process2 = multiprocessing.Process(target=mainloop, args = 1)
-    process3 = multiprocessing.Process(target=mainloop, args = 2)
+    process1 = multiprocessing.Process(target=mainloop, args = (0,))
+    process2 = multiprocessing.Process(target=mainloop, args = (1,))
+    process3 = multiprocessing.Process(target=mainloop, args = (2,))
 
     # Start the processes
     process1.start()

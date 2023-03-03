@@ -1,7 +1,7 @@
 import cv2 as cv
 import time
 import depthai as dai
-from cameraInitialisationClass import initialise
+from  backend.main.cameraInitialisationClass import initialise
 from imageProcessingClasses import imageProcessing
 from imageCaptureClasses import imageCapture
 from imageMaskGeneration import createMask

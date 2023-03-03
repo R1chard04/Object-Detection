@@ -16,19 +16,19 @@ import pdb
 
 #-----------------------------------------Directories-----------------------------------------#
 #Photos Path
-photosPath = "Photos\Init" #This is where all the images are being saved
+photosPath = "..\Photos\Init" #This is where all the images are being saved
 
 #MSE Initialisation Photos Path
-errDir = "Photos\Err" #This is whered the difference images can be saved; they are not currently
+errDir = "..\Photos\Err" #This is whered the difference images can be saved; they are not currently
 
 #Mask Paths
-refDir = "Photos\Refs" #This is where the reference photos for each part at one station are being saved
-colDir = "Photos\Col" #This is where the alternate colour reference photos for each part at one station are being saved
-maskDir = "Photos\Masks" #This is where the generated masks are being saved
+refDir = "..\Photos\Refs" #This is where the reference photos for each part at one station are being saved
+colDir = "..\Photos\Col" #This is where the alternate colour reference photos for each part at one station are being saved
+maskDir = "..\Photos\Masks" #This is where the generated masks are being saved
 
 #IPs
 IPString = "169.254.1."
-IPEndpoint = 202
+IPEndpoint = 201
 
 #Part List
 with open(r'parts.json') as f:
@@ -215,20 +215,20 @@ def mainloop(selected):
         brightness = -1
         lensPos = 108
        
-        print("done params")
+        # print("done params")
 
-        masks = maskSetup(selected, captureObject, recalibrate, brightness, lensPos, IP)
+        # masks = maskSetup(selected, captureObject, recalibrate, brightness, lensPos, IP)
 
-        print("done masks")
-        tempRef = controlSetup(selected, captureObject, recalibrate, brightness, lensPos)
-        print("done control setup")
-        processingObject = imageProcessing(masks, tempRef, tempRef, partsPerStation[selected]) #Initialisation of the processing object
-        print("processing object initialized")
+        # print("done masks")
+        # tempRef = controlSetup(selected, captureObject, recalibrate, brightness, lensPos)
+        # print("done control setup")
+        # processingObject = imageProcessing(masks, tempRef, tempRef, partsPerStation[selected]) #Initialisation of the processing object
+        # print("processing object initialized")
 
-        ref, passref = errorSetup(selected, captureObject, processingObject, recalibrate, brightness, lensPos)
-        print("errorsetup")
-        processingObject.setRefImg(ref)
-        print("refsetup")
+        # ref, passref = errorSetup(selected, captureObject, processingObject, recalibrate, brightness, lensPos)
+        # print("errorsetup")
+        # processingObject.setRefImg(ref)
+        # print("refsetup")
 
     #-------------------------------------------------------------------------------------------#   
         while True:
@@ -236,21 +236,22 @@ def mainloop(selected):
 
             # capture a test image
             img = captureObject.captureOne(os.path.join(photosPath, stations[selected],"Test.jpg"), brightness, lensPos)
-            processingObject.setTestImg(img)  
-            # display the result on the frame
-            frame = processingObject.displayResultPosition()
-            # get the mse error
-            error = processingObject.compareImage() 
-            #Generates PASS/FAIL array
-            prediction = MSEStabilization(error, passref[stations[selected]], len(passref[stations[selected]])) 
+            cv.imshow(IP, img)
+            # processingObject.setTestImg(img)  
+            # # display the result on the frame
+            # frame = processingObject.displayResultPosition()
+            # # get the mse error
+            # error = processingObject.compareImage() 
+            # #Generates PASS/FAIL array
+            # prediction = MSEStabilization(error, passref[stations[selected]], len(passref[stations[selected]])) 
 
-            result = prediction.result()
-            # print(result)
+            # result = prediction.result()
+            # # print(result)
 
-            # transferToPLC("OP100", result)
-            cv.waitKey(1)
-            frame = cv.pyrDown(frame)
-            frame = cv.pyrDown(frame)
-            cv.imshow(IP, frame)
+            # # transferToPLC("OP100", result)
+            # cv.waitKey(1)
+            # frame = cv.pyrDown(frame)
+            # frame = cv.pyrDown(frame)
+            # cv.imshow(IP, frame)
             
 

@@ -2,6 +2,28 @@
 // var socket = io.connect('http://127.0.0.1:5000/bt1xx/station/<int:station_number>/settings');
 
 document.addEventListener('DOMContentLoaded', function() {
+  // function redirect the user to the url of the python program using iframe
+  let btnClick = document.getElementById("show-frame-button");
+  function loadContent(){
+    
+    // get the content element
+    var content = document.getElementById("content");
+    let url = btnClick.getAttribute("data-url");
+
+    // create an iframe element
+    var iframe = document.getElementById("iframe");
+    iframe.src = url;
+    iframe.style.width = "50%";
+    iframe.style.height = "100px";
+
+    // add the iframe element to the content element
+    content.appendChild(iframe);
+  }
+
+  btnClick.addEventListener("click", function() {
+    loadContent();
+  });
+
   // Update the value of the focal length in real-time when the users drag the thumb
  const indicator = document.querySelector('.indicator');
  const bar = indicator.querySelector('.indicator .bar');

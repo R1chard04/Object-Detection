@@ -1,5 +1,4 @@
 from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, session
-from quart import Quart, render_template_string
 from sqlalchemy import create_engine, MetaData, inspect
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
@@ -16,7 +15,6 @@ from flask_migrate import Migrate
 import secrets
 import depthai as dai
 import requests
-import aiohttp
 import asyncio
 
 # import files
@@ -43,7 +41,11 @@ app.config['PREFERRED_URL_SCHEME'] = 'http'
 app.secret_key = secrets.token_hex(16)
 migrate = Migrate(app, db)
 
-# IP Address for each camera
+# This is the helper function to asynchronously render the template while connecting to the devices
+async def render_template_async(template_name, **kwargs):
+  with app.app_context():
+    template_string = render_template(template_name, **kwargs)
+  return template_string
 
 # Create SQLALCHEMY database object
 def create_tables():
@@ -140,11 +142,18 @@ def serve_static_css(filename):
   return send_from_directory(os.path.join(root_dir, 'backend/static-css'), filename)
 
 # include the path to the photos files
-@app.route('/Photos/<path:filename>')
+@app.route('/Logos/<path:filename>')
 # add the photos files path towards the html
 def serve_static_photos(filename):
   root_dir = os.path.dirname(os.getcwd())
   return send_from_directory(os.path.join(root_dir, 'backend/Logos'), filename)
+
+# include the path to the templates files
+# @app.route('/outside_template/<path:filename>')
+# # add the templates files towards the directory path
+# def serve_static_templates(filename):
+#   root_dir = os.path.dirname(os.getcwd())
+#   return send_from_directory(os.path.join(root_dir, 'backend/outside_template'), filename)
 
 ####################### HOMEPAGE ##########################
 # render the homepage
@@ -169,19 +178,17 @@ def station_detail(station_number):
 ###################### STATION SETTINGS ######################
 # render the station settings:
 @app.route('/bt1xx/station/<int:station_number>/settings')
-async def station_settings(station_number):
+def station_settings(station_number):
+  #   redirect(url_for('station_detail', station_number=station_number))
+  return render_template('station_settings.html', station_number=station_number)
+
+###################### STATION SHOW FRAME ######################
+@app.route('/bt1xx/showframe/<int:station_number>/')
+def show_frame(station_number):
   # get the IP address of the connected device depends on the station number by calling the helper function
   name, IP = insert_camera_info(station_number=station_number)
 
-  # render the template asynchronously while connecting to the device
-  async with aiohttp.ClientSession() as session:
-    async with session.get('station_settings.html') as resp:
-      template = await resp.text()
-      rendered_template = render_template_string(template, station_number = station_number)
-
-  # opening the frames for users to see their changes in focal length and brightness
   try:
-    
     pipeline = cameraInitialisation()
 
     device_info = dai.DeviceInfo(IP)
@@ -200,43 +207,44 @@ async def station_settings(station_number):
       # brightness, lensPos = paramsSetup(station_number, captureObject, recalibrate=True, name=IP)
       brightness, lensPos = captureObject.setParameters(name=IP)
 
-      return {
-        "XLINK_NAME" : name,
-        "IP_address" : IP,
+      return jsonify({
+        "XLINK_NAME" : str(name),
+        "IP_address" : str(IP),
         "camera_brightness" : brightness,
-        "camera_lensPos" : lensPos      
-      }
+        "camera_lensPos" : lensPos
+      })
 
   except:
     print(f"There is an error connecting to the device!")
-    redirect(url_for('station_detail', station_number=station_number))
+  
+  return redirect(url_for('station_detail', station_number=station_number))
 
 ###################### STATION CHANGE SETTINGS #################
 # retrieve the data from the form
 @app.route('/bt1xx/station/<int:station_number>/changeSettings', methods=['POST', 'GET'])
 def change_settings(station_number):
-  # create a url to get the json object 
-  station_number = str(station_number)
-  url = '/bt1xx/station/' + station_number + '/settings'
-  # make a get request to the url
-  response = request.get(url)
+  pdb.set_trace()
+  # get the json data from the url
+  url = "http://127.0.0.1:5000/bt1xx/showframe/" + str(station_number) + '/'
+  response = requests.get(url)
 
-  # if response status is 200 then get the json data
   if response.status_code == 200:
     json_data = response.json()
   else:
-    print(f"Cannot retrieve data!")
-  
-  # get the name of the connected device and the IP address
+    print(f"There is an error retrieving data!")
+
   device_name = json_data["XLINK_NAME"]
   device_IP = json_data["IP_address"]
+  focal_length_settings = json_data["camera_lensPos"]
+  brightness_setting = json_data["camera_brightness"]
+  
 
   if request.method == 'POST':
     try:
       # insert into the station detail table
       station_selected = station_number
-      focal_length_settings = request.form['focal_length_setting_input']
-      brightness_setting = request.form['brightness_setting_input']
+      # focal_length_settings = request.form['focal_length_setting_input']
+      # brightness_setting = request.form['brightness_setting_input']
       white_balance_lock_data = bool(request.form['white_balance_lock_input'])
       auto_exposure_lock_data = bool(request.form['auto_exposure_lock'])
 

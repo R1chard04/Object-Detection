@@ -23,7 +23,6 @@
       <label class="menu__btn" for="menu__toggle">
         <span></span>
       </label>
-
       <ul class="menu__box">
        <li><img id="nav-logo" src="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}" alt="Logo"></li>
        <li><a class="menu__item" href="{{ url_for('homepage') }}">Home</a></li>
@@ -36,6 +35,12 @@
    </nav>
   </div>
   <div class="main-page">
+    <div>
+      <button id="show-frame-button" data-url="{{ url_for('show_frame', station_number=station_number) }}" onclick="loadContent()">Show Frame for station {{ station_number }}</button>
+      <div id="content">
+        <iframe id="iframe" src="" width="100%" height="500" type="hidden"></iframe>
+      </div>
+    </div>
    <form action="{{ url_for('change_settings', station_number=station_number) }}" method="POST" class="form">
     <div class="focal-length-section-div">
      <section class="focal-length-section">
