@@ -207,13 +207,6 @@ def show_frame(station_number):
       # brightness, lensPos = paramsSetup(station_number, captureObject, recalibrate=True, name=IP)
       brightness, lensPos = captureObject.setParameters(name=IP)
 
-      return jsonify({
-        "XLINK_NAME" : str(name),
-        "IP_address" : str(IP),
-        "camera_brightness" : brightness,
-        "camera_lensPos" : lensPos
-      })
-
   except:
     print(f"There is an error connecting to the device!")
   
@@ -223,34 +216,21 @@ def show_frame(station_number):
 # retrieve the data from the form
 @app.route('/bt1xx/station/<int:station_number>/changeSettings', methods=['POST', 'GET'])
 def change_settings(station_number):
-  pdb.set_trace()
-  # get the json data from the url
-  url = "http://127.0.0.1:5000/bt1xx/showframe/" + str(station_number) + '/'
-  response = requests.get(url)
-
-  if response.status_code == 200:
-    json_data = response.json()
-  else:
-    print(f"There is an error retrieving data!")
-
-  device_name = json_data["XLINK_NAME"]
-  device_IP = json_data["IP_address"]
-  focal_length_settings = json_data["camera_lensPos"]
-  brightness_setting = json_data["camera_brightness"]
-  
-
+  # get the IP address of the connected device depends on the station number by calling the helper function
+  name, IP = insert_camera_info(station_number=station_number)
   if request.method == 'POST':
     try:
       # insert into the station detail table
       station_selected = station_number
-      # focal_length_settings = request.form['focal_length_setting_input']
-      # brightness_setting = request.form['brightness_setting_input']
+      focal_length_settings = request.form['focal_length_setting_input']
+      brightness_setting = request.form['brightness_setting_input']
       white_balance_lock_data = bool(request.form['white_balance_lock_input'])
       auto_exposure_lock_data = bool(request.form['auto_exposure_lock'])
 
+      pdb.set_trace()
       # create a list of new setting instance
       new_settings = [
-        Station(name=device_name, IP_address = device_IP, station_number=station_selected, station_focalLength=focal_length_settings,station_brightness=brightness_setting,white_balance_lock=white_balance_lock_data, auto_exposure_lock = auto_exposure_lock_data)
+        Station(name=name, IP_address = IP, station_number=station_selected, station_focalLength=focal_length_settings,station_brightness=brightness_setting,white_balance_lock=white_balance_lock_data, auto_exposure_lock = auto_exposure_lock_data)
       ]
 
       # add new setting into the station model
@@ -268,6 +248,7 @@ def change_settings(station_number):
 
       if result:
         print(f"Data has been inserted successfully!")
+        # overwrite the params.json
         return redirect(url_for('station_detail', station_number = station_number))
       else:
         print(f"Error inserting data into the database")
