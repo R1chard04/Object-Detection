@@ -28,7 +28,7 @@ class imageProcessing:
         for i in range(len(partList)):
             
             # count num of white pixels for each masks
-            pixels = np.sum(self.masks)
+            pixels = np.sum(self.masks[0])
             self.masksPixels.append(pixels)
             
             # count the pixel position to display result

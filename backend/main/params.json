@@ -2,18 +2,45 @@
     "station100":
     { 
         "brightness": -1,
-        "lensPos": 108
+        "lensPos": 108,
+        "parts": ["top", "left", "bottom", "right"],
+        "passref": [3,4,4,5],
+        "IP": "169.254.1.201",
+        "masks": ["Photos\\Masks\\station100\\top.jpg", "Photos\\Masks\\station100\\left.jpg",
+                "Photos\\Masks\\station100\\bottom.jpg", "Photos\\Masks\\station100\\right.jpg"],
+        "refs" : ["Photos\\Refs\\station100\\top.jpg", "Photos\\Refs\\station100\\left.jpg",
+                "Photos\\Refs\\station100\\right.jpg", "Photos\\Refs\\station100\\bottom.jpg"],
+        "cols" : ["Photos\\col\\station100\\top.jpg", "Photos\\col\\station100\\left.jpg",
+        "Photos\\col\\station100\\right.jpg", "Photos\\col\\station100\\bottom.jpg"],
+        "standard" : "Photos\\Refs\\station100\\STD.jpg",
+        "test" : "Photos\\Refs\\station100\\test.jpg"
     },
 
     "station5":
     {
         "brightness": -1,
-        "lensPos": 108
+        "lensPos": 108,
+        "parts":["left", "right"],
+        "passref": [2,3],
+        "IP": "169.254.1.202",
+        "masks": ["Photos\\Masks\\station5\\left.jpg", "Photos\\Masks\\station5\\right.jpg"],
+        "refs" : ["Photos\\Refs\\station5\\left.jpg", "Photos\\Refs\\station5\\right.jpg"],
+        "cols" : ["Photos\\col\\station5\\left.jpg", "Photos\\col\\station5\\right.jpg"],
+        "standard" : "Photos\\Refs\\station5\\STD.jpg",
+        "test" : "Photos\\Refs\\station5\\test.jpg"
     },
 
     "station10":
     {
         "brightness": -1,
-        "lensPos": 108
+        "lensPos": 108,
+        "parts":["left", "right"],
+        "passref": [2,3],
+        "IP": "169.254.1.203",
+        "masks": ["Photos\\Masks\\station10\\left.jpg", "Photos\\Masks\\station10\\right.jpg"],
+        "refs" : ["Photos\\Refs\\station10\\left.jpg", "Photos\\Refs\\station10\\right.jpg"],
+        "cols" : ["Photos\\col\\station10\\left.jpg", "Photos\\col\\station10\\right.jpg"],
+        "standard" : "Photos\\Refs\\station10\\STD.jpg",
+        "test" : "Photos\\Refs\\station10\\test.jpg"
     }
 }
