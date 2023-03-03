@@ -17,6 +17,9 @@ import secrets
 # import files
 from database_model.models import db, Station, Users
 from helper_functions.validate_users import validate_users, validate_username, validate_password, check_session_expiry
+from main.cameraInitialisationClass import initialise
+from main.imageCaptureClasses import imageCapture
+
 # import the modules
 # main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # sys.path.append(main_directory)
@@ -34,6 +37,7 @@ app.config['PREFERRED_URL_SCHEME'] = 'http'
 app.secret_key = secrets.token_hex(16)
 migrate = Migrate(app, db)
 
+# IP Address for each camera
 
 # Create SQLALCHEMY database object
 def create_tables():
@@ -134,7 +138,7 @@ def serve_static_css(filename):
 # add the photos files path towards the html
 def serve_static_photos(filename):
   root_dir = os.path.dirname(os.getcwd())
-  return send_from_directory(os.path.join(root_dir, 'backend/Photos'), filename)
+  return send_from_directory(os.path.join(root_dir, 'backend/Logos'), filename)
 
 ####################### HOMEPAGE ##########################
 # render the homepage
@@ -160,13 +164,16 @@ def station_detail(station_number):
 # render the station settings:
 @app.route('/bt1xx/station/<int:station_number>/settings')
 def station_settings(station_number):
-  # # import capture function from imageCaptureClasses
-  # captureObject = main.captureObject
+  # opening the frames for users to see their change in focal length and brightness
 
-  # # import paramSetup function to set the focal length and the brightness of the camera (camera settings)
-  # result = main.paramsSetup(station_selected, captureObject, recalibrate=True)
 
   return render_template("station_settings.html", station_number=station_number)
+
+####################### STATION MASKS SETTINGS ###############
+# render the url for station mask setup
+@app.route('/bt1xx/station/<int:station_number>/masksetup')
+def station_mask_setup(station_number):
+  return render_template("station_masksetup.html", station_number=station_number)
 
 ###################### STATION CHANGE SETTINGS #################
 # retrieve the data from the form
