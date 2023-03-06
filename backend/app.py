@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, session
+from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, session, flash
 from sqlalchemy import create_engine, MetaData, inspect
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
@@ -23,6 +23,7 @@ from helper_functions.validate_users import validate_users, validate_username, v
 from helper_functions.insert_camera_info import insert_camera_info, cameraInitialisation
 from main.cameraInitialisationClass import initialise
 from main.imageCaptureClasses import imageCapture
+from main.main import maskSetup
 
 # import the modules
 # main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -183,8 +184,8 @@ def station_settings(station_number):
   return render_template('station_settings.html', station_number=station_number)
 
 ###################### STATION SHOW FRAME ######################
-@app.route('/bt1xx/showframe/<int:station_number>/')
-def show_frame(station_number):
+@app.route('/bt1xx/paramSetup/showframe/<int:station_number>/')
+def show_frame_params(station_number):
   # get the IP address of the connected device depends on the station number by calling the helper function
   name, IP = insert_camera_info(station_number=station_number)
 
@@ -208,7 +209,7 @@ def show_frame(station_number):
       brightness, lensPos = captureObject.setParameters(name=IP)
 
   except:
-    print(f"There is an error connecting to the device!")
+    flash(f"There is an error connecting to the device!")
   
   return redirect(url_for('station_detail', station_number=station_number))
 
@@ -227,7 +228,6 @@ def change_settings(station_number):
       white_balance_lock_data = bool(request.form['white_balance_lock_input'])
       auto_exposure_lock_data = bool(request.form['auto_exposure_lock'])
 
-      pdb.set_trace()
       # create a list of new setting instance
       new_settings = [
         Station(name=name, IP_address = IP, station_number=station_selected, station_focalLength=focal_length_settings,station_brightness=brightness_setting,white_balance_lock=white_balance_lock_data, auto_exposure_lock = auto_exposure_lock_data)
@@ -263,10 +263,44 @@ def change_settings(station_number):
   # return render_template("successful.html", station_number=station_number)
 
 ####################### STATION MASKS SETTINGS ###############
-# render the url for station mask setup
+# render the url for station mask setup instructions
 @app.route('/bt1xx/station/<int:station_number>/masksetup')
 def station_mask_setup(station_number):
   return render_template("station_masksetup.html", station_number=station_number)
+
+# render the url for setting up the mask action
+@app.route('/bt1xx/createmask/showframe/station/<int:station_number>/')
+def create_mask(station_number):
+  # call the function for connecting to the devices
+  name, IP = insert_camera_info(station_number=station_number)
+
+  # query the brightness, lensPos and the IP address of the device
+  settings = Station.query.filter_by(station_number=station_number, IP_address=IP).first()
+
+  camera_focalLength = settings.station_focalLength
+  camera_brightness = settings.station_brightness
+
+  try:
+    pipeline = cameraInitialisation()
+
+    device_info = dai.DeviceInfo(IP)
+    device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
+    device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+
+    for device in dai.Device.getAllAvailableDevices():
+      print(f"{device.getMxId()} {device.state}")
+
+    with dai.Device(pipeline, device_info) as device:
+      captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
+                                  device.getOutputQueue(name="still", maxSize=30, blocking=True), 
+                                  device.getInputQueue(name="control"))
+      
+      # call the setting mask up function
+    masks = maskSetup(selected=station_number, captureObject=captureObject, recalibrate=True, brightness=camera_brightness, lensPos=camera_focalLength, name=IP)
+
+  except:
+    flash(f"Error connecting to the device!")
+    return redirect(url_for('station_detail', station_number=station_number))
 
 ################################# LOG IN PAGE #############################
 # render the login page

@@ -186,7 +186,6 @@ def mainloop(selected):
     #-----------------------------------------Camera Initialisation-----------------------------------------#
     IP = IPEndpoint + selected
     IP = IPString + str(IP)
-    recalibrate = True
 
     initialisationObject = initialise(photosPath)
     print("here1")
@@ -209,27 +208,8 @@ def mainloop(selected):
                                     device.getOutputQueue(name="still", maxSize=30, blocking=True), 
                                     device.getInputQueue(name="control"))
         print("here4")
-
-        # brightness, lensPos = paramsSetup(selected, captureObject, recalibrate, IP)
-        # this need to be taken out tomorrow
         brightness = -1
         lensPos = 108
-       
-        # print("done params")
-
-        # masks = maskSetup(selected, captureObject, recalibrate, brightness, lensPos, IP)
-
-        # print("done masks")
-        # tempRef = controlSetup(selected, captureObject, recalibrate, brightness, lensPos)
-        # print("done control setup")
-        # processingObject = imageProcessing(masks, tempRef, tempRef, partsPerStation[selected]) #Initialisation of the processing object
-        # print("processing object initialized")
-
-        # ref, passref = errorSetup(selected, captureObject, processingObject, recalibrate, brightness, lensPos)
-        # print("errorsetup")
-        # processingObject.setRefImg(ref)
-        # print("refsetup")
-
     #-------------------------------------------------------------------------------------------#   
         while True:
             # print("here5")

@@ -36,7 +36,7 @@
   </div>
   <div class="main-page">
     <div>
-      <button id="show-frame-button" data-url="{{ url_for('show_frame', station_number=station_number) }}" onclick="loadContent()">Show Frame for station {{ station_number }}</button>
+      <button id="show-frame-button" data-url="{{ url_for('show_frame_params', station_number=station_number) }}" onclick="loadContent()">Show Frame for station {{ station_number }}</button>
       <div id="content">
         <iframe id="iframe" src="" width="100%" height="500" type="hidden"></iframe>
       </div>
