@@ -14,18 +14,6 @@ import pdb
 # from pylogix import PLC
 # from PLCUpdate import transferToPLC
 
-#-----------------------------------------Directories-----------------------------------------#
-#Photos Path
-photosPath = "Photos\Init" #This is where all the images are being saved
-
-#MSE Initialisation Photos Path
-errDir = "Photos\Err" #This is whered the difference images can be saved; they are not currently
-
-#Mask Paths
-refDir = "Photos\Refs" #This is where the reference photos for each part at one station are being saved
-colDir = "Photos\Col" #This is where the alternate colour reference photos for each part at one station are being saved
-maskDir = "Photos\Masks" #This is where the generated masks are being saved
-
 #Part List
 with open(r'params.json') as f:
   partList = json.load(f)
@@ -43,15 +31,6 @@ refPaths = params["refs"]
 colPaths = params ["cols"]
 standardPath = params["standard"]
 testPath = params["test"]
-
-# for n in maskPaths:
-#     print(n)
-# print(refPaths[0])
-# img = cv.imread(maskPaths[0])
-# cv.imshow('hi',img)
-# cv.waitKey(0)
-
-#-----------------------------------------Main Loop-----------------------------------------#
 
 #-----------------------------------------Camera Initialisation-----------------------------------------#
 

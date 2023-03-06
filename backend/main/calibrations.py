@@ -1,6 +1,96 @@
+import json
+import depthai as dai
+import cv2 as cv
+from main.imageMaskGeneration import createMask
+
+def createPipeline():
+    pipeline = dai.Pipeline()
+    # This might improve reducing the latency on some systems
+    pipeline.setXLinkChunkSize(0)
+
+    # Define source and output
+    camRgb = pipeline.create(dai.node.ColorCamera)
+    camRgb.setFps(3)
+    camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
+    camRgb.setPreviewSize(1920, 1080)
+
+    xout = pipeline.create(dai.node.XLinkOut)
+    xout.setStreamName("out")
+    camRgb.isp.link(xout.input)
+    return pipeline
+
+# def cameraSetup(station):
+#     stationCamera = Recalibration(station)
+#     device_info = dai.DeviceInfo(stationCamera.IP)
+#     with dai.Device(createPipeline(), device_info) as device:
+#         # stationCamera.paramSetup()
+#         # render website?
+#         stationCamera.maskSetup()
+#         # render website?
+#     return
+
 # set up the mask, control and errors
 class Recalibration:
- def __init__(self) -> None:
-  pass
- def maskSetup(self):
-  
+    def __init__(self, station) -> None:
+        with open (r'params.json') as f:
+              partList = json.load(f)
+              
+        # select which station to use here
+        params = partList[station]
+        self.brightness = params["brightness"]
+        self.lensPos = params["lensPos"]
+        self.parts = params["parts"]
+        self.IP = params["IP"]
+        self.maskPaths = params["masks"]
+        self.refPaths = params["refs"]
+        self.colPaths = params ["cols"]
+        self.standardPath = params["standard"]
+        self.testPath = params["test"]
+    def paramSetup(self):
+        pass
+    
+    def maskSetup(self, device):
+        
+        q = device.getOutputQueue(name="out")            
+        for i in range(self.parts):
+            input("load" + self.part[i] + "part.")
+            imgFrame = q.get()
+            imgSil = imgFrame.getCvFrame()
+            cv.imWrite(self.refPaths[i], imgSil)
+            
+            input("load"+ self.part[i] + "colour part.")
+            imgFrame = q.get()
+            imgCol = imgFrame.getCvFrame()
+            cv.imWrite(self.refPaths[i], imgCol)
+            
+            print("Creating a mask, this may take a minute")
+            createMask(imgSil, imgCol, self.maskPaths[i])
+            print("Mask generated")
+        
+        print("all masks are done")
+        return
+                
+    def upDate(self, station):
+        # this method read all the parameters from the json again
+        with open (r'params.json') as f:
+              partList = json.load(f)
+              
+        # select which station to use here
+        params = partList[station]
+        self.brightness = params["brightness"]
+        self.lensPos = params["lensPos"]
+        self.parts = params["parts"]
+        self.IP = params["IP"]
+        self.maskPaths = params["masks"]
+        self.refPaths = params["refs"]
+        self.colPaths = params ["cols"]
+        self.standardPath = params["standard"]
+        self.testPath = params["test"]
+    
+    def errorSetup(self):
+        pass
+    
+    def controlSetup(self):
+        pass
+    
+        
