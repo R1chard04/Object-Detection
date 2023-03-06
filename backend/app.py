@@ -16,6 +16,7 @@ import secrets
 import depthai as dai
 import requests
 import asyncio
+import json
 
 # import files
 from database_model.models import db, Station, Users
@@ -24,6 +25,13 @@ from helper_functions.insert_camera_info import insert_camera_info, cameraInitia
 from main.cameraInitialisationClass import initialise
 from main.imageCaptureClasses import imageCapture
 from main.main import maskSetup
+
+# read in the params.json file
+with open(r'params.json') as f:
+  partList = json.load(f)
+# get all the stations from the json files
+stations = list(partList.keys())
+
 
 # import the modules
 # main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -86,6 +94,7 @@ def insert_users() -> None:
         print(f"User {user.username} already exists in the database!")
 
 insert_users()
+
 # app.config['SECRET_KEY'] = 'secret!'
 # socketio = SocketIO(app)
 # db.init_app(app)
@@ -187,7 +196,9 @@ def station_settings(station_number):
 @app.route('/bt1xx/paramSetup/showframe/<int:station_number>/')
 def show_frame_params(station_number):
   # get the IP address of the connected device depends on the station number by calling the helper function
-  name, IP = insert_camera_info(station_number=station_number)
+  # loop through the stations list to find the associate IP Address
+  IP = stations[str(station_number)]["IP"].value()
+  name = stations[str(station_number)]["name"].value()
 
   try:
     pipeline = cameraInitialisation()
@@ -218,7 +229,9 @@ def show_frame_params(station_number):
 @app.route('/bt1xx/station/<int:station_number>/changeSettings', methods=['POST', 'GET'])
 def change_settings(station_number):
   # get the IP address of the connected device depends on the station number by calling the helper function
-  name, IP = insert_camera_info(station_number=station_number)
+  IP = stations[str(station_number)]["IP"].value()
+  name = stations[str(station_number)]["name"].value()
+
   if request.method == 'POST':
     try:
       # insert into the station detail table
@@ -272,13 +285,18 @@ def station_mask_setup(station_number):
 @app.route('/bt1xx/createmask/showframe/station/<int:station_number>/')
 def create_mask(station_number):
   # call the function for connecting to the devices
-  name, IP = insert_camera_info(station_number=station_number)
+  IP = stations[str(station_number)]["IP"].value()
+  name = stations[str(station_number)]["name"].value()
 
   # query the brightness, lensPos and the IP address of the device
   settings = Station.query.filter_by(station_number=station_number, IP_address=IP).first()
-
-  camera_focalLength = settings.station_focalLength
-  camera_brightness = settings.station_brightness
+  # if the cameras have been recalibrated
+  if settings:
+    camera_focalLength = settings.station_focalLength
+    camera_brightness = settings.station_brightness
+  else:
+    camera_focalLength = 108
+    camera_brightness = -1
 
   try:
     pipeline = cameraInitialisation()

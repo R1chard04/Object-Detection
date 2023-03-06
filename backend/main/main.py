@@ -53,6 +53,7 @@ for i in range(len(stations)):
     errFolder = os.path.join(errDir, stations[i])
     initFolder = os.path.join(photosPath, stations[i])
 
+    # check if the folders are not created, then create them
     if not os.path.isdir(refFolder): 
         os.mkdir(refFolder)
     if not os.path.isdir(colFolder): 
@@ -74,9 +75,9 @@ def maskSetup(selected, captureObject, recalibrate, brightness, lensPos, name):
     
     if recalibrate == True:
 
-        refFolder = os.path.join(refDir, stations[selected])
-        colFolder = os.path.join(colDir, stations[selected])
-        maskFolder = os.path.join(maskDir, stations[selected])
+        # refFolder = os.path.join(refDir, stations[selected])
+        # colFolder = os.path.join(colDir, stations[selected])
+        # maskFolder = os.path.join(maskDir, stations[selected])
 
         for i in range(len(partsLayered[selected])):
             for j in range(len(partsLayered[selected][i])):
@@ -119,7 +120,7 @@ def maskSetup(selected, captureObject, recalibrate, brightness, lensPos, name):
     
     return masks
 
-def paramsSetup(selected, captureObject, recalibrate, name):
+def paramsSetup(selected, captureObject, recalibrate, name, stations):
     #Station prameters
     with open(r'params.json') as f:
         paramsList = json.load(f)
@@ -142,7 +143,7 @@ def paramsSetup(selected, captureObject, recalibrate, name):
 
     return brightness, lensPos
 
-def controlSetup(selected, captureObject, recalibrate, brightness, lensPos):
+def controlSetup(selected, captureObject, recalibrate, brightness, lensPos, stations):
     path = os.path.join(refDir, stations[selected], "STD.jpg")
     if recalibrate is True or os.path.isfile(path) is False:
         print("Load all parts. Press `C`` to continue")
@@ -152,7 +153,7 @@ def controlSetup(selected, captureObject, recalibrate, brightness, lensPos):
         tempRef = cv.imread(path)
     return tempRef
 
-def errorSetup(selected, captureObject, processingObject, recalibrate, brightness, lensPos):
+def errorSetup(selected, captureObject, processingObject, recalibrate, brightness, lensPos, stations):
     # pdb.set_trace()
     with open(r'errors.json') as f:
         passref = json.load(f)
@@ -181,7 +182,7 @@ def errorSetup(selected, captureObject, processingObject, recalibrate, brightnes
     return ref, passref
 
 #-----------------------------------------Main Loop-----------------------------------------#
-def mainloop(selected):
+def mainloop(selected, stations):
     print("here")
     #-----------------------------------------Camera Initialisation-----------------------------------------#
     IP = IPEndpoint + selected
