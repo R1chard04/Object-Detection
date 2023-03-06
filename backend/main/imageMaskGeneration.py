@@ -76,7 +76,6 @@ def createMask(std, col, maskPath):
 
   #Finding Contours
   contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-  pdb.set_trace()
   contours = sorted(contours, key=cv.contourArea, reverse=True)
   if len(contours) == 0:
     return False

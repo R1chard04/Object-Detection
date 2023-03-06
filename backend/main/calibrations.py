@@ -1,6 +1,7 @@
 import json
 import depthai as dai
 import cv2 as cv
+import time
 from main.imageMaskGeneration import createMask
 import pdb
 
@@ -52,17 +53,22 @@ class Recalibration:
     
     def maskSetup(self, device):
         q = device.getOutputQueue(name="out")
-        i = 0   
-        pdb.set_trace()         
+        i = 0           
         while i < len(self.parts):
-            input("load" + self.parts[i] + "part.")
-            imgFrame = q.get()
+            print("load" + self.parts[i] + "part.")
+            startTime = time.time()
+            while ((time.time()-startTime) < 3):
+                imgFrame = q.get()
             imgSil = imgFrame.getCvFrame()
             cv.imwrite(self.refPaths[i], imgSil)
             
             input("load"+ self.parts[i] + "colour part.")
+            startTime = time.time()
+            while ((time.time()-startTime) < 3):
+                imgFrame = q.get()
             imgFrame = q.get()
             imgCol = imgFrame.getCvFrame()
+            
             cv.imwrite(self.colPaths[i], imgCol)
             
             print("Creating a mask, this may take a minute")
