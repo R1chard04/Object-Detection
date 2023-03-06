@@ -14,7 +14,8 @@
         "cols" : ["Photos\\col\\station100\\top.jpg", "Photos\\col\\station100\\left.jpg",
         "Photos\\col\\station100\\right.jpg", "Photos\\col\\station100\\bottom.jpg"],
         "standard" : "Photos\\Refs\\station100\\STD.jpg",
-        "test" : "Photos\\Refs\\station100\\test.jpg"
+        "test" : "Photos\\Refs\\station100\\test.jpg",
+        "errDir": "Photos\\Err\\station100"
     },
 
     "station5":
@@ -29,7 +30,8 @@
         "refs" : ["Photos\\Refs\\station5\\left.jpg", "Photos\\Refs\\station5\\right.jpg"],
         "cols" : ["Photos\\col\\station5\\left.jpg", "Photos\\col\\station5\\right.jpg"],
         "standard" : "Photos\\Refs\\station5\\STD.jpg",
-        "test" : "Photos\\Refs\\station5\\test.jpg"
+        "test" : "Photos\\Refs\\station5\\test.jpg",
+        "errDir": "Photos\\Err\\station5"
     },
 
     "station10":
@@ -44,6 +46,7 @@
         "refs" : ["Photos\\Refs\\station10\\left.jpg", "Photos\\Refs\\station10\\right.jpg"],
         "cols" : ["Photos\\col\\station10\\left.jpg", "Photos\\col\\station10\\right.jpg"],
         "standard" : "Photos\\Refs\\station10\\STD.jpg",
-        "test" : "Photos\\Refs\\station10\\test.jpg"
+        "test" : "Photos\\Refs\\station10\\test.jpg",
+        "errDir": "Photos\\Err\\station10"
     }
 }

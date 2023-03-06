@@ -21,6 +21,9 @@ def createPipeline():
     camRgb.isp.link(xout.input)
     return pipeline
 
+def clamp(num, v0, v1):
+    return max(v0, min(num, v1))
+
 # def cameraSetup(station):
 #     stationCamera = Recalibration(station)
 #     device_info = dai.DeviceInfo(stationCamera.IP)
@@ -38,6 +41,7 @@ class Recalibration:
               partList = json.load(f)
               
         # select which station to use here
+        self.station = station
         params = partList[station]
         self.brightness = params["brightness"]
         self.lensPos = params["lensPos"]
@@ -48,8 +52,51 @@ class Recalibration:
         self.colPaths = params ["cols"]
         self.standardPath = params["standard"]
         self.testPath = params["test"]
-    def paramSetup(self):
-        pass
+        self.errDir = params["errDir"]
+        
+    def paramSetup(self, device):
+        qRgb = device.getOutputQueue(name="out")
+        # qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
+        qControl = device.getInputQueue(name="control")
+        
+        inRgb = qRgb.tryGet()
+        
+        while True:
+            
+            if inRgb is not None:
+                frame = inRgb.getCvFrame()
+                frame = cv.pyrDown(frame)
+                frame = cv.pyrDown(frame)
+                cv.imshow(self.station, frame)
+            
+            key = cv.waitKey(1)
+            
+            # brightness adjestment
+            if key in [ord(','), ord('.')]:
+                if key == ord(','):
+                    self.lensPos -= 2
+                elif key == ord('.'):
+                    self.lensPos += 2
+                self.lensPos = clamp(self.lensPos, 0, 255)
+                print("Setting manual focus, lens position: ", self.lensPos)
+                ctrl = dai.CameraControl()
+                ctrl.setManualFocus(self.lensPos)
+                self.qControl.send(ctrl)
+                
+            elif key in [ord('k'), ord('l')]:
+                if key == ord('k'):
+                    self.brightness -= 1
+                elif key == ord('l'):
+                    self.brightness += 1
+                self.brightness = clamp(self.brightness, -10, 10)
+                print("Brightness:", self.brightness)
+                ctrl = dai.CameraControl()
+                ctrl.setBrightness(self.brightness)
+                self.qControl.send(ctrl) 
+            
+            if key == ord('q'):
+                # update britness and lesPos to json file
+                return
     
     def maskSetup(self, device):
         q = device.getOutputQueue(name="out")
@@ -68,7 +115,6 @@ class Recalibration:
                 imgFrame = q.get()
             imgFrame = q.get()
             imgCol = imgFrame.getCvFrame()
-            
             cv.imwrite(self.colPaths[i], imgCol)
             
             print("Creating a mask, this may take a minute")
@@ -81,7 +127,7 @@ class Recalibration:
         print("all masks are done")
         return
                 
-    def upDate(self, station):
+    def upDateParams(self, station):
         # this method read all the parameters from the json again
         with open (r'params.json') as f:
               partList = json.load(f)
@@ -90,18 +136,29 @@ class Recalibration:
         params = partList[station]
         self.brightness = params["brightness"]
         self.lensPos = params["lensPos"]
-        self.parts = params["parts"]
-        self.IP = params["IP"]
-        self.maskPaths = params["masks"]
-        self.refPaths = params["refs"]
-        self.colPaths = params ["cols"]
-        self.standardPath = params["standard"]
-        self.testPath = params["test"]
-    
-    def errorSetup(self):
+        
+    def errorSetup(self, device):
+        q = device.getOutputQueue(name="out")
+        startTime = time.time()
+        while ((time.time()-startTime) < 3):
+            imgFrame = q.get()  
+        
+        input("press any key to start setting up error:")
+        for i in range(10):
+            imgFrame = q.get().getCvFrame()
+            cv.imwrite(self.colPaths[i], imgFrame)
         pass
     
-    def controlSetup(self):
+    def controlSetup(self, device):
+        q = device.getOutputQueue(name="out")
+        i = 0           
+        while i < len(self.parts):
+            print("load" + self.parts[i] + "part.")
+            startTime = time.time()
+            while ((time.time()-startTime) < 3):
+                imgFrame = q.get()
+            imgSil = imgFrame.getCvFrame()
+            cv.imwrite(self.refPaths[i], imgSil)
         pass
     
         
