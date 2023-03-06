@@ -2,6 +2,7 @@ import json
 import depthai as dai
 import cv2 as cv
 from main.imageMaskGeneration import createMask
+import pdb
 
 def createPipeline():
     pipeline = dai.Pipeline()
@@ -32,7 +33,7 @@ def createPipeline():
 # set up the mask, control and errors
 class Recalibration:
     def __init__(self, station) -> None:
-        with open (r'params.json') as f:
+        with open (r'main/params.json') as f:
               partList = json.load(f)
               
         # select which station to use here
@@ -50,22 +51,26 @@ class Recalibration:
         pass
     
     def maskSetup(self, device):
-        
-        q = device.getOutputQueue(name="out")            
-        for i in range(self.parts):
-            input("load" + self.part[i] + "part.")
+        q = device.getOutputQueue(name="out")
+        i = 0   
+        pdb.set_trace()         
+        while i < len(self.parts):
+            input("load" + self.parts[i] + "part.")
             imgFrame = q.get()
             imgSil = imgFrame.getCvFrame()
-            cv.imWrite(self.refPaths[i], imgSil)
+            cv.imwrite(self.refPaths[i], imgSil)
             
-            input("load"+ self.part[i] + "colour part.")
+            input("load"+ self.parts[i] + "colour part.")
             imgFrame = q.get()
             imgCol = imgFrame.getCvFrame()
-            cv.imWrite(self.refPaths[i], imgCol)
+            cv.imwrite(self.colPaths[i], imgCol)
             
             print("Creating a mask, this may take a minute")
-            createMask(imgSil, imgCol, self.maskPaths[i])
-            print("Mask generated")
+            if createMask(imgSil, imgCol, self.maskPaths[i]):
+                i += 1
+                print("Mask generated")
+            else:
+                print(f"Mask is redoing!")
         
         print("all masks are done")
         return

@@ -21,17 +21,13 @@ import json
 # import files
 from database_model.models import db, Station, Users
 from helper_functions.validate_users import validate_users, validate_username, validate_password, check_session_expiry
-from helper_functions.insert_camera_info import insert_camera_info, cameraInitialisation
 from main.cameraInitialisationClass import initialise
 from main.imageCaptureClasses import imageCapture
-from main.main import maskSetup
+from main.calibrations import Recalibration, createPipeline
 
 # read in the params.json file
-with open(r'params.json') as f:
+with open(r'main/params.json') as f:
   partList = json.load(f)
-# get all the stations from the json files
-stations = list(partList.keys())
-
 
 # import the modules
 # main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -197,11 +193,11 @@ def station_settings(station_number):
 def show_frame_params(station_number):
   # get the IP address of the connected device depends on the station number by calling the helper function
   # loop through the stations list to find the associate IP Address
-  IP = stations[str(station_number)]["IP"].value()
-  name = stations[str(station_number)]["name"].value()
+  IP = partList['station' + str(station_number)]["IP"]
+  name = partList['station' + str(station_number)]["name"]
 
   try:
-    pipeline = cameraInitialisation()
+    pipeline = createPipeline()
 
     device_info = dai.DeviceInfo(IP)
     device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
@@ -220,7 +216,7 @@ def show_frame_params(station_number):
       brightness, lensPos = captureObject.setParameters(name=IP)
 
   except:
-    flash(f"There is an error connecting to the device!")
+    print(f"There is an error connecting to the device!")
   
   return redirect(url_for('station_detail', station_number=station_number))
 
@@ -229,8 +225,8 @@ def show_frame_params(station_number):
 @app.route('/bt1xx/station/<int:station_number>/changeSettings', methods=['POST', 'GET'])
 def change_settings(station_number):
   # get the IP address of the connected device depends on the station number by calling the helper function
-  IP = stations[str(station_number)]["IP"].value()
-  name = stations[str(station_number)]["name"].value()
+  IP = partList['station' + str(station_number)]["IP"]
+  name = partList['station' + str(station_number)]["name"]
 
   if request.method == 'POST':
     try:
@@ -285,21 +281,11 @@ def station_mask_setup(station_number):
 @app.route('/bt1xx/createmask/showframe/station/<int:station_number>/')
 def create_mask(station_number):
   # call the function for connecting to the devices
-  IP = stations[str(station_number)]["IP"].value()
-  name = stations[str(station_number)]["name"].value()
-
-  # query the brightness, lensPos and the IP address of the device
-  settings = Station.query.filter_by(station_number=station_number, IP_address=IP).first()
-  # if the cameras have been recalibrated
-  if settings:
-    camera_focalLength = settings.station_focalLength
-    camera_brightness = settings.station_brightness
-  else:
-    camera_focalLength = 108
-    camera_brightness = -1
+  IP = partList['station' + str(station_number)]["IP"]
+  name = partList['station' + str(station_number)]["name"]
 
   try:
-    pipeline = cameraInitialisation()
+    pipeline = createPipeline()
 
     device_info = dai.DeviceInfo(IP)
     device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
@@ -309,15 +295,13 @@ def create_mask(station_number):
       print(f"{device.getMxId()} {device.state}")
 
     with dai.Device(pipeline, device_info) as device:
-      captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
-                                  device.getOutputQueue(name="still", maxSize=30, blocking=True), 
-                                  device.getInputQueue(name="control"))
-      
-      # call the setting mask up function
-    masks = maskSetup(selected=station_number, captureObject=captureObject, recalibrate=True, brightness=camera_brightness, lensPos=camera_focalLength, name=IP)
+      recalibration = Recalibration(station='station' + str(station_number))
+      recalibration.maskSetup(device=device)
+    
+    return redirect(url_for('station_detail', station_number = station_number))
 
   except:
-    flash(f"Error connecting to the device!")
+    print(f"Error connecting to the device!")
     return redirect(url_for('station_detail', station_number=station_number))
 
 ################################# LOG IN PAGE #############################

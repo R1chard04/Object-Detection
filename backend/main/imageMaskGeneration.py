@@ -52,14 +52,13 @@ def floodFill(imgThresh):
 
     
 def createMask(std, col, maskPath):
-  
   #Creating ref image
   ref = cv.cvtColor(std, cv.COLOR_BGR2GRAY)
   ref[ref != 0] = 0
   __, ref = cv.threshold(ref, 0, 255, cv.THRESH_BINARY)
 
   #Image subtraction
-  diff = cv.subtract(std, col)
+  diff = cv.absdiff(std, col)
 
   #Denoising
   denoise = np.float32(diff) / 255.0
@@ -77,9 +76,13 @@ def createMask(std, col, maskPath):
 
   #Finding Contours
   contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+  pdb.set_trace()
   contours = sorted(contours, key=cv.contourArea, reverse=True)
-  largest_contour = contours[0]
-  cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 7)
+  if len(contours) == 0:
+    return False
+  else:
+    largest_contour = contours[0]
+    cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 7)
 
   #Reparing contoured
   repair = fillByLine(ref, "V")
@@ -88,7 +91,7 @@ def createMask(std, col, maskPath):
 
   mask = repair
   cv.imwrite(maskPath, mask)
-  return mask
+  return True
 
     
 
