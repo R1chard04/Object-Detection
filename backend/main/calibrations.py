@@ -58,19 +58,15 @@ class Recalibration:
         self.errDir = params["errDir"]
         
     def paramSetup(self, device):
-        pdb.set_trace()
-        qRgb = device.getOutputQueue(name="out")
+        q = device.getOutputQueue(name="out")
         # qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
         qControl = device.getInputQueue(name="control")
         
-        inRgb = qRgb.tryGet()
-        
         while True:
-            if inRgb is not None:
-                frame = inRgb.getCvFrame()
-                frame = cv.pyrDown(frame)
-                frame = cv.pyrDown(frame)
-                cv.imshow(self.station, frame)
+            frame = q.get().getCvFrame()
+            frame = cv.pyrDown(frame)
+            frame = cv.pyrDown(frame)
+            cv.imshow(self.station, frame)
             
             key = cv.waitKey(1)
             
@@ -84,7 +80,7 @@ class Recalibration:
                 print("Setting manual focus, lens position: ", self.lensPos)
                 ctrl = dai.CameraControl()
                 ctrl.setManualFocus(self.lensPos)
-                self.qControl.send(ctrl)
+                qControl.send(ctrl)
                 
             elif key in [ord('k'), ord('l')]:
                 if key == ord('k'):
@@ -95,7 +91,7 @@ class Recalibration:
                 print("Brightness:", self.brightness)
                 ctrl = dai.CameraControl()
                 ctrl.setBrightness(self.brightness)
-                self.qControl.send(ctrl) 
+                qControl.send(ctrl) 
             
             if key == ord('q'):
                 # update britness and lesPos to json file
@@ -164,4 +160,6 @@ class Recalibration:
             cv.imwrite(self.refPaths[i], imgSil)
         pass
     
+    def adjustCamera(self, device):
+        pass
         
