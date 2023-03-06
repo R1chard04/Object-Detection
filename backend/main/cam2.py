@@ -59,7 +59,7 @@ pipeline.setXLinkChunkSize(0)
 
 # Define source and output
 camRgb = pipeline.create(dai.node.ColorCamera)
-camRgb.setFps(1)
+camRgb.setFps(3)
 camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
 camRgb.setPreviewSize(1920, 1080)
 
@@ -95,7 +95,7 @@ with dai.Device(pipeline, device_info) as device:
         print(IP)
         # capture a test image
         # img = captureObject.captureOne(testPath, brightness, lensPos)
-        img = img = imgFrame.getCvFrame()
+        img = imgFrame.getCvFrame()
         processingObject.setTestImg(img)  
         # display the result on the frame
         frame = processingObject.displayResultPosition()
