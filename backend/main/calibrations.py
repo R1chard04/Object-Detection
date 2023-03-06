@@ -18,6 +18,9 @@ def createPipeline():
 
     xout = pipeline.create(dai.node.XLinkOut)
     xout.setStreamName("out")
+    xin = pipeline.create(dai.node.XLinkIn)
+    xin.setStreamName("control")
+    xin.out.link(camRgb.inputControl)
     camRgb.isp.link(xout.input)
     return pipeline
 
@@ -55,6 +58,7 @@ class Recalibration:
         self.errDir = params["errDir"]
         
     def paramSetup(self, device):
+        pdb.set_trace()
         qRgb = device.getOutputQueue(name="out")
         # qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
         qControl = device.getInputQueue(name="control")
@@ -62,7 +66,6 @@ class Recalibration:
         inRgb = qRgb.tryGet()
         
         while True:
-            
             if inRgb is not None:
                 frame = inRgb.getCvFrame()
                 frame = cv.pyrDown(frame)
@@ -96,7 +99,7 @@ class Recalibration:
             
             if key == ord('q'):
                 # update britness and lesPos to json file
-                return
+                return self.brightness, self.lensPos
     
     def maskSetup(self, device):
         q = device.getOutputQueue(name="out")

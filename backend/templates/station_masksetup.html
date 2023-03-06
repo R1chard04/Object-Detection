@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
  <head>
-  <title>
+  <title id="station">
    Mask Settings Station {{ station_number }}
   </title>
   <script type="text/javascript" src="{{ url_for('serve_static_js', filename = 'station_masksetup.js' ) }}"></script>
@@ -15,12 +15,8 @@
     Please follow the following instructions to set up all the masks images for this station!
    </h2> 
   </div>
-  <div class="iframe-content">
-   <button id="show-frame-button" data-url="{{ url_for('create_mask', station_number=station_number) }}" onclick="loadContent()">Prepare Masks Images for station {{ station_number }}
-   </button>
-   <div id="content">
-     <iframe id="iframe" src="" width="100%" height="500" type="hidden"></iframe>
-   </div>
+  <div class="body">
+    <button id="show-frame-button" onclick="loadContent()">Start Masks Setup</button>
   </div>
  </body>
 </html>

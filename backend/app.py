@@ -198,7 +198,7 @@ def show_frame_params(station_number):
 
   try:
     pipeline = createPipeline()
-
+    print("here")
     device_info = dai.DeviceInfo(IP)
     device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
     device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
@@ -207,13 +207,13 @@ def show_frame_params(station_number):
       print(f"{device.getMxId()} {device.state}")
 
     with dai.Device(pipeline, device_info) as device:
-      captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
-                                  device.getOutputQueue(name="still", maxSize=30, blocking=True), 
-                                  device.getInputQueue(name="control"))
+      print(f"Ayoo! What's up!")
+      recalibration = Recalibration(station='station' + str(station_number))
       
       # import paramSetup function to set the focal length and the brightness of the camera (camera settings)
       # brightness, lensPos = paramsSetup(station_number, captureObject, recalibrate=True, name=IP)
-      brightness, lensPos = captureObject.setParameters(name=IP)
+      brightness, lensPos = recalibration.paramSetup(device)
+
 
   except:
     print(f"There is an error connecting to the device!")
@@ -253,11 +253,12 @@ def change_settings(station_number):
           db.session.rollback()
           print(f"Settings for station {setting.station_number} already existed!")
 
-      result = Station.query.filter_by(station_number=station_selected).first()
+      result = Station.query.filter_by(station_number=station_selected, IP_address=IP, name=name).first()
 
       if result:
         print(f"Data has been inserted successfully!")
         # overwrite the params.json
+        
         return redirect(url_for('station_detail', station_number = station_number))
       else:
         print(f"Error inserting data into the database")
