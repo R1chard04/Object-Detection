@@ -33,6 +33,7 @@ with open(r'main/params.json') as f:
 # connect flask to the database
 app = Flask(__name__)
 api = Api(app)
+socketio = SocketIO(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/martinrea.db'
 app.config['SERVER_NAME'] = '127.0.0.1:5000'
 app.config['APPLICATION_ROOT'] = '/'
@@ -122,9 +123,9 @@ insert_users()
 # def handle_disconnect():
 #     print('Client disconnected')
 
-# @socketio.on('key_event')
-# def handle_key_event(data):
-#   print(f'Received key event: {data}')
+@socketio.on('key_event')
+def handle_key_event(data):
+  print(f'Received key event: {data}')
 
 # include the path to javascript files
 @app.route('/static-js/<path:filename>')
@@ -211,7 +212,7 @@ def show_frame_params(station_number):
       
       # import paramSetup function to set the focal length and the brightness of the camera (camera settings)
       # brightness, lensPos = paramsSetup(station_number, captureObject, recalibrate=True, name=IP)
-      brightness, lensPos = recalibration.paramSetup(device)
+      brightness, lensPos = recalibration.paramSetup(device, station_number)
     
     return redirect(url_for('setUpSuccessful', station_number=station_number))
 
