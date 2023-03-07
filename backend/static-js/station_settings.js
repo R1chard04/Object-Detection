@@ -1,34 +1,41 @@
 // Create a new WebSocket connection to the Python server
 // var socket = io.connect('http://127.0.0.1:5000/bt1xx/station/<int:station_number>/settings');
 
-// Enable websocket to connect the localhost server (client) to Python server
-const stationElement = document.querySelector('#station');
-// cut out the station number in the url
-const stationNumber = stationElement.textContent.trim();
-const numberPattern = /\d+/; // match one or more digits
-const matches = stationNumber.match(numberPattern);
-const stationNumberOnly = matches ? matches[0] : null;
-
-var socket = new WebSocket("ws://127.0.0.1:5000/bt1xx/station/" + stationNumberOnly.toString() + "/settings");
-
-socket.onopen = function(event) {
-  console.log("Connection established!");
-};
-
-socket.onerror = function(event) {
-  console.error("WebSocket error observed:", event);
-};
-
-socket.onmessage = function(event) {
-  console.log("Server says: ", event.data);
-};
-
-document.addEventListener('keydown', function(event) {
-  var key = String.fromCharCode(event.key);
-  socket.send(key);
-});
-
 document.addEventListener('DOMContentLoaded', function() {
+  // Enable websocket to connect the localhost server (client) to Python server
+  // const stationElement = document.querySelector('#station');
+  // // cut out the station number in the url
+  // const stationNumber = stationElement.textContent.trim();
+  // const numberPattern = /\d+/; // match one or more digits
+  // const matches = stationNumber.match(numberPattern);
+  // const stationNumberOnly = matches ? matches[0] : null;
+
+  // var socket = new WebSocket("ws://127.0.0.1:5000/bt1xx/station/" + stationNumberOnly.toString() + "/settings");
+
+  // socket.onopen = function(event) {
+  //   console.log("Connection established!");
+  // };
+
+  // socket.onerror = function(event) {
+  //   console.error("WebSocket error observed:", event);
+  // };
+
+  // socket.onmessage = function(event) {
+  //   console.log("Server says: ", event.data);
+  // };
+
+  // document.addEventListener('keydown', function(event) {
+  //   var key = String.fromCharCode(event.key);
+  //   socket.send(key);
+  // });
+
+  // var socket = io.connect('http://127.0.0.1:5000/bt1xx/paramSetup/showframe/' + stationNumberOnly.toString());
+ 
+  // document.addEventListener('keydown', function(event) {
+  //   var data = {key: event.key};
+  //   socket.emit('key_event', data);
+  // });
+
   // function redirect the user to the url of the python program using iframe
   let btnClick = document.getElementById("show-frame-button");
   function loadContent(){
@@ -100,13 +107,13 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('mouseup', handleMouseUp);
  });
 
- document.addEventListener('keydown', (event) => {
+ window.addEventListener('keydown', (event) => {
+  // create an ajax request to change the python function
+
   if(event.key == ','){
    focalLength = Math.max(minFocalLength, focalLength-1);
    updateIndicator();
    inputField.value = focalLength;
-    // send the key code to the python server
-    socket.send(event.key.toString());
   } // decrease the focal length
   else if (event.key == '.'){
    focalLength = Math.max(minFocalLength, focalLength+1);
@@ -116,8 +123,6 @@ document.addEventListener('DOMContentLoaded', function() {
    }
    updateIndicator();
    inputField.value = focalLength;
-    // send the key code to the python server
-    socket.send(event.key.toString());
   }
  });
 
@@ -180,13 +185,11 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('mouseup', handleMouseUp);
  });
 
- document.addEventListener('keydown', (event) => {
+ window.addEventListener('keydown', (event) => {
   if(event.key == 'k'){
    brightness = Math.max(minBrightness, brightness-1);
    updateBrightnessIndicator(); 
    inputField_brightness.value = brightness;  
-   // send the key code to the python server
-   socket.send(event.key.toString());
   } // decrease the focal length
   else if (event.key == 'l'){
    brightness = Math.max(minBrightness, brightness+1);
@@ -196,8 +199,6 @@ document.addEventListener('DOMContentLoaded', function() {
    }
    updateBrightnessIndicator();
    inputField_brightness.value = brightness;
-   // send the key code to the python server
-   socket.send(event.key.toString());
   }
  });
 
@@ -301,5 +302,5 @@ document.addEventListener('DOMContentLoaded', function() {
     event.preventDefault();
     // send all the input fields to the database when the users hit submit button
     document.querySelector("#form").submit()
-  })
+  });
 });

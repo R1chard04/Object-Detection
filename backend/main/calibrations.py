@@ -70,7 +70,7 @@ class Recalibration:
             
             key = cv.waitKey(1)
             
-            # brightness adjestment
+            # focal length adjustment
             if key in [ord(','), ord('.')]:
                 if key == ord(','):
                     self.lensPos -= 2
@@ -81,7 +81,7 @@ class Recalibration:
                 ctrl = dai.CameraControl()
                 ctrl.setManualFocus(self.lensPos)
                 qControl.send(ctrl)
-                
+            # brightness adjustment
             elif key in [ord('k'), ord('l')]:
                 if key == ord('k'):
                     self.brightness -= 1

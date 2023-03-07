@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title id="station">
+   Errors Settings Station {{ station_number }}
+  </title>
+  <script type="text/javascript" src="{{ url_for('serve_static_js', filename = 'station_errors_setup.js' ) }}"></script>
+ </head>
+ <body>
+  <div class="header">
+   <h1>
+    Welcome to station {{ station_number }} errors setup manuals!
+   </h1>
+   <h2>
+    Please follow the following instructions to set up all the errors protocols to use MSE Algorithm for this station!
+   </h2> 
+  </div>
+  <div class="body">
+    <button id="show-frame-button" onclick="loadContent()">Start Errors Setup</button>
+  </div>
+ </body>
+</html>

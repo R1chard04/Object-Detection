@@ -8,6 +8,7 @@ from pyignite import Client
 import os
 import sys
 import websocket
+import logging
 import traceback
 from flask_socketio import SocketIO, emit
 import pdb
@@ -32,7 +33,7 @@ with open(r'main/params.json') as f:
 # connect flask to the database
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///martinrea.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/martinrea.db'
 app.config['SERVER_NAME'] = '127.0.0.1:5000'
 app.config['APPLICATION_ROOT'] = '/'
 app.config['PREFERRED_URL_SCHEME'] = 'http'
@@ -88,30 +89,42 @@ insert_users()
 
 # an object contains functions that listen for events on the client side then send them to the server side
 
-def on_message(ws, message):
-  print(message)
-  ws.send(message)
+# def on_message(ws, message):
+#   print(message)
+#   ws.send(message)
 
-def on_error(ws, error):
-  print(error)
+# def on_error(ws, error):
+#   print(error)
 
-def on_close(ws, close_status_code, close_msg):
-  print(f"Connection closed")
+# def on_close(ws, close_status_code, close_msg):
+#   print(f"Connection closed")
 
-def on_open(ws):
-  print(f"Connection established")
+# def on_open(ws):
+#   print(f"Connection established")
 
-def establish_websocket(station_number):
-  pdb.set_trace()
-  try:
-    websocket.enableTrace(True)
-    ws = websocket.WebSocketApp(f"ws://127.0.0.1/bt1xx/station/" + str(station_number) + "/settings", on_message=on_message, on_error=on_error, on_close=on_close)
+# def establish_websocket(station_number) -> None:
+#   try:
+#     websocket.enableTrace(True)
+#     ws = websocket.WebSocketApp(f"ws://127.0.0.1:5000/bt1xx/station/" + str(station_number) + "/settings", on_message=on_message, on_error=on_error, on_close=on_close)
+  
+#     ws.on_open = on_open
+#     ws.run_forever()
+#   except Exception as e:
+#     print(f"Error:", e)
+#     traceback.print_exc()
 
-    ws.on_open = on_open
-    ws.run_forever()
-  except Exception as e:
-    print(f"Error:", e)
-    traceback.print_exc()
+# websocket to sync key events on javascript to python terminal
+# @socketio.on('connect')
+# def handle_connect():
+#     print('Client connected')
+
+# @socketio.on('disconnect')
+# def handle_disconnect():
+#     print('Client disconnected')
+
+# @socketio.on('key_event')
+# def handle_key_event(data):
+#   print(f'Received key event: {data}')
 
 # include the path to javascript files
 @app.route('/static-js/<path:filename>')
@@ -165,9 +178,14 @@ def station_detail(station_number):
 # render the station settings:
 @app.route('/bt1xx/station/<int:station_number>/settings')
 def station_settings(station_number):
-  # enable the websockets to be ready to listen for events on the client side
-  establish_websocket(station_number=station_number)
-  return render_template('station_settings.html', station_number=station_number)
+  try:
+    # enable the websockets to be ready to listen for events on the client side
+    # establish_websocket(station_number=station_number)
+    return render_template('station_settings.html', station_number=station_number)
+  except Exception as e:
+    print(f"Error:" + str(e))
+    # catch the error of cannot perform a connection to the server
+    return redirect(url_for('station_detail', station_number=station_number))
 
 ###################### STATION SHOW FRAME ######################
 @app.route('/bt1xx/paramSetup/showframe/<int:station_number>/')
@@ -194,7 +212,8 @@ def show_frame_params(station_number):
       # import paramSetup function to set the focal length and the brightness of the camera (camera settings)
       # brightness, lensPos = paramsSetup(station_number, captureObject, recalibrate=True, name=IP)
       brightness, lensPos = recalibration.paramSetup(device)
-
+    
+    return redirect(url_for('setUpSuccessful', station_number=station_number))
 
   except:
     print(f"There is an error connecting to the device!")
@@ -283,13 +302,86 @@ def create_mask(station_number):
 
     with dai.Device(pipeline, device_info) as device:
       recalibration = Recalibration(station='station' + str(station_number))
+      recalibration.upDateParams(station='station' + str(station_number))
       recalibration.maskSetup(device=device)
     
-    return redirect(url_for('station_detail', station_number = station_number))
+    return redirect(url_for('setUpSuccessful', station_number=station_number))
 
   except:
     print(f"Error connecting to the device!")
     return redirect(url_for('station_detail', station_number=station_number))
+  
+############################### STATION ERRORS SETUP PAGE ######################
+@app.route('/bt1xx/station/<int:station_number>/errorsetup')
+def station_errors_setup(station_number):
+  return render_template("station_errorsetup.html", station_number=station_number)
+
+# render the url for setting up errors actions
+@app.route('/bt1xx/errors/showframe/station/<int:station_number>')
+def create_errors(station_number):
+  # call the function to connect to a device
+  IP = partList['station' + str(station_number)]["IP"]
+  name = partList['station' + str(station_number)]["name"]
+
+  try:
+    pipeline = createPipeline()
+
+    device_info = dai.DeviceInfo(IP)
+    device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
+    device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+
+    for device in dai.Device.getAllAvailableDevices():
+      print(f"{device.getMxId()} {device.state}")
+
+    with dai.Device(pipeline, device_info) as device:
+      # call a function to set up the errors
+      recalibration = Recalibration(station='station' + str(station_number))
+      recalibration.upDateParams(station='station' + str(station_number))
+      recalibration.errorSetup(device=device)
+
+    return redirect(url_for('setUpSuccessful', station_number=station_number))
+
+  except:
+    print(f"Error connecting to the device!")
+    return redirect(url_for('station_detail', station_number=station_number))
+  
+############################### STATION CONTROL SETUP PAGE ##########################
+@app.route('/bt1xx/station/<int:station_number>/controlsetup')
+def station_control_setup(station_number):
+  return render_template('station_control_setup.html', station_number=station_number)
+
+@app.route('/bt1xx/control/showframe/station/<int:station_number>')
+def create_controls(station_number):
+  # call the function to connect to a device
+  IP = partList['station' + str(station_number)]["IP"]
+  name = partList['station' + str(station_number)]["name"]
+
+  try:
+    pipeline = createPipeline()
+
+    device_info = dai.DeviceInfo(IP)
+    device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
+    device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+
+    for device in dai.Device.getAllAvailableDevices():
+      print(f"{device.getMxId()} {device.state}")
+
+    with dai.Device(pipeline, device_info) as device:
+      # call a function to set up the errors
+      recalibration = Recalibration(station='station' + str(station_number))
+      recalibration.upDateParams(station='station' + str(station_number))
+      recalibration.controlSetup(device=device)
+    
+    return redirect(url_for('setUpSuccessful', station_number=station_number))
+  
+  except:
+    print(f"Error connecting to the device!")
+    return redirect(url_for('station_detail', station_number=station_number))
+
+################ SUCCESSFUL PAGE AFTER SETTING UP #################
+@app.route('/bt1xx/station_settings/<int:station_number>/successful/')
+def setUpSuccessful(station_number):
+  return render_template('successful.html', station_number=station_number)
 
 ################################# LOG IN PAGE #############################
 # render the login page
@@ -342,9 +434,8 @@ def checkExpiration():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
- app.run(debug=True)
  # connect to the websocket server to listening for events sent from localhost:5000
- 
+ app.run(debug=True)
 
 
 

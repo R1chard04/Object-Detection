@@ -19,7 +19,13 @@
      <a href="{{ url_for('station_settings', station_number=station_number) }}">Station {{ station_number }} settings</a>
     </li>
     <li>
-     <a href="{{ url_for('station_mask_setup', station_number=station_number) }}">Mask Setup {{ station_number }}</a>
+     <a href="{{ url_for('station_mask_setup', station_number=station_number) }}">Mask Setup for Station {{ station_number }}</a>
+    </li>
+    <li>
+     <a href="{{ url_for('station_errors_setup', station_number=station_number) }}">Errors Setup for Station {{ station_number }}</a>
+    </li>
+    <li>
+     <a href="{{ url_for('station_control_setup', station_number=station_number )}}">Control Setup for Station {{ Station_number }}</a>
     </li>
    </ul>
   </div>
