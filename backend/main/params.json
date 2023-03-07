@@ -39,8 +39,8 @@
         "errDir": "Photos\\Err\\station100"
     },
     "station5": {
-        "brightness": 29,
-        "lensPos": 88,
+        "brightness": -1,
+        "lensPos": 108,
         "parts": [
             "left",
             "right"
