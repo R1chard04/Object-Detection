@@ -257,9 +257,14 @@ def change_settings(station_number):
 
       if result:
         print(f"Data has been inserted successfully!")
+        
         # overwrite the params.json
+        this_station = 'station' + str(station_selected)
+        changeJson = Recalibration(station=this_station)
+        changeJson.updateJson(station=this_station, new_brightness=int(brightness_setting), new_lensPos=int(focal_length_settings))
         
         return redirect(url_for('station_detail', station_number = station_number))
+      
       else:
         print(f"Error inserting data into the database")
         pass

@@ -1,52 +1,99 @@
 {
-    "station100":
-    { 
+    "station100": {
         "brightness": -1,
         "lensPos": 108,
-        "parts": ["top", "left", "bottom", "right"],
-        "passref": [3,4,4,5],
+        "parts": [
+            "top",
+            "left",
+            "bottom",
+            "right"
+        ],
+        "passref": [
+            3,
+            4,
+            4,
+            5
+        ],
         "IP": "169.254.1.201",
         "name": "19443010613C6E1300",
-        "masks": ["Photos\\Masks\\station100\\top.jpg", "Photos\\Masks\\station100\\left.jpg",
-                "Photos\\Masks\\station100\\bottom.jpg", "Photos\\Masks\\station100\\right.jpg"],
-        "refs" : ["Photos\\Refs\\station100\\top.jpg", "Photos\\Refs\\station100\\left.jpg",
-                "Photos\\Refs\\station100\\right.jpg", "Photos\\Refs\\station100\\bottom.jpg"],
-        "cols" : ["Photos\\col\\station100\\top.jpg", "Photos\\col\\station100\\left.jpg",
-        "Photos\\col\\station100\\right.jpg", "Photos\\col\\station100\\bottom.jpg"],
-        "standard" : "Photos\\Refs\\station100\\STD.jpg",
-        "test" : "Photos\\Refs\\station100\\test.jpg",
+        "masks": [
+            "Photos\\Masks\\station100\\top.jpg",
+            "Photos\\Masks\\station100\\left.jpg",
+            "Photos\\Masks\\station100\\bottom.jpg",
+            "Photos\\Masks\\station100\\right.jpg"
+        ],
+        "refs": [
+            "Photos\\Refs\\station100\\top.jpg",
+            "Photos\\Refs\\station100\\left.jpg",
+            "Photos\\Refs\\station100\\right.jpg",
+            "Photos\\Refs\\station100\\bottom.jpg"
+        ],
+        "cols": [
+            "Photos\\col\\station100\\top.jpg",
+            "Photos\\col\\station100\\left.jpg",
+            "Photos\\col\\station100\\right.jpg",
+            "Photos\\col\\station100\\bottom.jpg"
+        ],
+        "standard": "Photos\\Refs\\station100\\STD.jpg",
+        "test": "Photos\\Refs\\station100\\test.jpg",
         "errDir": "Photos\\Err\\station100"
     },
-
-    "station5":
-    {
-        "brightness": -1,
-        "lensPos": 108,
-        "parts":["left", "right"],
-        "passref": [2,3],
+    "station5": {
+        "brightness": 29,
+        "lensPos": 88,
+        "parts": [
+            "left",
+            "right"
+        ],
+        "passref": [
+            2,
+            3
+        ],
         "IP": "169.254.1.202",
         "name": "1844301051B53C1300",
-        "masks": ["Photos\\Masks\\station5\\left.jpg", "Photos\\Masks\\station5\\right.jpg"],
-        "refs" : ["Photos\\Refs\\station5\\left.jpg", "Photos\\Refs\\station5\\right.jpg"],
-        "cols" : ["Photos\\col\\station5\\left.jpg", "Photos\\col\\station5\\right.jpg"],
-        "standard" : "Photos\\Refs\\station5\\STD.jpg",
-        "test" : "Photos\\Refs\\station5\\test.jpg",
+        "masks": [
+            "Photos\\Masks\\station5\\left.jpg",
+            "Photos\\Masks\\station5\\right.jpg"
+        ],
+        "refs": [
+            "Photos\\Refs\\station5\\left.jpg",
+            "Photos\\Refs\\station5\\right.jpg"
+        ],
+        "cols": [
+            "Photos\\col\\station5\\left.jpg",
+            "Photos\\col\\station5\\right.jpg"
+        ],
+        "standard": "Photos\\Refs\\station5\\STD.jpg",
+        "test": "Photos\\Refs\\station5\\test.jpg",
         "errDir": "Photos\\Err\\station5"
     },
-
-    "station10":
-    {
+    "station10": {
         "brightness": -1,
         "lensPos": 108,
-        "parts":["left", "right"],
-        "passref": [2,3],
+        "parts": [
+            "left",
+            "right"
+        ],
+        "passref": [
+            2,
+            3
+        ],
         "IP": "169.254.1.203",
         "name": "1944301051766E1300",
-        "masks": ["Photos\\Masks\\station10\\left.jpg", "Photos\\Masks\\station10\\right.jpg"],
-        "refs" : ["Photos\\Refs\\station10\\left.jpg", "Photos\\Refs\\station10\\right.jpg"],
-        "cols" : ["Photos\\col\\station10\\left.jpg", "Photos\\col\\station10\\right.jpg"],
-        "standard" : "Photos\\Refs\\station10\\STD.jpg",
-        "test" : "Photos\\Refs\\station10\\test.jpg",
+        "masks": [
+            "Photos\\Masks\\station10\\left.jpg",
+            "Photos\\Masks\\station10\\right.jpg"
+        ],
+        "refs": [
+            "Photos\\Refs\\station10\\left.jpg",
+            "Photos\\Refs\\station10\\right.jpg"
+        ],
+        "cols": [
+            "Photos\\col\\station10\\left.jpg",
+            "Photos\\col\\station10\\right.jpg"
+        ],
+        "standard": "Photos\\Refs\\station10\\STD.jpg",
+        "test": "Photos\\Refs\\station10\\test.jpg",
         "errDir": "Photos\\Err\\station10"
     }
 }

@@ -128,14 +128,29 @@ class Recalibration:
                 
     def upDateParams(self, station):
         # this method read all the parameters from the json again
-        with open (r'params.json') as f:
+        with open (r'main/params.json', 'r') as f:
               partList = json.load(f)
               
         # select which station to use here
         params = partList[station]
         self.brightness = params["brightness"]
         self.lensPos = params["lensPos"]
+
+    def updateJson(self, station, new_brightness, new_lensPos):
+        # this function set all the values in the json
+        with open(r'main/params.json', 'r') as f:
+            partList = json.load(f)
         
+        # change the settings in json
+        
+        partList[station]["brightness"] = new_brightness
+        partList[station]["lensPos"] = new_lensPos
+
+        with open('main/params.json', 'w') as f:
+            json.dump(partList, f, indent=4)
+
+        print(f"Update values of the brightness and focal length")
+       
     def errorSetup(self, device):
         q = device.getOutputQueue(name="out")
         startTime = time.time()
