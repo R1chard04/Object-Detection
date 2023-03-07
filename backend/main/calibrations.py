@@ -4,6 +4,7 @@ import cv2 as cv
 import time
 from main.imageMaskGeneration import createMask
 import pdb
+import websocket
 
 def createPipeline():
     pipeline = dai.Pipeline()
@@ -57,7 +58,8 @@ class Recalibration:
         self.testPath = params["test"]
         self.errDir = params["errDir"]
         
-    def paramSetup(self, device):
+    def paramSetup(self, device, station_number):
+        
         q = device.getOutputQueue(name="out")
         qControl = device.getInputQueue(name="control")
         

@@ -3,12 +3,12 @@
 
 document.addEventListener('DOMContentLoaded', function() {
   // Enable websocket to connect the localhost server (client) to Python server
-  // const stationElement = document.querySelector('#station');
-  // // cut out the station number in the url
-  // const stationNumber = stationElement.textContent.trim();
-  // const numberPattern = /\d+/; // match one or more digits
-  // const matches = stationNumber.match(numberPattern);
-  // const stationNumberOnly = matches ? matches[0] : null;
+  const stationElement = document.querySelector('#station');
+  // cut out the station number in the url
+  const stationNumber = stationElement.textContent.trim();
+  const numberPattern = /\d+/; // match one or more digits
+  const matches = stationNumber.match(numberPattern);
+  const stationNumberOnly = matches ? matches[0] : null;
 
   // var socket = new WebSocket("ws://127.0.0.1:5000/bt1xx/station/" + stationNumberOnly.toString() + "/settings");
 
@@ -29,12 +29,12 @@ document.addEventListener('DOMContentLoaded', function() {
   //   socket.send(key);
   // });
 
-  // var socket = io.connect('http://127.0.0.1:5000/bt1xx/paramSetup/showframe/' + stationNumberOnly.toString());
+  var socket = io.connect('http://127.0.0.1:5000/bt1xx/paramSetup/showframe/' + stationNumberOnly.toString());
  
-  // document.addEventListener('keydown', function(event) {
-  //   var data = {key: event.key};
-  //   socket.emit('key_event', data);
-  // });
+  document.addEventListener('keydown', function(event) {
+    var data = {key: event.key};
+    socket.emit('key_event', data);
+  });
 
   // function redirect the user to the url of the python program using iframe
   let btnClick = document.getElementById("show-frame-button");
