@@ -5,4 +5,4 @@ camera = Recalibration("station10")
 
 device_info = dai.DeviceInfo(camera.IP)
 with dai.Device(createPipeline(), device_info) as device:
-    camera.paramSetup(device)
+    camera.adjustCamera(device)

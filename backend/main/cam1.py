@@ -6,6 +6,7 @@ from imageProcessingClasses import imageProcessing
 from imageCaptureClasses import imageCapture
 from imageMaskGeneration import createMask
 from imagePredictionClass import MSEStabilization, getPassRef
+from calibrations import Recalibration, createPipeline
 import time
 import os
 import json
@@ -14,99 +15,38 @@ import pdb
 # from pylogix import PLC
 # from PLCUpdate import transferToPLC
 
-#Part List
-with open(r'params.json') as f:
-  partList = json.load(f)
-
-# select which station to use here
-params = partList["station5"]
-
-brightness = params["brightness"]
-lensPos = params["lensPos"]
-parts = params["parts"]
-passref = params["passref"]
-IP = params["IP"]
-maskPaths = params["masks"]
-refPaths = params["refs"]
-colPaths = params ["cols"]
-standardPath = params["standard"]
-testPath = params["test"]
-
 #-----------------------------------------Camera Initialisation-----------------------------------------#
 
-# photosPath = "backend\main\Photos"
-# initialisationObject = initialise(photosPath) # appeartly the photodirectoryName is not used anywhere?
+station = Recalibration("station10")
+device_info = dai.DeviceInfo(station.IP)
 
-# photoDirectoryName, pipeline, camRgb, xoutRgb, xin, videoEnc, xoutStill = initialisationObject.initialise()
-
-# for device in dai.Device.getAllAvailableDevices():
-#     print(f"{device.getMxId()} {device.state}")
-# device_info = dai.DeviceInfo(IP)
-# device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
-# device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
-
-
-# #----------------------Camera Capture Initialisation---------------------#
-# #This needs to be setup for multiple cameras
-
-# with dai.Device(pipeline, device_info) as device:
-    # captureObject = imageCapture(device.getOutputQueue(name="rgb", maxSize=30, blocking=False), 
-    #                             device.getOutputQueue(name="still", maxSize=30, blocking=True), 
-    #                             device.getInputQueue(name="control"))    
-
-
-# Create pipeline
-pipeline = dai.Pipeline()
-# This might improve reducing the latency on some systems
-pipeline.setXLinkChunkSize(0)
-
-# Define source and output
-camRgb = pipeline.create(dai.node.ColorCamera)
-camRgb.setFps(3)
-camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P)
-camRgb.setPreviewSize(1920, 1080)
-
-xout = pipeline.create(dai.node.XLinkOut)
-xout.setStreamName("out")
-camRgb.isp.link(xout.input)
-
-device_info = dai.DeviceInfo(IP)
-
-with dai.Device(pipeline, device_info) as device:
+with dai.Device(createPipeline(), device_info) as device:
     q = device.getOutputQueue(name="out")
     print("done params")
 
     # masks = maskSetup(selected, captureObject, recalibrate, brightness, lensPos, IP)
     masks = []
-    for path in maskPaths:
+    for path in station.maskPaths:
         masks.append(cv.imread(path, 0))
     print("done masks")
     # tempRef = controlSetup(selected, captureObject, recalibrate, brightness, lensPos)
-    tempRef = cv.imread(standardPath)
-    # pdb.set_trace()
-    processingObject = imageProcessing(masks, tempRef, tempRef, parts) #Initialisation of the processing object
+    tempRef = cv.imread(station.standardPath)
+    processingObject = imageProcessing(masks, tempRef, tempRef, station.parts) #Initialisation of the processing object
     print("processing object initialized")
-
-    # ref, passref = errorSetup(selected, captureObject, processingObject, recalibrate, brightness, lensPos)
-    # print("errorsetup")
-    # processingObject.setRefImg(tempRef)
-    # print("refsetup")
 
 #-------------------------------------------------------------------------------------------#   
     while True:
         
-        imgFrame = q.get()
-        print(IP)
+        print(station.IP)
         # capture a test image
         # img = captureObject.captureOne(testPath, brightness, lensPos)
-        img = imgFrame.getCvFrame()
-        processingObject.setTestImg(img)  
+        processingObject.setTestImg(station.capture())  
         # display the result on the frame
         frame = processingObject.displayResultPosition()
         # get the mse error
         error = processingObject.compareImage() 
         #Generates PASS/FAIL array
-        prediction = MSEStabilization(error, passref, len(parts)) 
+        prediction = MSEStabilization(error, station.passref, len(station.parts)) 
 
         result = prediction.result()
         # print(result)
@@ -115,6 +55,6 @@ with dai.Device(pipeline, device_info) as device:
         cv.waitKey(1)
         frame = cv.pyrDown(frame)
         frame = cv.pyrDown(frame)
-        cv.imshow(IP, frame)
+        cv.imshow(station.IP, frame)
         
 # python cam1.py& python cam2.py& python cam3.py&

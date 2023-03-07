@@ -59,7 +59,6 @@ class Recalibration:
         
     def paramSetup(self, device):
         q = device.getOutputQueue(name="out")
-        # qStill = device.getOutputQueue(name="still", maxSize=30, blocking=True)
         qControl = device.getInputQueue(name="control")
         
         while True:
@@ -175,6 +174,59 @@ class Recalibration:
             cv.imwrite(self.refPaths[i], imgSil)
         pass
     
+    
+    # this function should be called when the camera get turned on
+    # it will adjust the camera to the brightness and lensPos 
     def adjustCamera(self, device):
-        pass
         
+        q = device.getOutputQueue(name="out")
+        qControl = device.getInputQueue(name="control")
+        
+        print("Setting manual focus, lens position: ", self.lensPos)
+        ctrl = dai.CameraControl()
+        ctrl.setManualFocus(self.lensPos)
+        qControl.send(ctrl)
+        
+        print("Brightness:", self.brightness)
+        ctrl = dai.CameraControl()
+        ctrl.setBrightness(self.brightness)
+        qControl.send(ctrl)
+        
+        startTime = time.time()
+        while ((time.time()-startTime) < 10):
+            imgFrame = q.get().getCvFrame()
+            imgFrame = cv.pyrDown(imgFrame)
+            imgFrame = cv.pyrDown(imgFrame)
+            cv.imshow("it'shere", imgFrame)
+            cv.waitKey(1)
+        
+        # auto white balance lock
+        print("auto white balance lock")
+        ctrl = dai.CameraControl()
+        ctrl.setAutoWhiteBalanceLock(True)
+        qControl.send(ctrl)
+
+        # auto exposure lock
+        print("auto exposure lock")
+        ctrl = dai.CameraControl()
+        ctrl.setAutoExposureLock(True)
+        qControl.send(ctrl)
+        
+        # while True:
+        #     imgFrame = q.get().getCvFrame()
+        #     imgFrame = cv.pyrDown(imgFrame)
+        #     imgFrame = cv.pyrDown(imgFrame)
+        #     cv.imshow("results", imgFrame)
+        #     key = cv.waitKey(1)
+        #     if key == ord('q'):
+        #         break
+        return
+        
+    # this function capture an image and return it    
+    def capture(self, device):
+        q = device.getOutputQueue(name="out")
+        imgFrame = q.get().getCvFrame()
+        return imgFrame
+
+    def pressKeyCapture(self, device):
+        pass
