@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+import json
 
 # from imagePredictionClass import Prediction
 
@@ -12,18 +13,36 @@ def mse(img1, img2, pixels):
     return ans
 
 class imageProcessing:
-    def __init__(self, maskArray, ref, test, partList) -> None:
-
+    def __init__(self, station) -> None:
+        # maskArray, ref, test, partList
+        with open (r'params.json') as f:
+            listInfo = json.load(f)
+              
+        # select which station to use here
+        self.station = station
+        params = listInfo[station]
+        partList = params["parts"]
+        maskPaths = params["masks"]
+        standardPath = params["standard"]
+        testPath = params["test"]
+        
+        maskArray = []
+        for path in maskPaths:
+            maskArray.append(cv.imread(path, 0))  
+        
         self.masks = maskArray
         self.masksPixels = []
         self.parts = partList
+        self.ref = cv.imread(standardPath)
+        self.test = cv.imread(testPath)
+        self.MSEResults = [0]*len(self.parts)
         
         # calculate position for displaying result
         self.output_y = []
         self.output_x = []
 
-        x2 = ref.shape[1] - 60
-        y2 = ref.shape[0] - 60
+        x2 = self.ref.shape[1] - 60
+        y2 = self.ref.shape[0] - 60
         x1 = x2 - 1000
         for i in range(len(partList)):
             
@@ -39,11 +58,6 @@ class imageProcessing:
         self.output_x.append(x1 + 400)
         self.line_p1 = (x1+20, self.output_y[0]-100)
         self.line_p2 = (x2 -10,self.output_y[0]-100)
-
-        
-        self.ref = ref  
-        self.test = test
-        self.MSEResults = [0]*4
         
 
     def setTestImg(self, img) -> None:

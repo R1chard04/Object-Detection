@@ -3,7 +3,6 @@ import datetime
 import depthai as dai
 import os
 import time
-from main.imageProcessingClasses import imageProcessing
 
 # A function to ensure lens and brightness adjestment does not go out of range
 def clamp(num, v0, v1):

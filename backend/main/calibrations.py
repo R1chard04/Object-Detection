@@ -2,8 +2,11 @@ import json
 import depthai as dai
 import cv2 as cv
 import time
-from main.imageMaskGeneration import createMask
+from imageMaskGeneration import createMask
+from imageProcessingClasses import imageProcessing
+from imagePredictionClass import MSEStabilization, getPassRef
 import pdb
+import os
 
 def createPipeline():
     pipeline = dai.Pipeline()
@@ -27,25 +30,16 @@ def createPipeline():
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
 
-# def cameraSetup(station):
-#     stationCamera = Recalibration(station)
-#     device_info = dai.DeviceInfo(stationCamera.IP)
-#     with dai.Device(createPipeline(), device_info) as device:
-#         # stationCamera.paramSetup()
-#         # render website?
-#         stationCamera.maskSetup()
-#         # render website?
-#     return
-
 # set up the mask, control and errors
 class Recalibration:
     def __init__(self, station) -> None:
-        with open (r'main/params.json') as f:
+        with open (r'params.json') as f:
               partList = json.load(f)
               
         # select which station to use here
         self.station = station
         params = partList[station]
+        self.passref = params["passref"]
         self.brightness = params["brightness"]
         self.lensPos = params["lensPos"]
         self.parts = params["parts"]
@@ -69,7 +63,7 @@ class Recalibration:
             
             key = cv.waitKey(1)
             
-            # focal length adjustment
+            # brightness adjestment
             if key in [ord(','), ord('.')]:
                 if key == ord(','):
                     self.lensPos -= 2
@@ -80,7 +74,7 @@ class Recalibration:
                 ctrl = dai.CameraControl()
                 ctrl.setManualFocus(self.lensPos)
                 qControl.send(ctrl)
-            # brightness adjustment
+                
             elif key in [ord('k'), ord('l')]:
                 if key == ord('k'):
                     self.brightness -= 1
@@ -94,7 +88,7 @@ class Recalibration:
             
             if key == ord('q'):
                 # update britness and lesPos to json file
-                return self.brightness, self.lensPos
+                return 
     
     def maskSetup(self, device):
         q = device.getOutputQueue(name="out")
@@ -134,46 +128,38 @@ class Recalibration:
         params = partList[station]
         self.brightness = params["brightness"]
         self.lensPos = params["lensPos"]
+        return
 
-    def updateJson(self, station, new_brightness, new_lensPos):
+    def updateJson(self, station):
         # this function set all the values in the json
-        with open(r'main/params.json', 'r') as f:
+        with open(r'params.json', 'r') as f:
             partList = json.load(f)
         
         # change the settings in json
-        
-        partList[station]["brightness"] = new_brightness
-        partList[station]["lensPos"] = new_lensPos
+        partList[station]["brightness"] = self.brightness
+        partList[station]["lensPos"] = self.lensPos
+        partList[station]["passref"] = self.passref
+        print(self.passRef)
 
-        with open('main/params.json', 'w') as f:
+        with open('params.json', 'w') as f:
             json.dump(partList, f, indent=4)
 
         print(f"Update values of the brightness and focal length")
        
     def errorSetup(self, device):
         q = device.getOutputQueue(name="out")
-        startTime = time.time()
-        while ((time.time()-startTime) < 3):
-            imgFrame = q.get()  
-        
-        input("press any key to start setting up error:")
+        processingObject = imageProcessing(self.station)
+        self.passRef = [0]*len(self.parts)
+          
         for i in range(10):
             imgFrame = q.get().getCvFrame()
-            cv.imwrite(self.colPaths[i], imgFrame)
-        pass
-    
-    def controlSetup(self, device):
-        q = device.getOutputQueue(name="out")
-        i = 0           
-        while i < len(self.parts):
-            print("load" + self.parts[i] + "part.")
-            startTime = time.time()
-            while ((time.time()-startTime) < 3):
-                imgFrame = q.get()
-            imgSil = imgFrame.getCvFrame()
-            cv.imwrite(self.refPaths[i], imgSil)
-        pass
-    
+            processingObject.setTestImg(imgFrame)
+            error = processingObject.compareImage()
+            self.passRef = getPassRef(error, self.passRef)
+            print(error, self.passRef)
+            
+            # cv.imwrite(self.errDir + "//err" + str(i) + ".jpg", imgFrame)   
+        return
     
     # this function should be called when the camera get turned on
     # it will adjust the camera to the brightness and lensPos 
@@ -197,7 +183,7 @@ class Recalibration:
             imgFrame = q.get().getCvFrame()
             imgFrame = cv.pyrDown(imgFrame)
             imgFrame = cv.pyrDown(imgFrame)
-            cv.imshow("it'shere", imgFrame)
+            cv.imshow("adjusting the camera", imgFrame)
             cv.waitKey(1)
         
         # auto white balance lock
@@ -212,14 +198,7 @@ class Recalibration:
         ctrl.setAutoExposureLock(True)
         qControl.send(ctrl)
         
-        # while True:
-        #     imgFrame = q.get().getCvFrame()
-        #     imgFrame = cv.pyrDown(imgFrame)
-        #     imgFrame = cv.pyrDown(imgFrame)
-        #     cv.imshow("results", imgFrame)
-        #     key = cv.waitKey(1)
-        #     if key == ord('q'):
-        #         break
+        cv.destroyAllWindows()
         return
         
     # this function capture an image and return it    
@@ -228,5 +207,18 @@ class Recalibration:
         imgFrame = q.get().getCvFrame()
         return imgFrame
 
-    def pressKeyCapture(self, device):
-        pass
+    def pressKeyCapture(self, device, path):
+        q = device.getOutputQueue(name="out")
+        
+        while True:
+            imgFrame = q.get().getCvFrame()
+            key = cv.waitKey(1)
+            if key == ord('c'):
+                cv.imwrite(path, imgFrame)
+                cv.destroyAllWindows()
+                break
+            
+            imgFrame = cv.pyrDown(imgFrame)
+            imgFrame = cv.pyrDown(imgFrame)
+            cv.imshow("results", imgFrame)
+            
