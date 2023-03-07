@@ -7,8 +7,8 @@ from hashlib import sha256
 from pyignite import Client
 import os
 import sys
-import asyncio
-import websockets
+import websocket
+import traceback
 from flask_socketio import SocketIO, emit
 import pdb
 from flask_migrate import Migrate
@@ -28,11 +28,6 @@ from main.calibrations import Recalibration, createPipeline
 # read in the params.json file
 with open(r'main/params.json') as f:
   partList = json.load(f)
-
-# import the modules
-# main_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-# sys.path.append(main_directory)
-# import main
 
 # connect flask to the database
 app = Flask(__name__)
@@ -91,47 +86,32 @@ def insert_users() -> None:
 
 insert_users()
 
-# app.config['SECRET_KEY'] = 'secret!'
-# socketio = SocketIO(app)
-# db.init_app(app)
+# an object contains functions that listen for events on the client side then send them to the server side
 
-# @socketio.on('connect', namespace='/bt1xx/station/<int:station_number>/settings')
-# def test_connect():
-#   emit('my response', {'data': 'Connected'})
+def on_message(ws, message):
+  print(message)
+  ws.send(message)
 
-# # connect the python server to the web socket
-# async def handle_key_events(websocket, path):
-#   async for message in websocket:
-#     # Process the key code received from the client
-#     if message == ",": # Key code for ","
-#       print(",")
-#     elif message == ".": # Key code for "."
-#       print(".")
-#     elif message == "k": # Key code for "k"
-#       print("k")
-#     elif message == "l": # Key code for "l"
-#       print("l")
+def on_error(ws, error):
+  print(error)
 
-# # Start the WebSocket server 
-# async def start_server():
-#   # Set the WebSocket server URL
-#   server_url = "http://127.0.0.1:5000/bt1xx/station/<int:station_number>/settings"
+def on_close(ws, close_status_code, close_msg):
+  print(f"Connection closed")
 
-#   # Start the WebSocket Server
-#   async with websockets.serve(handle_key_events, server_url):
-#     await asyncio.Future() # Run the server indefinitely
+def on_open(ws):
+  print(f"Connection established")
 
-# asyncio.run(start_server())
+def establish_websocket(station_number):
+  pdb.set_trace()
+  try:
+    websocket.enableTrace(True)
+    ws = websocket.WebSocketApp(f"ws://127.0.0.1/bt1xx/station/" + str(station_number) + "/settings", on_message=on_message, on_error=on_error, on_close=on_close)
 
-# client = Client()
-# client.connect('10.10.10.33', 8088)
-
-# app.config['SQL_ALCHEMY_URI'] = 'ignite://10.10.10.33:8088/Hydroform'
-# db = SQLAlchemy(app)
-
-# # create the Ignite engine and connect to the server
-# engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'], module='sqlalchemy_ignite.pyignite')
-# engine.connect()
+    ws.on_open = on_open
+    ws.run_forever()
+  except Exception as e:
+    print(f"Error:", e)
+    traceback.print_exc()
 
 # include the path to javascript files
 @app.route('/static-js/<path:filename>')
@@ -185,7 +165,8 @@ def station_detail(station_number):
 # render the station settings:
 @app.route('/bt1xx/station/<int:station_number>/settings')
 def station_settings(station_number):
-  #   redirect(url_for('station_detail', station_number=station_number))
+  # enable the websockets to be ready to listen for events on the client side
+  establish_websocket(station_number=station_number)
   return render_template('station_settings.html', station_number=station_number)
 
 ###################### STATION SHOW FRAME ######################
@@ -362,6 +343,8 @@ def checkExpiration():
 
 if __name__ == '__main__':
  app.run(debug=True)
+ # connect to the websocket server to listening for events sent from localhost:5000
+ 
 
 
 

@@ -1,6 +1,33 @@
 // Create a new WebSocket connection to the Python server
 // var socket = io.connect('http://127.0.0.1:5000/bt1xx/station/<int:station_number>/settings');
 
+// Enable websocket to connect the localhost server (client) to Python server
+const stationElement = document.querySelector('#station');
+// cut out the station number in the url
+const stationNumber = stationElement.textContent.trim();
+const numberPattern = /\d+/; // match one or more digits
+const matches = stationNumber.match(numberPattern);
+const stationNumberOnly = matches ? matches[0] : null;
+
+var socket = new WebSocket("ws://127.0.0.1:5000/bt1xx/station/" + stationNumberOnly.toString() + "/settings");
+
+socket.onopen = function(event) {
+  console.log("Connection established!");
+};
+
+socket.onerror = function(event) {
+  console.error("WebSocket error observed:", event);
+};
+
+socket.onmessage = function(event) {
+  console.log("Server says: ", event.data);
+};
+
+document.addEventListener('keydown', function(event) {
+  var key = String.fromCharCode(event.key);
+  socket.send(key);
+});
+
 document.addEventListener('DOMContentLoaded', function() {
   // function redirect the user to the url of the python program using iframe
   let btnClick = document.getElementById("show-frame-button");
@@ -248,12 +275,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // event for the logo
   var logo = document.getElementById('logo');
-  const stationElement = document.querySelector('#station');
-  // cut out the station number in the url
-  const stationNumber = stationElement.textContent.trim();
-  const numberPattern = /\d+/; // match one or more digits
-  const matches = stationNumber.match(numberPattern);
-  const stationNumberOnly = matches ? matches[0] : null;
 
   function goToSettingPage() {
     window.location.href = "http://127.0.0.1:5000/bt1xx/station/" + stationNumberOnly.toString();
