@@ -192,7 +192,7 @@ def station_settings(station_number):
     return redirect(url_for('station_detail', station_number=station_number))
 
 ###################### STATION SHOW FRAME ######################
-@app.route('/bt1xx/paramSetup/showframe/<int:station_number>/')
+@app.route('/bt1xx/paramSetup/showframe/station/<int:station_number>/')
 def show_frame_params(station_number):
   # get the IP address of the connected device depends on the station number by calling the helper function
   # loop through the stations list to find the associate IP Address
@@ -211,11 +211,17 @@ def show_frame_params(station_number):
 
     with dai.Device(pipeline, device_info) as device:
       print(f"Ayoo! What's up!")
+      pdb.set_trace()
       recalibration = Recalibration(station='station' + str(station_number))
       
       # import paramSetup function to set the focal length and the brightness of the camera (camera settings)
       # brightness, lensPos = paramsSetup(station_number, captureObject, recalibrate=True, name=IP)
-      brightness, lensPos = recalibration.paramSetup(device, station_number)
+      recalibration.paramSetup(device)
+
+      # overwrite the params.json
+      this_station = 'station' + str(station_number)
+      changeJson = Recalibration(station=this_station)
+      changeJson.updateJson(station=this_station)
     
     return redirect(url_for('setUpSuccessful', station_number=station_number))
 
@@ -261,11 +267,6 @@ def change_settings(station_number):
 
       if result:
         print(f"Data has been inserted successfully!")
-        
-        # overwrite the params.json
-        this_station = 'station' + str(station_selected)
-        changeJson = Recalibration(station=this_station)
-        changeJson.updateJson(station=this_station, new_brightness=int(brightness_setting), new_lensPos=int(focal_length_settings))
         
         return redirect(url_for('station_detail', station_number = station_number))
       
@@ -339,6 +340,7 @@ def create_errors(station_number):
 
     with dai.Device(pipeline, device_info) as device:
       # call a function to set up the errors
+      pdb.set_trace()
       recalibration = Recalibration(station='station' + str(station_number))
       recalibration.upDateParams(station='station' + str(station_number))
       recalibration.errorSetup(device=device)
@@ -437,6 +439,13 @@ def logout():
 def checkExpiration():
   if(check_session_expiry()):
     return redirect(url_for('login'))
+  
+############################## RUNNING ALL THE PROGRAMS ##############################
+@app.route('/bt1xx/startallprograms/', methods=['GET'])
+def startPrograms():
+  # import all the camera files
+  
+
 
 # test endpoint for javascript to listen to the key event and send them to the python server
 @app.route('/handle-key-event', methods=['POST', 'GET'])

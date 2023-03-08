@@ -2,9 +2,9 @@ import json
 import depthai as dai
 import cv2 as cv
 import time
-from imageMaskGeneration import createMask
-from imageProcessingClasses import imageProcessing
-from imagePredictionClass import MSEStabilization, getPassRef
+from main.imageMaskGeneration import createMask
+from main.imageProcessingClasses import imageProcessing
+from main.imagePredictionClass import MSEStabilization, getPassRef
 import pdb
 import os
 
@@ -33,7 +33,7 @@ def clamp(num, v0, v1):
 # set up the mask, control and errors
 class Recalibration:
     def __init__(self, station) -> None:
-        with open (r'params.json') as f:
+        with open (r'main/params.json') as f:
               partList = json.load(f)
               
         # select which station to use here
@@ -89,7 +89,7 @@ class Recalibration:
             
             if key == ord('q'):
                 # update britness and lesPos to json file
-                return 
+                return
     
     # this function setup masks for station
     def maskSetup(self, device):
@@ -135,7 +135,8 @@ class Recalibration:
     
     # this function updates all the values in the json
     def updateJson(self, station):
-        with open(r'params.json', 'r') as f:
+        pdb.set_trace()
+        with open(r'main/params.json', 'r') as f:
             partList = json.load(f)
         
         # change the settings in json
@@ -143,7 +144,7 @@ class Recalibration:
         partList[station]["lensPos"] = self.lensPos
         partList[station]["passref"] = self.passref
         
-        with open('params.json', 'w') as f:
+        with open('main/params.json', 'w') as f:
             json.dump(partList, f, indent = 4)
 
         print(f"Json updated")

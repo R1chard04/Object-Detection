@@ -40,18 +40,20 @@ document.addEventListener('DOMContentLoaded', function() {
   let btnClick = document.getElementById("show-frame-button");
   function loadContent(){
     
-    // get the content element
-    var content = document.getElementById("content");
-    let url = btnClick.getAttribute("data-url");
+    // // get the content element
+    // var content = document.getElementById("content");
+    // let url = btnClick.getAttribute("data-url");
 
-    // create an iframe element
-    var iframe = document.getElementById("iframe");
-    iframe.src = url;
-    iframe.style.width = "50%";
-    iframe.style.height = "100px";
+    // // create an iframe element
+    // var iframe = document.getElementById("iframe");
+    // iframe.src = url;
+    // iframe.style.width = "50%";
+    // iframe.style.height = "100px";
 
-    // add the iframe element to the content element
-    content.appendChild(iframe);
+    // // add the iframe element to the content element
+    // content.appendChild(iframe);
+    // redirect the users to set up the change setting url
+    window.location.href = 'http://127.0.0.1:5000/bt1xx/paramSetup/showframe/station/' + stationNumberOnly.toString();
   }
 
   btnClick.addEventListener("click", function() {
