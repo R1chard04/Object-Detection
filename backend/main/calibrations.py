@@ -152,14 +152,13 @@ class Recalibration:
     def errorSetup(self, device):
         q = device.getOutputQueue(name="out")
         processingObject = imageProcessing(self.station)
-        self.passRef = [0]*len(self.parts)
+        self.passref = [0]*len(self.parts)
           
         for i in range(10):
             imgFrame = q.get().getCvFrame()
             processingObject.setTestImg(imgFrame)
             error = processingObject.compareImage()
-            self.passRef = getPassRef(error, self.passRef)
-            print(error, self.passRef)
+            self.passref = getPassRef(error, self.passref)
             
             # cv.imwrite(self.errDir + "//err" + str(i) + ".jpg", imgFrame)   
         return

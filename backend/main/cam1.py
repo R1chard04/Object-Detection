@@ -10,51 +10,37 @@ from calibrations import Recalibration, createPipeline
 import time
 import os
 import json
-import pdb
+import cv2 as cv
+import depthai as dai
 
-# from pylogix import PLC
-# from PLCUpdate import transferToPLC
+camera = Recalibration("station10")
+processingObject = imageProcessing("station10")
 
-#-----------------------------------------Camera Initialisation-----------------------------------------#
-
-station = Recalibration("station10")
-device_info = dai.DeviceInfo(station.IP)
+device_info = dai.DeviceInfo(camera.IP)
 
 with dai.Device(createPipeline(), device_info) as device:
-    q = device.getOutputQueue(name="out")
-    print("done params")
-
-    # masks = maskSetup(selected, captureObject, recalibrate, brightness, lensPos, IP)
-    masks = []
-    for path in station.maskPaths:
-        masks.append(cv.imread(path, 0))
-    print("done masks")
-    # tempRef = controlSetup(selected, captureObject, recalibrate, brightness, lensPos)
-    tempRef = cv.imread(station.standardPath)
-    processingObject = imageProcessing(masks, tempRef, tempRef, station.parts) #Initialisation of the processing object
-    print("processing object initialized")
-
-#-------------------------------------------------------------------------------------------#   
-    while True:
+    camera.adjustCamera(device)
+    
+    print("start")
+    while True:     
         
-        print(station.IP)
-        # capture a test image
-        # img = captureObject.captureOne(testPath, brightness, lensPos)
-        processingObject.setTestImg(station.capture())  
-        # display the result on the frame
+        img = camera.capture(device)
+        processingObject.setTestImg(img)
         frame = processingObject.displayResultPosition()
-        # get the mse error
-        error = processingObject.compareImage() 
-        #Generates PASS/FAIL array
-        prediction = MSEStabilization(error, station.passref, len(station.parts)) 
+        error = processingObject.compareImage()
+        prediction = MSEStabilization(error, camera.passref, len(camera.parts)) 
 
         result = prediction.result()
-        # print(result)
+        print(result)
 
         # transferToPLC("OP100", result)
         cv.waitKey(1)
         frame = cv.pyrDown(frame)
         frame = cv.pyrDown(frame)
-        cv.imshow(station.IP, frame)
+        cv.imshow(camera.IP, frame)
         
-# python cam1.py& python cam2.py& python cam3.py&
+    # print("press c to capture a standard picture")
+    # camera.pressKeyCapture(device, camera.standardPath)
+    # print("press c to start setting errors")
+    # camera.errorSetup(device)
+    # camera.updateJson(camera.station)
