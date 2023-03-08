@@ -2,9 +2,9 @@ import json
 import depthai as dai
 import cv2 as cv
 import time
-from main.imageMaskGeneration import createMask
-from main.imageProcessingClasses import imageProcessing
-from main.imagePredictionClass import MSEStabilization, getPassRef
+from imageMaskGeneration import createMask
+from imageProcessingClasses import imageProcessing
+from imagePredictionClass import MSEStabilization, getPassRef
 import pdb
 import os
 
@@ -33,7 +33,7 @@ def clamp(num, v0, v1):
 # set up the mask, control and errors
 class Recalibration:
     def __init__(self, station) -> None:
-        with open (r'main/params.json') as f:
+        with open (r'params.json') as f:
               partList = json.load(f)
               
         # select which station to use here
@@ -96,7 +96,7 @@ class Recalibration:
         q = device.getOutputQueue(name="out")
         i = 0           
         while i < len(self.parts):
-            print("load" + self.parts[i] + "part.")
+            input("load" + self.parts[i] + "part.")
             startTime = time.time()
             while ((time.time()-startTime) < 3):
                 imgFrame = q.get()
@@ -124,7 +124,7 @@ class Recalibration:
     # this method read all the parameters from the json again                
     def upDateParams(self, station):
 
-        with open (r'main/params.json', 'r') as f:
+        with open (r'params.json', 'r') as f:
               partList = json.load(f)
               
         # select which station to use here
@@ -135,8 +135,7 @@ class Recalibration:
     
     # this function updates all the values in the json
     def updateJson(self, station):
-        pdb.set_trace()
-        with open(r'main/params.json', 'r') as f:
+        with open(r'params.json', 'r') as f:
             partList = json.load(f)
         
         # change the settings in json
@@ -144,7 +143,7 @@ class Recalibration:
         partList[station]["lensPos"] = self.lensPos
         partList[station]["passref"] = self.passref
         
-        with open('main/params.json', 'w') as f:
+        with open('params.json', 'w') as f:
             json.dump(partList, f, indent = 4)
 
         print(f"Json updated")

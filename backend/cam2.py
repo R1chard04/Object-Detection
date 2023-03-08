@@ -1,20 +1,15 @@
 import cv2 as cv
 import time
 import depthai as dai
-from cameraInitialisationClass import initialise
 from imageProcessingClasses import imageProcessing
-from imageCaptureClasses import imageCapture
-from imageMaskGeneration import createMask
-from imagePredictionClass import MSEStabilization, getPassRef
+from imagePredictionClass import MSEStabilization
 from calibrations import Recalibration, createPipeline
 import time
-import os
-import json
 import cv2 as cv
 import depthai as dai
 
-camera = Recalibration("station100")
-processingObject = imageProcessing("station100")
+camera = Recalibration("station5")
+processingObject = imageProcessing("station5")
 
 device_info = dai.DeviceInfo(camera.IP)
 

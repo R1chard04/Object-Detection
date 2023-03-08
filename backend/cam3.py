@@ -1,15 +1,10 @@
 import cv2 as cv
 import time
 import depthai as dai
-from cameraInitialisationClass import initialise
 from imageProcessingClasses import imageProcessing
-from imageCaptureClasses import imageCapture
-from imageMaskGeneration import createMask
-from imagePredictionClass import MSEStabilization, getPassRef
+from imagePredictionClass import MSEStabilization
 from calibrations import Recalibration, createPipeline
 import time
-import os
-import json
 import cv2 as cv
 import depthai as dai
 
@@ -38,9 +33,3 @@ with dai.Device(createPipeline(), device_info) as device:
         frame = cv.pyrDown(frame)
         frame = cv.pyrDown(frame)
         cv.imshow(camera.IP, frame)
-        
-    # print("press c to capture a standard picture")
-    # camera.pressKeyCapture(device, camera.standardPath)
-    # print("press c to start setting errors")
-    # camera.errorSetup(device)
-    # camera.updateJson(camera.station)

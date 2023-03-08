@@ -1,7 +1,7 @@
 {
     "station100": {
-        "brightness": -1,
-        "lensPos": 108,
+        "brightness": 0,
+        "lensPos": 112,
         "parts": [
             "top",
             "left",
@@ -9,10 +9,10 @@
             "right"
         ],
         "passref": [
-            3,
-            4,
-            4,
-            5
+            430.0865310560413,
+            4.636753446451747,
+            3.7165448338534435,
+            2.5419663629507436
         ],
         "IP": "169.254.1.201",
         "name": "19443010613C6E1300",
@@ -67,33 +67,53 @@
         "test": "Photos\\Refs\\station5\\test.jpg",
         "errDir": "Photos\\Err\\station5"
     },
-    "station10": {
+    "station120": {
         "brightness": -1,
         "lensPos": 108,
         "parts": [
+            "topRight",
+            "topLeft",
             "left",
+            "bottomLeft",
+            "bottomRight",
             "right"
         ],
         "passref": [
-            21.823452157952456,
-            21.823452157952456
+            3,
+            4,
+            4,
+            5,
+            5,
+            5
         ],
         "IP": "169.254.1.203",
         "name": "1944301051766E1300",
         "masks": [
-            "Photos\\Masks\\station10\\left.jpg",
-            "Photos\\Masks\\station10\\right.jpg"
+            "Photos\\Masks\\station120\\topRight.jpg",
+            "Photos\\Masks\\station120\\topLeft.jpg",
+            "Photos\\Masks\\station120\\left.jpg",
+            "Photos\\Masks\\station120\\bottomLeft.jpg",
+            "Photos\\Masks\\station120\\bottomRight.jpg",
+            "Photos\\Masks\\station120\\right.jpg"
         ],
         "refs": [
-            "Photos\\Refs\\station10\\left.jpg",
-            "Photos\\Refs\\station10\\right.jpg"
+            "Photos\\Refs\\station120\\topRight.jpg",
+            "Photos\\Refs\\station120\\topLeft.jpg",
+            "Photos\\Refs\\station120\\left.jpg",
+            "Photos\\Refs\\station120\\bottomLeft.jpg",
+            "Photos\\Refs\\station120\\bottomRight.jpg",
+            "Photos\\Refs\\station120\\right.jpg"
         ],
         "cols": [
-            "Photos\\col\\station10\\left.jpg",
-            "Photos\\col\\station10\\right.jpg"
+            "Photos\\Col\\station120\\topLeft.jpg",
+            "Photos\\Col\\station120\\topRight.jpg",
+            "Photos\\Col\\station120\\left.jpg",
+            "Photos\\Col\\station120\\bottomLeft.jpg",
+            "Photos\\Col\\station120\\bottomRight.jpg",
+            "Photos\\Col\\station120\\right.jpg"
         ],
-        "standard": "Photos\\Refs\\station10\\STD.jpg",
-        "test": "Photos\\Refs\\station10\\test.jpg",
-        "errDir": "Photos\\Err\\station10"
+        "standard": "Photos\\Refs\\station120\\STD.jpg",
+        "test": "Photos\\Refs\\station120\\test.jpg",
+        "errDir": "Photos\\Err\\station120"
     }
 }

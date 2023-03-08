@@ -19,23 +19,22 @@ import depthai as dai
 import requests
 import asyncio
 import json
+import subprocess
 
 # import files
 from database_model.models import db, Station, Users
 from helper_functions.validate_users import validate_users, validate_username, validate_password, check_session_expiry
-from main.cameraInitialisationClass import initialise
-from main.imageCaptureClasses import imageCapture
-from main.calibrations import Recalibration, createPipeline
+from calibrations import Recalibration, createPipeline
 
 # read in the params.json file
-with open(r'main/params.json') as f:
+with open(r'params.json') as f:
   partList = json.load(f)
 
 # connect flask to the database
 app = Flask(__name__)
 api = Api(app)
 socketio = SocketIO(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///martinrea.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/martinrea.db'
 app.config['SERVER_NAME'] = '127.0.0.1:5000'
 app.config['APPLICATION_ROOT'] = '/'
 app.config['PREFERRED_URL_SCHEME'] = 'http'
@@ -91,40 +90,12 @@ def insert_users() -> None:
 
 insert_users()
 
-# an object contains functions that listen for events on the client side then send them to the server side
+# function to run all the cameras at once
+def run_all_cameras():
+  subprocess.Popen(['C:/Users/kent.tran/AppData/Local/Programs/Python/Python311/python.exe', 'cam1.py'])
+  subprocess.Popen(['C:/Users/kent.tran/AppData/Local/Programs/Python/Python311/python.exe', 'cam2.py'])
+  subprocess.Popen(['C:/Users/kent.tran/AppData/Local/Programs/Python/Python311/python.exe', 'cam3.py'])
 
-# def on_message(ws, message):
-#   print(message)
-#   ws.send(message)
-
-# def on_error(ws, error):
-#   print(error)
-
-# def on_close(ws, close_status_code, close_msg):
-#   print(f"Connection closed")
-
-# def on_open(ws):
-#   print(f"Connection established")
-
-# def establish_websocket(station_number) -> None:
-#   try:
-#     websocket.enableTrace(True)
-#     ws = websocket.WebSocketApp(f"ws://127.0.0.1:5000/bt1xx/station/" + str(station_number) + "/settings", on_message=on_message, on_error=on_error, on_close=on_close)
-  
-#     ws.on_open = on_open
-#     ws.run_forever()
-#   except Exception as e:
-#     print(f"Error:", e)
-#     traceback.print_exc()
-
-# websocket to sync key events on javascript to python terminal
-# @socketio.on('connect')
-# def handle_connect():
-#     print('Client connected')
-
-# @socketio.on('disconnect')
-# def handle_disconnect():
-#     print('Client disconnected')
 
 @socketio.on('key_event')
 def handle_key_event(data):
@@ -211,7 +182,6 @@ def show_frame_params(station_number):
 
     with dai.Device(pipeline, device_info) as device:
       print(f"Ayoo! What's up!")
-      pdb.set_trace()
       recalibration = Recalibration(station='station' + str(station_number))
       
       # import paramSetup function to set the focal length and the brightness of the camera (camera settings)
@@ -220,8 +190,7 @@ def show_frame_params(station_number):
 
       # overwrite the params.json
       this_station = 'station' + str(station_number)
-      changeJson = Recalibration(station=this_station)
-      changeJson.updateJson(station=this_station)
+      recalibration.updateJson(station=this_station)
     
     return redirect(url_for('setUpSuccessful', station_number=station_number))
 
@@ -340,10 +309,11 @@ def create_errors(station_number):
 
     with dai.Device(pipeline, device_info) as device:
       # call a function to set up the errors
-      pdb.set_trace()
       recalibration = Recalibration(station='station' + str(station_number))
       recalibration.upDateParams(station='station' + str(station_number))
+      recalibration.adjustCamera(device=device)
       recalibration.errorSetup(device=device)
+      recalibration.updateJson(station='station' + str(station_number))
 
     return redirect(url_for('setUpSuccessful', station_number=station_number))
 
@@ -443,9 +413,9 @@ def checkExpiration():
 ############################## RUNNING ALL THE PROGRAMS ##############################
 @app.route('/bt1xx/startallprograms/', methods=['GET'])
 def startPrograms():
-  # import all the camera files
-  
-
+  # run all the cameras files
+  run_all_cameras()
+  return render_template('view.html')
 
 # test endpoint for javascript to listen to the key event and send them to the python server
 @app.route('/handle-key-event', methods=['POST', 'GET'])
