@@ -2,9 +2,9 @@ import json
 import depthai as dai
 import cv2 as cv
 import time
-from main.imageMaskGeneration import createMask
-from main.imageProcessingClasses import imageProcessing
-from main.imagePredictionClass import MSEStabilization, getPassRef
+from imageMaskGeneration import createMask
+from imageProcessingClasses import imageProcessing
+from imagePredictionClass import MSEStabilization, getPassRef
 import pdb
 import os
 
@@ -50,7 +50,8 @@ class Recalibration:
         self.standardPath = params["standard"]
         self.testPath = params["test"]
         self.errDir = params["errDir"]
-        
+    
+    # this function setup params for stations
     def paramSetup(self, device):
         q = device.getOutputQueue(name="out")
         qControl = device.getInputQueue(name="control")
@@ -90,6 +91,7 @@ class Recalibration:
                 # update britness and lesPos to json file
                 return 
     
+    # this function setup masks for station
     def maskSetup(self, device):
         q = device.getOutputQueue(name="out")
         i = 0           
@@ -118,9 +120,10 @@ class Recalibration:
         
         print("all masks are done")
         return
-                
+    
+    # this method read all the parameters from the json again                
     def upDateParams(self, station):
-        # this method read all the parameters from the json again
+
         with open (r'main/params.json', 'r') as f:
               partList = json.load(f)
               
@@ -129,9 +132,9 @@ class Recalibration:
         self.brightness = params["brightness"]
         self.lensPos = params["lensPos"]
         return
-
+    
+    # this function updates all the values in the json
     def updateJson(self, station):
-        # this function set all the values in the json
         with open(r'params.json', 'r') as f:
             partList = json.load(f)
         
@@ -139,13 +142,13 @@ class Recalibration:
         partList[station]["brightness"] = self.brightness
         partList[station]["lensPos"] = self.lensPos
         partList[station]["passref"] = self.passref
-        print(self.passRef)
-
+        
         with open('params.json', 'w') as f:
-            json.dump(partList, f, indent=4)
+            json.dump(partList, f, indent = 4)
 
-        print(f"Update values of the brightness and focal length")
-       
+        print(f"Json updated")
+    
+    # this function set up the passref for the parts  
     def errorSetup(self, device):
         q = device.getOutputQueue(name="out")
         processingObject = imageProcessing(self.station)
@@ -207,6 +210,7 @@ class Recalibration:
         imgFrame = q.get().getCvFrame()
         return imgFrame
 
+    # this function stream the frames until the user press c to capture an image
     def pressKeyCapture(self, device, path):
         q = device.getOutputQueue(name="out")
         
