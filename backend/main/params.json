@@ -68,15 +68,15 @@
         "errDir": "Photos\\Err\\station5"
     },
     "station10": {
-        "brightness": 55,
+        "brightness": -1,
         "lensPos": 108,
         "parts": [
             "left",
             "right"
         ],
         "passref": [
-            2,
-            3
+            21.823452157952456,
+            21.823452157952456
         ],
         "IP": "169.254.1.203",
         "name": "1944301051766E1300",
