@@ -185,7 +185,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('mouseup', handleMouseUp);
  });
 
- window.addEventListener('keydown', (event) => {
+ document.addEventListener('keydown', (event) => {
+  console.log('Key pressed:', event.key);
   if(event.key == 'k'){
    brightness = Math.max(minBrightness, brightness-1);
    updateBrightnessIndicator(); 
@@ -217,6 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
  let switchCheckBox_input = document.getElementById('white_balance_lock_input');
   if(switchCheckBox.value == 'on'){
     switchCheckBox_input.value = 1;
+    
     switchCheckBox_input.value = !!(switchCheckBox_input.value)
   }
   else {

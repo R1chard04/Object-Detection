@@ -2,9 +2,9 @@ import json
 import depthai as dai
 import cv2 as cv
 import time
-from imageMaskGeneration import createMask
-from imageProcessingClasses import imageProcessing
-from imagePredictionClass import MSEStabilization, getPassRef
+from main.imageMaskGeneration import createMask
+from main.imageProcessingClasses import imageProcessing
+from main.imagePredictionClass import MSEStabilization, getPassRef
 import pdb
 import os
 

@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, session, flash
+from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, session, flash, abort
+from flask_cors import CORS
 from sqlalchemy import create_engine, MetaData, inspect
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
@@ -34,10 +35,12 @@ with open(r'main/params.json') as f:
 app = Flask(__name__)
 api = Api(app)
 socketio = SocketIO(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/martinrea.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///martinrea.db'
 app.config['SERVER_NAME'] = '127.0.0.1:5000'
 app.config['APPLICATION_ROOT'] = '/'
 app.config['PREFERRED_URL_SCHEME'] = 'http'
+app.config['CORS_HEADERS'] = 'Content-Type'
+CORS(app)
 
 # generate a 32-character hexadecimal secret key for users to login their session
 app.secret_key = secrets.token_hex(16)
@@ -393,6 +396,7 @@ def login():
 # authenticate the users login
 @app.route('/bt1xx/authentication/', methods=['POST', 'GET'])
 def authentication():
+  # if the user is not in session then abort the users to not authorized url
   if request.method == 'POST':
     try:
       username = request.form['username']
@@ -433,6 +437,14 @@ def logout():
 def checkExpiration():
   if(check_session_expiry()):
     return redirect(url_for('login'))
+
+# test endpoint for javascript to listen to the key event and send them to the python server
+@app.route('/handle-key-event', methods=['POST', 'GET'])
+def handle_key_event():
+  # Handle the key event
+  key = request.json['key']
+  print(f"Key pressed:" + key)
+  return 'OK'
 
 if __name__ == '__main__':
  # connect to the websocket server to listening for events sent from localhost:5000
