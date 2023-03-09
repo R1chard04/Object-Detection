@@ -6,6 +6,8 @@ from imageProcessingClasses import imageProcessing
 from imageCaptureClasses import imageCapture
 from imageMaskGeneration import createMask
 from imagePredictionClass import MSEStabilization, getPassRef
+from imageRenamingClasses import BinaryNameAssigner
+from imageTimingClasses import imageTiming
 import time
 import os
 import json
@@ -201,7 +203,8 @@ def mainloop(selected):
                 
             processingObject.setTestImg(img)  
             # display the result on the frame
-            frame = processingObject.displayResultPosition()
+            frame = process\
+                gvingObject.displayResultPosition()
             # get the mse error
             error = processingObject.compareImage() 
             #Generates PASS/FAIL array
@@ -209,6 +212,15 @@ def mainloop(selected):
 
             result = prediction.result()
             print(result)
+            
+            bna = BinaryNameAssigner(result)
+            # ask user to name each occurance in array
+            assigned_names = bna.assign()
+            print(assigned_names)
+            
+            timing = imageTiming(result, assigned_names)
+            # record time elasped for each pass or fail and write to rescording_results.txt
+            timing.record()
 
             # transferToPLC("OP100", result)
 
@@ -216,4 +228,3 @@ def mainloop(selected):
             frame = cv.pyrDown(frame)
             cv.imshow("errors", frame)
             cv.waitKey(1)
-
