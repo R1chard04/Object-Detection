@@ -32,5 +32,15 @@ with dai.Device(pipeline, device_info) as device:
         print('Latency1: {:.2f} ms, Average latency: {:.2f} ms, Std: {:.2f}'.format(latencyMs, np.average(diffs), np.std(diffs)))
         
         # Not relevant for this example
-        cv.imshow('frame', imgFrame.getCvFrame())
+        img = imgFrame.getCvFrame()
+        cv.imwrite("photos.jpg", img)
+        cv.imshow('frame', cv.imread("photos.jpg"))
         cv.waitKey(1)
+        
+        
+# if self.qStill.has():
+#                 with open(path, "wb") as img:
+#                     img.write(self.qStill.get().getData())
+                
+#                     img = cv.imread(path)
+#                     return path

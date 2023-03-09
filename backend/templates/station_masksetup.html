@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title id="station">
+   Mask Settings Station {{ station_number }}
+  </title>
+  <script type="text/javascript" src="{{ url_for('serve_static_js', filename = 'station_masksetup.js' ) }}"></script>
+ </head>
+ <body>
+  <div class="header">
+   <h1>
+    Welcome to station {{ station_number }} masks setup manuals!
+   </h1>
+   <h2>
+    Please follow the following instructions to set up all the masks images for this station!
+   </h2> 
+  </div>
+  <div class="body">
+    <button id="show-frame-button" onclick="loadContent()">Start Masks Setup for station {{ station_number }}</button>
+  </div>
+ </body>
+</html>

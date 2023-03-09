@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title id="station">
+   Station {{ station_number }}
+  </title>
+  <script type="text/javascript" src="{{ url_for('serve_static_js', filename = 'station_settings.js' ) }}"></script>
+  <link rel="stylesheet" href="{{ url_for('serve_static_css', filename = 'station_settings.css') }}">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+ </head>
+ <body>
+  <header class="header">
+   <div>
+    <img id="logo" src="{{ url_for('serve_static_photos', filename = 'martinrea-logo.jpg') }}" alt="Logo" onclick="goToSettingPage()">
+    <h2 class="page-heading">Settings manuals for station {{ station_number }}</h2>
+   </div>
+  </header>
+  <div>
+   <nav>
+    <div class="navigation-bar">
+     <div class="hamburger-menu">
+      <input id="menu__toggle" type="checkbox" />
+      <label class="menu__btn" for="menu__toggle">
+        <span></span>
+      </label>
+      <ul class="menu__box">
+       <li><img id="nav-logo" src="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}" alt="Logo"></li>
+       <li><a class="menu__item" href="{{ url_for('homepage') }}">Home</a></li>
+       <li><a class="menu__item" href="{{ url_for('station_detail', station_number = station_number) }}">Station</a></li>
+       <li><a class="menu__item" href="/bt1xx/contact">Contact</a></li>
+       <li><a class="menu__item" href="/bt1xx/about">About</a></li>
+      </ul>
+     </div>
+    </div>  
+   </nav>
+  </div>
+  <div class="main-page">
+    <div>
+      <button id="show-frame-button" data-url="{{ url_for('show_frame_params', station_number=station_number) }}" onclick="loadContent()">Start settings for station {{ station_number }}</button>
+      <!-- <div id="content">
+        <iframe id="iframe" src="" width="100%" height="500" type="hidden"></iframe>
+      </div> -->
+    </div>
+   <form action="{{ url_for('change_settings', station_number=station_number) }}" method="POST" class="form">
+    <div class="focal-length-section-div">
+     <section class="focal-length-section">
+      <label class = "focal-length-increase" for="focal_length_increase">Press "." to increase the focal length</label><br>
+      <label class = "focal-length-decrease" for="focal_length_decrease">Press "," to decrease the focal length</label><br>
+      <div class="focal-length">
+       <div class="indicator">
+        <div class="bar"></div>
+        <div class="thumb"></div>
+       </div>
+       <div class="label">Focal Length: <span id="focal-length-value">100</span></div>
+      </div>
+      <!-- Create a bar indicator to indicate the event when the user click either of the keys -->
+      <label class = "focal_length_setting" for="focal_length_setting">You can also input the focal length setting manually</label>
+      <input type="number" id = "focal_length_setting_input" min = "0" max = "200" value="108" name="focal_length_setting_input"/>
+     </section>
+    </div>
+    <div class="brightness-section-div">
+     <section class="brightness-section">
+      <label id="brightness-increase" for="brightness_increase">Press "l" to increase the brightness of the camera</label><br>
+      <label id="brightness-decrease" for="brightness_decrease">Press "k" to decrease the brightness of the camera</label><br>
+      <!-- Create a bar indicator to indicate the event when the user click either of the keys  -->
+      <div class="brightness">
+       <div class="indicator-brightness">
+        <div class="bar-brightness"></div>
+        <div class="thumb-brightness"></div>
+       </div>
+       <div class="label">Brightness: <span id="brightness-value">0</span></div>
+      </div>
+      <label class="brightness_setting" for="brightness_setting">You can also input the brightness setting manually</label>
+      <input type="number" id="brightness-input" min="-100" max="100" value="0" name="brightness_setting_input"/>
+     </section>
+    </div>
+    <div class="white-balance-lock-section-div">
+     <section class="white-balance-lock-section">
+      <label id="white-balance-lock-text" for="white_balance_lock">Press "1" to turn on/off white balance lock</label>
+      <!-- Create an indicator to indicate the current state of the white balance lock -->
+      <div>
+       <label class="switch">
+        <input type="checkbox" id="white_balance_lock" name="white_balance_lock" checked>
+        <!-- <input type="hidden" id="white_balance_lock_input" name="white_balance_lock_input"> -->
+        <span class="slider"></span>
+       </label>
+       <input type="hidden" id="white_balance_lock_input" name="white_balance_lock_input">
+      </div> 
+     </section>
+    </div>
+    <div class="auto-exposure-lock-section-div">
+     <section class="auto-exposure-lock-section">
+      <label id="auto-exposure-lock-text" for="auto_exposure_lock">Press "2" to turn on/off auto exposure lock</label>
+      <!-- Create an indicator to indicate the current state of the auto exposure lock -->
+      <div class="lock-container">
+       <img src="{{ url_for('serve_static_photos', filename = 'lock-closed.png') }}" class="lock" alt="Lock">
+       <img src="{{ url_for('serve_static_photos', filename = 'lock-opened.png') }}" class="unlock" alt="Unlock" style="display: none">
+       <input type="hidden" id="auto_exposure_lock_input" name="auto_exposure_lock"/>
+      </div>
+     </section>
+    </div>
+    <div class="save-button">
+     <p>Click here (or press q) to save all the settings</p>
+     <div class="wrapper">
+      <input type="submit" name="Save" value="Save" class="button">
+       <div class="success">
+        <svg xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"  viewBox="0 0 29.756 29.756" style="enable-background:new 0 0 29.756 29.756;" xml:space="preserve">
+         <path d="M29.049,5.009L28.19,4.151c-0.943-0.945-2.488-0.945-3.434,0L10.172,18.737l-5.175-5.173   c-0.943-0.944-2.489-0.944-3.432,0.001l-0.858,0.857c-0.943,0.944-0.943,2.489,0,3.433l7.744,7.752   c0.944,0.943,2.489,0.943,3.433,0L29.049,8.442C29.991,7.498,29.991,5.953,29.049,5.009z"/>
+         </svg>
+       </div>
+      </input>    
+     </div>
+    </div>
+   </form>
+  </div>
+  <footer class="footer">
+   <div class="container">
+    <p>
+     © 2023 Martinrea Hydroform Solutions. All rights reserved.
+    </p>
+   </div>
+  </footer>
+ </body>
+</html>

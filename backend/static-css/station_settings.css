@@ -1,0 +1,719 @@
+/* Styling the header */
+@media screen and (min-width: 768px) {
+ .header {
+  background-color: #171942;
+  color: silver;
+  padding: 50px;
+  border-radius: 10px;
+ }
+
+ .page-heading {
+  vertical-align: middle;
+  margin-left: 200px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 50px;
+  line-height: 2;
+  word-spacing: 5px;
+  color: #333;
+  background-image: linear-gradient(
+   -225deg,
+   #231557 0%,
+   #44107a 29%,
+   #ff1361 67%,
+   yellow 100%
+  );
+  background-size: auto auto;
+  background-clip: border-box;
+  background-size: 200% auto;
+  color: #fff;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textclip 2s linear infinite;
+  display: inline-block;
+ }
+
+ #logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  vertical-align: middle;
+  object-fit: contain;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+ }
+
+ #logo:hover {
+  transform: scale(1.08);
+ }
+
+ @keyframes textclip {
+  to {
+   background-position: 200% center;
+  }
+ }
+}
+
+/* CSS styling for the footer */
+.footer {
+ background-color: #171942;
+ color: silver;
+ padding: 30px;
+ border-radius: 10px;
+ margin-top: 100px;
+}
+
+.footer p {
+ font-size: 18px;
+ color: white;
+ text-align: center;
+}
+
+/* Styling the navbar */
+#menu__toggle {
+ opacity: 0;
+}
+#menu__toggle:checked + .menu__btn > span {
+ transform: rotate(45deg);
+}
+#menu__toggle:checked + .menu__btn > span::before {
+ top: 0;
+ transform: rotate(0deg);
+}
+#menu__toggle:checked + .menu__btn > span::after {
+ top: 0;
+ transform: rotate(90deg);
+}
+#menu__toggle:checked ~ .menu__box {
+ left: 0 !important;
+}
+
+.menu__btn {
+ position: fixed;
+ top: 350px;
+ left: 20px;
+ width: 26px;
+ height: 26px;
+ cursor: pointer;
+ z-index: 1;
+ transition: all 0.3s ease-in-out;
+}
+
+.menu__btn:hover {
+ transform: scale(1.1);
+}
+
+.menu__btn > span,
+.menu__btn > span::before,
+.menu__btn > span::after {
+ display: block;
+ position: absolute;
+ width: 100%;
+ height: 2px;
+ background-color: #616161;
+ transition-duration: .25s;
+}
+.menu__btn > span::before {
+ content: '';
+ top: -8px;
+}
+.menu__btn > span::after {
+ content: '';
+ top: 8px;
+}
+.menu__box {
+ display: block;
+ position: fixed;
+ top: 0;
+ left: -100%;
+ width: 300px;
+ height: 100%;
+ margin: 0;
+ padding: 80px 0;
+ list-style: none;
+ background-color: #171942;
+ box-shadow: 2px 2px 6px rgba(0, 0, 0, .4);
+ transition-duration: .25s;
+}
+
+.menu__item {
+ display: block;
+ padding: 12px 24px;
+ color: white;
+ font-family: 'Roboto', sans-serif;
+ font-size: 20px;
+ font-weight: 600;
+ text-decoration: none;
+ transition-duration: .25s;
+}
+.menu__item:hover {
+ background-color: #CFD8DC;
+}
+
+#nav-logo {
+ width: 80px;
+ height: 80px;
+ margin-top: -50px;
+ margin-left: 10px;
+}
+
+/* Creating styling for the focal length input field */
+.focal_length_setting {
+ font-size: 16px;
+ font-weight: bold;
+ margin-right: 10px;
+ margin-top: 2rem;
+}
+
+input[type="number"] {
+ font-size: 16px;
+ padding: 5px;
+ border-radius: 5px;
+ border: 1px solid #ccc;
+ width: 80px;
+ margin-right: 10px;
+ margin-top: 5px;
+}
+
+input[type="number"]:focus {
+ border-color: #3b88fd;
+ box-shadow: 0 0 5px rgba(59, 136, 253, 0.5);
+}
+
+/* Style the 2 instruction labels for focal length */
+.focal-length-section {
+ transition: transform 2s ease-in-out;
+ text-align: center;
+}
+
+.focal-length-section:hover {
+ transform: scale(1.1);
+}
+
+.focal-length-increase {
+ font-family: 'Montserrat', sans-serif;
+ font-size: 18px;
+ line-height: 1.6;
+ color: #333;
+}
+
+.focal-length-decrease {
+ margin-top: -10px;
+ font-family: 'Montserrat', sans-serif;
+ font-size: 18px;
+ line-height: 1.6;
+ color: #333;
+ display: inline-block;
+}
+
+/* Creating styling for the focal length indicator bar */
+.focal-length {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ margin-top: 20px;
+}
+
+.indicator {
+ position: relative;
+ width: 200px;
+ height: 20px;
+ background-color: black;
+ border-radius: 10px;
+ box-shadow: inset 0px 0px 5px #bfbfbb;
+ overflow: hidden;
+ transition: all 0.3s ease-in-out;
+}
+
+.indicator .bar  {
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: 100%;
+ width: 100%;
+ background-color: #007bff;
+}
+
+.focal-length:hover {
+ transform: 0.5;
+}
+
+.indicator .thumb {
+ position: absolute;
+ top: -5px;
+ left: 50%;
+ transform: translateX(-50%);
+ width: 10px;
+ height: 10px;
+ border-radius: 50%;
+ background-color: white;
+ box-shadow: 0px 0px 5px #007bff;
+ cursor: pointer;
+}
+
+.focal-length .label {
+ margin-top: 10px;
+ font-size: 16px;
+ color: blue;
+}
+
+#focal-length-value {
+ font-weight: bold;
+}
+
+/* Creating styling for brightness input field */
+.brightness_setting {
+ font-size: 16px;
+ font-weight: bold;
+ margin-right: 10px;
+ margin-top: 2rem;
+}
+
+input[type="number"] {
+ font-size: 16px;
+ padding: 5px;
+ border-radius: 5px;
+ border: 1px solid #ccc;
+ width: 80px;
+ margin-right: 10px;
+ margin-top: 5px;
+}
+
+input[type="number"] {
+ border-color: #3b88fd;
+ box-shadow: 0 0 5px rgba(59, 136, 253, 0.5);
+}
+
+/* Style 2 instructions labels for brightness */
+.brightness-section {
+ margin-top: 5rem;
+}
+
+.brightness-section:hover {
+ transform: scale(1.1);
+}
+
+#brightness-increase {
+ font-family: 'Montserrat', sans-serif;
+ font-size: 18px;
+ line-height: 1.6;
+ color: #333;
+ display: inline-block;
+}
+
+#brightness-decrease {
+ margin-top: -10px;
+ font-family: 'Montserrat', sans-serif;
+ font-size: 18px;
+ line-height: 1.6;
+ color: #333;
+ display: inline-block;
+}
+
+/* Creating brightness for brightness indicator bar */
+.brightness {
+ display: flex;
+ flex-direction: column;
+ margin-top: 20px;
+ align-items: center;
+}
+
+.brightness .indicator-brightness {
+ position: relative;
+ width: 200px;
+ height: 20px;
+ background-color: black;
+ border-radius: 10px;
+ box-shadow: inset 0px 0px 5px #bfbfbb;
+ overflow: hidden;
+ transition: all 0.3s ease-in-out;
+}
+
+.indicator-brightness  {
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: 100%;
+ width: 100%;
+ background-color: yellow;
+}
+
+.indicator-brightness .thumb-brightness {
+ position: absolute;
+ top: -5px;
+ left: 50%;
+ transform: translateX(-50%);
+ width: 10px;
+ height: 10px;
+ border-radius: 50%;
+ background-color: white;
+ box-shadow: 0px 0px 5px yellowgreen;
+ cursor: pointer;
+}
+
+.indicator-brightness .bar-brightness {
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: 100%;
+ width: 100%;
+ background-color: orange;
+}
+
+.brightness .label {
+ margin-top: 10px;
+ font-size: 16px;
+ color: red;
+}
+
+#brightness-value {
+ font-weight: bold;
+}
+
+/* Setting up the instruction for white balance lock */
+.white-balance-lock-section {
+ margin-top: 80px;
+ align-items: center;
+ text-align: center;
+ transition: transform 2s ease-in-out;
+}
+
+.white-balance-lock-section:hover {
+ transform: scale(1.1);
+}
+
+#white-balance-lock-text {
+ font-family: 'Montserrat', sans-serif;
+ font-size: 18px;
+ line-height: 1.6;
+ color: #333;
+ display: inline-block;
+}
+
+/* Setting up the switch indicator for white balance lock */
+.switch {
+ position: relative;
+ display: inline-block;
+ width: 100px;
+ height: 26px;
+ margin: 10px;
+}
+
+.switch input[type="checkbox"] {
+ opacity: 0;
+ width: 0;
+ height: 0;
+}
+
+.slider {
+ position: absolute;
+ cursor: pointer;
+ top: 0;
+ left: 0;
+ right: 0;
+ bottom: 0;
+ background-color: gray;
+ -webkit-transition: 0.4s;
+ transition: .4s;
+ border-radius: 34px;
+}
+
+.slider::before {
+ position: absolute;
+ content: "";
+ height: 19px;
+ width: 18px;
+ left: 3px;
+ bottom: 4px;
+ background-color: white;
+ -webkit-transition: .4s;
+ transition: .4s;
+ border-radius: 50%;
+}
+
+input:checked + .slider {
+ background-color: #2196f3;
+}
+
+input:checked + .slider::before {
+ -webkit-transform: translateX(76px);
+ -ms-transform: translateX(76px);
+ transform: translateX(76px);
+}
+
+/* rounded sliders */
+.slider.round {
+ border-radius: 34px;
+}
+
+.slider.round::before {
+ border-radius: 50%;
+}
+
+/* Setting up the instruction for the auto exposure lock */
+.auto-exposure-lock-section {
+ margin-top: 80px;
+ align-items: center;
+ text-align: center;
+ transition: all 0.3s ease-in-out;
+}
+
+.auto-exposure-lock-section:hover {
+ transform: scale(1.05);
+}
+
+#auto-exposure-lock-text {
+ font-family: 'Montserrat', sans-serif;
+ font-size: 18px;
+ line-height: 1.6;
+ color: #333;
+ display: inline-block;
+}
+
+/* Setting up the lock image for the auto-exposure indicator */
+.lock-container {
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ margin-top: 20px;
+}
+
+.lock {
+ width: 200px;
+ height: 150px;
+ cursor: pointer;
+ transition: all 0.3s ease-in-out;
+ background-color: none;
+}
+
+.unlock {
+ width: 200px;
+ height: 150px;
+ cursor: pointer;
+ display: none;
+ background-color: none;
+}
+
+.lock:hover {
+ transform: scale(1.05);
+}
+
+.unlock:hover {
+ transform: scale(1.05);
+}
+
+.lock.closed:hover {
+ transform: scale(1.05);
+}
+
+/* Setting up the fade-in and rectangular border for each session */
+@media screen and (min-width: 768px) {
+ .focal-length-section {
+  margin-top: 70px;
+  margin-left: 330px;
+  border: 5px solid black;
+  align-content: center;
+  width: 50rem;
+  border-radius: 10px;
+  padding: 10px;
+  transition: opacity 0.5s ease-in-out;
+  margin-bottom: 10px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+  animation-name: fade-in;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+ }
+
+ .focal-length-section-div {
+  transition: all 0.5s ease-in-out;
+ }
+
+ .focal-length-section-div:hover {
+  transform: scale(1.05);
+ }
+ 
+ .brightness-section {
+  margin-top: 80px;
+  border: 5px solid black;
+  margin-left: 330px;
+  width: 50rem;
+  align-content: center;
+  border-radius: 10px;
+  padding: 10px;
+  transition: opacity 0.5s ease-in-out;
+  margin-bottom: 10px;
+  box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+  animation-name: fade-in;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  text-align: center;
+ }
+
+ .brightness-section-div {
+  transition: all 0.5s ease-in-out;
+ }
+
+ .brightness-section-div:hover {
+  transform: scale(1.05);
+ }
+ 
+ .white-balance-lock-section {
+  margin-top: 80px;
+  margin-left: 330px;
+  border-radius: 10px;
+  border-style: inset;
+  border-width: 5px;
+  border-color: black;
+  width: 50rem;
+  padding: 10px;
+  transition: opacity 0.5s ease-in-out;
+  margin-bottom: 10px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 12px 28px 0px, rgba(0, 0, 0, 0.1) 0px 2px 4px 0px, rgba(255, 255, 255, 0.05) 0px 0px 0px 1px inset;
+  animation-name: fade-in;
+  animation-duration: 3s;
+  animation-fill-mode: forwards;
+  text-align: center;
+ }
+
+ .white-balance-lock-section-div {
+  transition: all 0.5s ease-in-out;
+ }
+
+ .white-balance-lock-section-div:hover {
+  transform: scale(1.05);
+ }
+ 
+ .auto-exposure-lock-section {
+  align-self: center;
+  border-style: inset;
+  border-width: 5px;
+  border-color: black;
+  border-radius: 10px;
+  margin-top: 80px;
+  margin-left: 330px;
+  align-items: center;
+  padding: 10px;
+  width: 50rem;
+  transition: opacity 0.5s ease-in-out;
+  margin-bottom: 10px;
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+  animation-name: fade-in;
+  animation-duration: 4s;
+  animation-fill-mode: forwards;
+ }
+
+ .auto-exposure-lock-section-div {
+  transition: all 0.5s ease-in-out;
+ }
+
+ .auto-exposure-lock-section-div:hover {
+  transform: scale(1.05);
+ }
+
+ @keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+ }
+}
+
+/* Styling css for save button */
+.save-button p {
+ margin-left: 550px;
+ font-family: 'Montserrat', sans-serif;
+ font-size: 18px;
+ line-height: 1.6;
+ color: #333;
+ display: inline-block;
+ font-weight: bold;
+}
+
+.wrapper{
+ position: relative;
+ width: 100%;
+ height: 100%;
+}
+
+.button{
+ margin-top: 40px;
+ font-family: 'Ubuntu', sans-serif;
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ 
+ width: 170px;
+ height: 40px;
+ line-height: 1;
+ font-size: 18px;
+ font-weight: bold;
+ letter-spacing: 1px;
+ border: 3px solid #8C82FC;
+ background: #fff;
+ color: #8C82FC;
+ border-radius: 40px;
+ cursor: pointer;
+ overflow: hidden;
+ transition: all .35s;
+}
+
+.button:hover{
+ background: #8C82FC;
+ color: #fff;
+}
+
+.button span{
+ opacity: 1;
+ visibility: visible;
+ transition: all .35s;
+}
+
+.success{
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ background: #fff;
+ border-radius: 50%;
+ z-index: 1;
+ opacity: 0;
+ visibility: hidden;
+ transition: all .35s;
+}
+
+.success svg{
+ width: 20px;
+ height: 20px;
+ fill: yellowgreen;
+ transform-origin: 50% 50%;
+ transform: translateY(-50%) rotate(0deg) scale(0);
+ transition: all .35s;
+}
+
+.button.is_active{
+ width: 40px;
+ height: 40px;
+}
+
+.button.is_active .success{
+ opacity: 1;
+ visibility: visible;
+}
+
+.button.is_active .success svg{
+ margin-top: 50%;
+ transform: translateY(-50%) rotate(720deg) scale(1);
+}
+
+.button.is_active span{
+ opacity: 0;
+ visibility: hidden;
+}

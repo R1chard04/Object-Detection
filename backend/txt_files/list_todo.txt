@@ -1,0 +1,26 @@
+Here is a list of things need to be done for the BT1XX Program Website
+
+1. Back-end: SQLAlchemy is already set up to create 2 tables in martinrea database:
+   + Station table (camera's setting of the station):
+     - id (serial numbers)
+     - station numbers
+     - station's focal length
+     - station's brightness
+     - station's white balance lock
+     - station's auto exposure lock
+     - date + time created
+     - date + time updated
+
+   + Users table (store the users data in order to authenticate users for login):
+     - id (serial numbers)
+     - username or martinrea email
+     - password
+     - whether the user is an admin or not
+     - date + time created
+     - date + time updated
+
+2. API and URLs: 
+  + GET request towards 
+
+# redo the url to mask setup
+# import main and photos againnnnnnnnnnnnnnnnnn into backend
