@@ -6,7 +6,12 @@ from imageProcessingClasses import imageProcessing
 from imageCaptureClasses import imageCapture
 from imageMaskGeneration import createMask
 from imagePredictionClass import MSEStabilization, getPassRef
+<<<<<<< HEAD
+from imageRenamingClasses import BinaryNameAssigner
+from imageTimingClasses import imageTiming
+=======
 import numpy as np
+>>>>>>> f00d98667325706781e9853cdd2117df6da6936e
 import time
 import os
 import json
@@ -233,6 +238,37 @@ def mainloop(IP,selected):
     #-------------------------------------------------------------------------------------------#   
         while True:
             # capture a test image
+<<<<<<< HEAD
+            img = cv.imread(captureObject.autoCapture("Test.jpg", photoDirectoryName)) #returns a path that can be read. For some reason this prevents the return of a corrupted image
+                
+            processingObject.setTestImg(img)  
+            # display the result on the frame
+            frame = process\
+                gvingObject.displayResultPosition()
+            # get the mse error
+            error = processingObject.compareImage() 
+            #Generates PASS/FAIL array
+            prediction = MSEStabilization(error, passref, 4) 
+
+            result = prediction.result()
+            print(result)
+            
+            bna = BinaryNameAssigner(result)
+            # ask user to name each occurance in array
+            assigned_names = bna.assign()
+            print(assigned_names)
+            
+            timing = imageTiming(result, assigned_names)
+            # record time elasped for each pass or fail and write to rescording_results.txt
+            timing.record()
+
+            # transferToPLC("OP100", result)
+
+            frame = cv.pyrDown(frame)
+            frame = cv.pyrDown(frame)
+            cv.imshow("errors", frame)
+            cv.waitKey(1)
+=======
             img = captureObject.captureOne(os.path.join(photosPath, stations[selected],"Test.jpg"), brightness, lensPos, IP)
             cv.imshow(IP, img)
             cv.waitKey(1)
@@ -255,3 +291,4 @@ def mainloop(IP,selected):
             # cv.imshow(IP, frame)
             
 
+>>>>>>> f00d98667325706781e9853cdd2117df6da6936e

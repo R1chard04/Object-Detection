@@ -4,10 +4,21 @@ import depthai as dai
 from imageProcessingClasses import imageProcessing
 from imagePredictionClass import MSEStabilization
 from calibrations import Recalibration, createPipeline
+from imageRenamingClasses import BinaryNameAssigner
+from imageTimingClasses import imageTiming
+from imageAverageClasses import imageAverage
 import time
 import cv2 as cv
 import depthai as dai
 import pdb
+
+db_config = {
+    "hostname": "localhost",
+    "database": "imageTiming",
+    "username": "postgres",
+    "pwd": "W1nter@2023Hydro",
+    "port_id": 5432
+}
 
 camera = Recalibration("station120")
 processingObject = imageProcessing("station120")
@@ -19,6 +30,11 @@ with dai.Device(createPipeline(), device_info) as device:
     camera.pressKeyCapture(device, camera.standardPath)
     
     print("start")
+    
+    array = [0, 0, 0, 0]
+    bna = BinaryNameAssigner(array)
+    assigned_names = bna.assign()
+    
     while True:     
         
         img = camera.capture(device)
@@ -28,6 +44,12 @@ with dai.Device(createPipeline(), device_info) as device:
         prediction = MSEStabilization(error, camera.passref, len(camera.parts)) 
 
         result = prediction.result()
+        timing = imageTiming(assigned_names, db_config)
+        response = timing.record(result)
+        calculation = imageAverage(db_config)
+        calculation.average(result)
+        
+        
         print(result)
 
         # transferToPLC("OP100", result)
