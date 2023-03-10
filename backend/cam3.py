@@ -4,7 +4,6 @@ import depthai as dai
 from imageProcessingClasses import imageProcessing
 from imagePredictionClass import MSEStabilization
 from calibrations import Recalibration, createPipeline
-from imageRenamingClasses import BinaryNameAssigner
 from imageTimingClasses import imageTiming
 from imageAverageClasses import imageAverage
 import time
@@ -30,9 +29,13 @@ with dai.Device(createPipeline(), device_info) as device:
     
     print("start")
     
-    array = [0, 0, 0, 0]
-    bna = BinaryNameAssigner(array)
-    assigned_names = bna.assign()
+    # ask user to name each occurance in array
+    assigned_names = [1, 2, 3, 4]
+    print(assigned_names)
+
+    timing = imageTiming(assigned_names, db_config)
+
+    arr = [0, 0, 0, 0]
     
     while True:     
         
@@ -43,10 +46,9 @@ with dai.Device(createPipeline(), device_info) as device:
         prediction = MSEStabilization(error, camera.passref, len(camera.parts)) 
 
         result = prediction.result()
-        timing = imageTiming(assigned_names, db_config)
         response = timing.record(result)
         calculation = imageAverage(db_config)
-        calculation.average(result)
+        final = calculation.average()
         
         
         print(result)
