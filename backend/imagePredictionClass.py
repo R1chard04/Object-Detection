@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 # declare arrays to store the errors for top, left, bottom, right
 def getPassRef(error, final):
     for i in range(len(error)):
-        if final[i] < error[i]*3:
-            final[i] = error[i] * 3
+        if final[i] < error[i]* 3.75:
+            final[i] = error[i] * 3.75
     return final
 
 # for live video
