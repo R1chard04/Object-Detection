@@ -49,7 +49,6 @@ with dai.Device(createPipeline(), device_info) as device:
         calculation = imageAverage(db_config)
         calculation.average(result)
         
-        
         print(result)
 
         # transferToPLC("OP100", result)
