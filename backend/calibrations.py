@@ -95,14 +95,14 @@ class Recalibration:
     def maskSetup(self, device):
         q = device.getOutputQueue(name="out")
         i = 0           
+        input("load all parts")
+        startTime = time.time()
+        while ((time.time()-startTime) < 3):
+            imgFrame = q.get()
+        imgSil = imgFrame.getCvFrame()
+        # cv.imwrite(self.refPaths[i], imgSil)
+        
         while i < len(self.parts):
-            input("load" + self.parts[i] + "part.")
-            startTime = time.time()
-            while ((time.time()-startTime) < 3):
-                imgFrame = q.get()
-            imgSil = imgFrame.getCvFrame()
-            cv.imwrite(self.refPaths[i], imgSil)
-            
             input("load"+ self.parts[i] + "colour part.")
             startTime = time.time()
             while ((time.time()-startTime) < 3):
@@ -154,11 +154,11 @@ class Recalibration:
         processingObject = imageProcessing(self.station)
         self.passref = [0]*len(self.parts)
           
-        for i in range(30):
+        for i in range(50):
             imgFrame = q.get().getCvFrame()
             processingObject.setTestImg(imgFrame)
             error = processingObject.compareImage()
-            print(error)
+            # print(error)
             self.passref = getPassRef(error, self.passref)
             
             # cv.imwrite(self.errDir + "//err" + str(i) + ".jpg", imgFrame)   
