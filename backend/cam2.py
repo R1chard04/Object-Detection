@@ -8,13 +8,14 @@ import time
 import cv2 as cv
 import depthai as dai
 
-camera = Recalibration("station5")
-processingObject = imageProcessing("station5")
+camera = Recalibration("station100")
+processingObject = imageProcessing("station100")
 
 device_info = dai.DeviceInfo(camera.IP)
 
 with dai.Device(createPipeline(), device_info) as device:
     camera.adjustCamera(device)
+    camera.pressKeyCapture(device, camera.standardPath)
     
     print("start")
     while True:     

@@ -67,14 +67,25 @@ create_tables()
 def insert_users() -> None:
   with app.app_context():
     # create a list of non-encoded username and passwords
+    name = 'Kent'
     usernames = 'kent.tran@martinrea.com'
     passwords = 'Kenttran2302$'
+    name1 = 'Leo'
+    usernames1 = 'leo.you@martinrea.com'
+    passwords1 = 'Leoyou1234$'
+    name2 = 'Jamie'
+    usernames2 = 'jamie.yen@martinrea.com'
+    passwords2 = 'Jamieyen12345$'
     # validate the username and password constraints before hashing it and put it into the database
-    if validate_username(usernames):
+    if validate_username(usernames) and validate_username(usernames1) and validate_username(usernames2):
       hashed_password = validate_password(usernames, passwords)
+      hashed_password1 = validate_password(usernames1, passwords1)
+      hashed_password2 = validate_password(usernames2, passwords2)
       # create an instance to insert rows into user table
       new_users = [
-        Users(id=1, username=usernames, password=hashed_password, is_admin=True)
+        Users(id=1, name=name, username=usernames, password=hashed_password, is_admin=True),
+        Users(id=2, name=name1, username=usernames1, password=hashed_password1, is_admin=True),
+        Users(id=3, name=name2, username=usernames2, password=hashed_password2, is_admin=True),
       ]
 
     # insert the new user into the session
@@ -94,7 +105,7 @@ insert_users()
 def run_all_cameras():
   subprocess.Popen(['C:/Users/kent.tran/AppData/Local/Programs/Python/Python311/python.exe', 'cam1.py'])
   subprocess.Popen(['C:/Users/kent.tran/AppData/Local/Programs/Python/Python311/python.exe', 'cam2.py'])
-  subprocess.Popen(['C:/Users/kent.tran/AppData/Local/Programs/Python/Python311/python.exe', 'cam3.py'])
+  # subprocess.Popen(['C:/Users/kent.tran/AppData/Local/Programs/Python/Python311/python.exe', 'cam3.py'])
 
 
 @socketio.on('key_event')
@@ -151,7 +162,7 @@ def station_detail(station_number):
 
 ###################### STATION SETTINGS ######################
 # render the station settings:
-@app.route('/bt1xx/station/<int:station_number>/settings')
+@app.route('/bt1xx/station/<int:station_number>/settings/')
 def station_settings(station_number):
   try:
     # enable the websockets to be ready to listen for events on the client side
@@ -312,44 +323,12 @@ def create_errors(station_number):
       recalibration = Recalibration(station='station' + str(station_number))
       recalibration.upDateParams(station='station' + str(station_number))
       recalibration.adjustCamera(device=device)
+      recalibration.pressKeyCapture(device=device, path=recalibration.standardPath)
       recalibration.errorSetup(device=device)
       recalibration.updateJson(station='station' + str(station_number))
 
     return redirect(url_for('setUpSuccessful', station_number=station_number))
 
-  except:
-    print(f"Error connecting to the device!")
-    return redirect(url_for('station_detail', station_number=station_number))
-  
-############################### STATION CONTROL SETUP PAGE ##########################
-@app.route('/bt1xx/station/<int:station_number>/controlsetup')
-def station_control_setup(station_number):
-  return render_template('station_control_setup.html', station_number=station_number)
-
-@app.route('/bt1xx/control/showframe/station/<int:station_number>')
-def create_controls(station_number):
-  # call the function to connect to a device
-  IP = partList['station' + str(station_number)]["IP"]
-  name = partList['station' + str(station_number)]["name"]
-
-  try:
-    pipeline = createPipeline()
-
-    device_info = dai.DeviceInfo(IP)
-    device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
-    device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
-
-    for device in dai.Device.getAllAvailableDevices():
-      print(f"{device.getMxId()} {device.state}")
-
-    with dai.Device(pipeline, device_info) as device:
-      # call a function to set up the errors
-      recalibration = Recalibration(station='station' + str(station_number))
-      recalibration.upDateParams(station='station' + str(station_number))
-      recalibration.controlSetup(device=device)
-    
-    return redirect(url_for('setUpSuccessful', station_number=station_number))
-  
   except:
     print(f"Error connecting to the device!")
     return redirect(url_for('station_detail', station_number=station_number))
@@ -405,10 +384,10 @@ def logout():
   return redirect(url_for('login'))
 
 # Check session expiration
-@app.before_request
-def checkExpiration():
-  if(check_session_expiry()):
-    return redirect(url_for('login'))
+# @app.before_request
+# def checkExpiration():
+#   if(check_session_expiry()):
+#     return redirect(url_for('login'))
   
 ############################## RUNNING ALL THE PROGRAMS ##############################
 @app.route('/bt1xx/startallprograms/', methods=['GET'])

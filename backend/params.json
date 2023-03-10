@@ -1,7 +1,7 @@
 {
     "station100": {
-        "brightness": 0,
-        "lensPos": 112,
+        "brightness": -1,
+        "lensPos": 108,
         "parts": [
             "top",
             "left",
@@ -9,13 +9,13 @@
             "right"
         ],
         "passref": [
-            430.0865310560413,
-            4.636753446451747,
-            3.7165448338534435,
-            2.5419663629507436
+            47.7156544384786,
+            18.83384324819704,
+            50.854958361299694,
+            16.1083513840255
         ],
-        "IP": "169.254.1.201",
-        "name": "19443010613C6E1300",
+        "IP": "169.254.1.203",
+        "name": "1944301051766E1300",
         "masks": [
             "Photos\\Masks\\station100\\top.jpg",
             "Photos\\Masks\\station100\\left.jpg",
@@ -39,7 +39,7 @@
         "errDir": "Photos\\Err\\station100"
     },
     "station5": {
-        "brightness": 0,
+        "brightness": -1,
         "lensPos": 108,
         "parts": [
             "left",
@@ -69,7 +69,7 @@
     },
     "station120": {
         "brightness": -1,
-        "lensPos": 108,
+        "lensPos": 128,
         "parts": [
             "topRight",
             "topLeft",
@@ -79,15 +79,15 @@
             "right"
         ],
         "passref": [
-            3,
-            4,
-            4,
-            5,
-            5,
-            5
+            64.22949918928674,
+            87.09771833145693,
+            93.03540743055069,
+            166.83599171869417,
+            169.1752990122406,
+            95.29499009726763
         ],
-        "IP": "169.254.1.203",
-        "name": "1944301051766E1300",
+        "IP": "169.254.1.201",
+        "name": "19443010613C6E1300",
         "masks": [
             "Photos\\Masks\\station120\\topRight.jpg",
             "Photos\\Masks\\station120\\topLeft.jpg",

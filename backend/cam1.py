@@ -16,6 +16,7 @@ device_info = dai.DeviceInfo(camera.IP)
 
 with dai.Device(createPipeline(), device_info) as device:
     camera.adjustCamera(device)
+    camera.pressKeyCapture(device, camera.standardPath)
     
     print("start")
     while True:     

@@ -56,6 +56,11 @@
  }
 }
 
+/* CSS styling for the show frame button */
+#show-frame-button {
+  margin-left: 40rem;
+}
+
 /* CSS styling for the footer */
 .footer {
  background-color: #171942;

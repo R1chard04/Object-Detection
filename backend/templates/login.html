@@ -20,7 +20,7 @@
      <span class="error" style="color:red;">{{ errors['username'] }}</span><br>
     {% endif %}
     <label for="password">Password:</label><br>
-    <input type="text" name="password" id="password"/><br>
+    <input type="password" name="password" id="password"/><br>
     {% if request.method == 'POST' and errors.get('password') %} 
      <span class="error" style="color:red">{{ errors['password'] }}</span><br>
     {% endif %}

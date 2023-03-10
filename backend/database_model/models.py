@@ -36,6 +36,7 @@ class Users(db.Model):
   __tablename__ = 'users'
 
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+  name = db.Column(db.String(50), nullable=False, unique=True)
   username = db.Column(db.String(100), nullable=False, unique=True) # check constraint for username
   password = db.Column(db.String(100), nullable=False, unique=True) # check constraint for password
   is_admin = db.Column(db.Boolean, nullable=False) # check if the user is admin or not
@@ -52,6 +53,6 @@ class Users(db.Model):
   )
 
   def __repr__(self) -> str:
-    return '<User %r>' % self.username
+    return '<User %r>' % self.username % self.name
 
 

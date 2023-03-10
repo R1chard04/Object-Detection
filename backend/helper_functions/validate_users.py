@@ -8,7 +8,7 @@ def validate_users(user_info, username) -> bool:
  # if the user's login fields are all validated (user's information is in the database)
  if user_info:
   session['username'] = username
-  session['expiry_time'] = (datetime.now() + timedelta(minutes=15)).isoformat()
+  session['expiry_time'] = (datetime.now() + timedelta(minutes=1440)).isoformat()
   return True
  # if the users failed to login, this might be the users are not authorized for this program or they didn't enter your username and password
  else:
@@ -41,5 +41,5 @@ def check_session_expiry() -> bool:
       return True
     else:
       # Update expiry time
-      session['expiry_time'] = (datetime.now() + timedelta(minutes=15)).isoformat()
+      session['expiry_time'] = (datetime.now() + timedelta(minutes=1440)).isoformat()
       return False

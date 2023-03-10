@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
  let btnClick = document.getElementById('show-frame-button');
+ const btnClickEvent = document.getElementById('instructions-box');
+
  const stationElement = document.querySelector('#station');
  // cut out the station number in the url
  const stationNumber = stationElement.textContent.trim();
@@ -13,5 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
  btnClick.addEventListener('click', function() {
   loadContent();
+  btnClickEvent.style.display = 'inline-block';
  });
 });

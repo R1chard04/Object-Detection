@@ -8,8 +8,8 @@ import time
 import cv2 as cv
 import depthai as dai
 
-camera = Recalibration("station10")
-processingObject = imageProcessing("station10")
+camera = Recalibration("station100")
+processingObject = imageProcessing("station100")
 
 device_info = dai.DeviceInfo(camera.IP)
 

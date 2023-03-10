@@ -16,7 +16,56 @@
    </h2> 
   </div>
   <div class="body">
-    <button id="show-frame-button" onclick="loadContent()">Start Masks Setup for station {{ station_number }}</button>
+    <button id="show-frame-button" onclick="loadContent()">Start Masks Setup for station {{ station_number }}</button><br>
+    <div id="instructions-box" style="display:none;">
+      {% if station_number == 100 %}
+      <div>
+        <p id="top-part">Load top part, then press any button to continue.</p>
+        <button id="top-part-button">Finish</button><br>
+        <p id="top-part-colour">Load top part with colour, then press any button to continue.</p>
+        <button id="top-part-colour-button">Finish</button><br>
+        <p id="left-part">Load left part, then press any button to continue.</p>
+        <button id="left-part-button">Finish</button><br>
+        <p id="left-part-colour">Load left part with colour, then press any button to continue.</p>
+        <button id="left-part-colour-button">Finish</button><br>
+        <p id="bottom-part">Load bottom part, after that, press any button to move on the next part.</p>
+        <button id="bottom-part-button">Finish</button><br>
+        <p id="bottom-part-colour">Load bottom part with colour, then press any button to continue the process.</p>
+        <button id="bottom-part-colour-button">Finish</button><br>
+        <p id="right-part">Load right part, then press any button to continue.</p>
+        <button id="right-part-button">Finish</button><br>
+        <p id="right-part-colour">Load right part with colour, then press any button to continue.</p>
+        <button id="right-part-colour-button">Finish</button><br>
+      </div>
+      {% elif station_number == 120 %}
+      <div>
+        <p id="topRight-part">Load top right part, then press any button to continue.</p><br>
+        <button id="topRight-part-button">Finish</button><br>
+        <p id="topRight-part-colour">Load top right part with colour, then press any button to continue.</p><br>
+        <button id="topRight-part-colour-button">Finish</button><br>
+        <p id="topLeft-part">Load top left part, then press any button to continue.</p><br>
+        <button id="topLeft-part-button">Finish</button><br>
+        <p id="topLeft-part-colour">Load top left part with colour, then press any button to continue.</p><br>
+        <button id="topLeft-part-colour-button">Finish</button><br>
+        <p id="left-part">Load left part, then press any button to continue.</p><br>
+        <button id="left-part-button">Finish</button><br>
+        <p id="left-part-colour">Load left part with colour, then press any button to continue.</p><br>
+        <button id="left-part-colour-button">Finish</button><br>
+        <p id="bottomLeft-part">Load bottom left part, after that, press any button to move on the next part.</p><br>
+        <button id="bottomLeft-part-button">Finish</button><br>
+        <p id="bottomLeft-part-colour">Load bottom left part with colour, then press any button to continue the process.</p><br>
+        <button id="bottomLeft-part-colour-button">Finish</button><br>
+        <p id="bottomRight-part">Load bottom right part, after that, press any button to move on the next part.</p><br>
+        <button id="bottomRight-part-button">Finish</button><br>
+        <p id="bottomRight-part-colour">Load bottom right part with colour, then press any button to continue the process.</p><br>
+        <button id="bottomRight-part-colour-button">Finish</button><br>
+        <p id="right-part">Load right part, then press any button to continue.</p><br>
+        <button id="right-part-button">Finish</button><br>
+        <p id="right-part-colour">Load right part with colour, then press any button to continue.</p><br>
+        <button id="right-part-colour-button">Finish</button><br>
+      </div>
+      {% endif %}
+    </div>
   </div>
  </body>
 </html>
