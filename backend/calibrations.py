@@ -154,10 +154,11 @@ class Recalibration:
         processingObject = imageProcessing(self.station)
         self.passref = [0]*len(self.parts)
           
-        for i in range(10):
+        for i in range(30):
             imgFrame = q.get().getCvFrame()
             processingObject.setTestImg(imgFrame)
             error = processingObject.compareImage()
+            print(error)
             self.passref = getPassRef(error, self.passref)
             
             # cv.imwrite(self.errDir + "//err" + str(i) + ".jpg", imgFrame)   
