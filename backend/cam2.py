@@ -28,11 +28,11 @@ device_info = dai.DeviceInfo(camera.IP)
 
 with dai.Device(createPipeline(), device_info) as device:
     camera.adjustCamera(device)
-    camera.pressKeyCapture(device, camera.standardPath)
-    camera.errorSetup(device)
-    print("final error:")
-    print(camera.passref)
-    camera.updateJson(camera.station)
+    # camera.pressKeyCapture(device, camera.standardPath)
+    # camera.errorSetup(device)
+    # print("final error:")
+    # print(camera.passref)
+    # camera.updateJson(camera.station)
     processingObject = imageProcessing("station100")
     
     # print("start")
