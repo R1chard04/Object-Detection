@@ -11,6 +11,10 @@ import time
 import cv2 as cv
 import depthai as dai
 import pdb
+import pylogix 
+from pylogix import PLC
+from PLCUpdate import writePLC
+
 
 db_config = {
     "hostname": "localhost",
@@ -48,9 +52,12 @@ with dai.Device(createPipeline(), device_info) as device:
         response = timing.record(result)
         calculation = imageAverage(db_config)
         calculation.average(result)
-        
+
+        # write PLC value to the HMI
+        writePLC("Camera_Output.5", result)
         
         print(result)
+
 
         # transferToPLC("OP100", result)
         cv.waitKey(1)
