@@ -1,1 +1,0 @@
-python cam1.py& python cam2.py& python cam3.py&

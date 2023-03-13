@@ -3,7 +3,7 @@ import time
 import depthai as dai
 from imageProcessingClasses import imageProcessing
 from imagePredictionClass import MSEStabilization
-from calibrations import Recalibration, createPipeline
+from imageCalibrationClass import Recalibration, createPipeline
 from imageTimingClasses import imageTiming
 from imageAverageClasses import imageAverage
 import time

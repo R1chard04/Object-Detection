@@ -35,8 +35,7 @@
             "Photos\\col\\station100\\bottom.jpg"
         ],
         "standard": "Photos\\Refs\\station100\\STD.jpg",
-        "test": "Photos\\Refs\\station100\\test.jpg",
-        "errDir": "Photos\\Err\\station100"
+        "test": "Photos\\Refs\\station100\\test.jpg"
     },
     "station5": {
         "brightness": -1,
@@ -64,8 +63,7 @@
             "Photos\\col\\station5\\right.jpg"
         ],
         "standard": "Photos\\Refs\\station5\\STD.jpg",
-        "test": "Photos\\Refs\\station5\\test.jpg",
-        "errDir": "Photos\\Err\\station5"
+        "test": "Photos\\Refs\\station5\\test.jpg"
     },
     "station120": {
         "brightness": -1,
@@ -113,7 +111,6 @@
             "Photos\\Col\\station120\\right.jpg"
         ],
         "standard": "Photos\\Refs\\station120\\STD.jpg",
-        "test": "Photos\\Refs\\station120\\test.jpg",
-        "errDir": "Photos\\Err\\station120"
+        "test": "Photos\\Refs\\station120\\test.jpg"
     }
 }
