@@ -13,6 +13,8 @@ import pdb
 import pylogix 
 from pylogix import PLC
 from PLCUpdate import writePLC
+from time import timeLog
+    
 
 db_config = {
      "hostname": "localhost",
@@ -43,7 +45,8 @@ with dai.Device(createPipeline(), device_info) as device:
     timing = imageTiming(assigned_names, db_config)
 
     arr = [0, 0, 0, 0]
-    
+    timeObject = timeLog(camera.IP, camera['parts'])
+
     while True:     
         
         img = camera.capture(device)
@@ -53,10 +56,14 @@ with dai.Device(createPipeline(), device_info) as device:
         prediction = MSEStabilization(error, camera.passref, len(camera.parts)) 
         # pdb.set_trace()
         result = prediction.result()
-        
-        response = timing.record(result)
-        calculation = imageAverage(db_config)
-        final = calculation.average()
+
+        clampClosed = #FROM SHUBHAM
+
+        recorded = timeObject.record(result, clampClosed)
+
+        # response = timing.record(result)
+        # calculation = imageAverage(db_config)
+        # final = calculation.average()
         #  # write PLC value to the HMI
         writePLC("Camera_Output.5", result)
         print(result)
@@ -65,3 +72,9 @@ with dai.Device(createPipeline(), device_info) as device:
         cv.waitKey(1)
         frame = cv.pyrDown(frame)
         cv.imshow(camera.IP, frame)
+
+        if recorded is True:
+            while welding is True #(SHUBHAM)
+
+            timeObject = timeLog(camera.IP, camera['parts'])
+                
