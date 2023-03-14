@@ -25,11 +25,12 @@ device_info = dai.DeviceInfo(camera.IP)
 #     camera.maskSetup(device)
 #     # processingObject = imageProcessing("station100")
 
-imgSil = cv.imread(camera.standardPath)
-cv.imshow("this", imgSil)
-cv.waitKey(0)
+# cv.imshow("this", imgSil)
+# cv.waitKey(0)
 
 for i in range(len(camera.parts)):
     print(camera.parts[i])
+    imgSil = cv.imread(camera.refPaths[i])
     imgCol = cv.imread(camera.colPaths[i])
+    print(camera.maskPaths[i])
     createMask(imgSil, imgCol, camera.maskPaths[i])

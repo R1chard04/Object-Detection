@@ -128,17 +128,20 @@ class Recalibration:
     def maskSetup(self, device):
         q = device.getOutputQueue(name="out")
         i = 0           
-        print("load all parts and press c to capture")
-        while True:
-            imgSil = q.get().getCvFrame()
-            key = cv.waitKey(1)
-            if key == ord('c'):
-                cv.destroyAllWindows()
-                break
-            imgSil = cv.pyrDown(imgSil)
-            cv.imshow("results", imgSil)
         
         while i < len(self.parts):
+            
+            print("load"+ self.parts[i] + "silver part and press c to capture")
+            while True:
+                imgSil = q.get().getCvFrame()
+                key = cv.waitKey(1)
+                if key == ord('c'):
+                    cv.imwrite(self.refPaths[i], imgSil)
+                    cv.destroyAllWindows()
+                    break
+                imgSil = cv.pyrDown(imgSil)
+                cv.imshow("results", imgSil)
+                
             print("load"+ self.parts[i] + "colour part and press c to capture")
             while True:
                 imgCol = q.get().getCvFrame()

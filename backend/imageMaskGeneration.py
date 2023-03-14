@@ -59,6 +59,9 @@ def createMask(std, col, maskPath):
 
   #Image subtraction
   diff = cv.absdiff(std, col)
+  test = cv.pyrDown(diff)
+  cv.imshow("diff",test)
+  cv.waitKey(0)
 
   #Denoising
   denoise = np.float32(diff) / 255.0
@@ -77,11 +80,11 @@ def createMask(std, col, maskPath):
   #Finding Contours
   contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
   contours = sorted(contours, key=cv.contourArea, reverse=True)
-  if len(contours) == 0:
-    return False
-  else:
-    largest_contour = contours[0]
-    cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 7)
+  # if len(contours) == 0:
+  #   return False
+  # else:
+  largest_contour = contours[0]
+  cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 7)
 
   #Reparing contoured
   repair = fillByLine(ref, "V")
@@ -89,6 +92,9 @@ def createMask(std, col, maskPath):
   repair = floodFill(repair)
 
   mask = repair
+  mask = cv.pyrDown(mask)
+  cv.imshow("mask", mask)
+  cv.waitKey(0)
   cv.imwrite(maskPath, mask)
   return True
 
