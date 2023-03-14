@@ -12,7 +12,7 @@ import depthai as dai
 import pdb
 import pylogix 
 from pylogix import PLC
-from PLCUpdate import writePLC
+from PLCUpdate import writePLC, readPLC
 
 # db_config = {
 #      "hostname": "localhost",
@@ -21,6 +21,13 @@ from PLCUpdate import writePLC
 #      "pwd": "W1nter@2023Hydro",
 #      "port_id": 5432
 #  }
+
+# Clamp at work for station#100
+clampSt100 = readPLC("Program:Sta100.Station.Cycle.Step.Bit[7]")
+# clear to enter station#100
+clrSt100 = readPLC("Sta100_OK_To_Enter")
+
+        
 
 camera = Recalibration("station100")
 device_info = dai.DeviceInfo(camera.IP)

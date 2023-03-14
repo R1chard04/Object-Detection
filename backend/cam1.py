@@ -12,7 +12,7 @@ import depthai as dai
 import pdb
 import pylogix 
 from pylogix import PLC
-from PLCUpdate import writePLC
+from PLCUpdate import writePLC, readPLC
 
 # db_config = {
 #      "hostname": "localhost",
@@ -21,6 +21,13 @@ from PLCUpdate import writePLC
 #      "pwd": "W1nter@2023Hydro",
 #      "port_id": 5432
 #  }
+
+
+# Clamp at work for station#120
+clampSt120 = readPLC("Program:Sta120.Station.Cycle.Step.Bit[10]")
+# clear to enter station#120
+clrSt120 = readPLC("Sta120_OK_To_Enter")
+
 
 camera = Recalibration("station120")
 device_info = dai.DeviceInfo(camera.IP)
@@ -59,6 +66,7 @@ with dai.Device(createPipeline(), device_info) as device:
         # final = calculation.average()
         #  # write PLC value to the HMI
         writePLC("Camera_Output.5", result)
+
         print(result)
 
         # transferToPLC("OP100", result)

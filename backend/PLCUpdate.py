@@ -8,7 +8,8 @@ def readPLC(camTagName):
     with PLC() as comm:
         comm.IPAddress = '10.110.50.201'
         Operator_Swipe = comm.Read(camTagName)
-        print(Operator_Swipe.TagName, Operator_Swipe.Value, Operator_Swipe.Status)
+        return Operator_Swipe.Value
+        
 
 # send one for pass and zero for fail for each feature, Run when it requires to write the value
 def writePLC(tagName, resultError):
