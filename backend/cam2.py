@@ -4,23 +4,30 @@ import depthai as dai
 from imageProcessingClasses import imageProcessing
 from imagePredictionClass import MSEStabilization
 from imageCalibrationClass import Recalibration, createPipeline
-from imageTimingClasses import imageTiming
-from imageAverageClasses import imageAverage
+# from imageTimingClasses import imageTiming
+# from imageAverageClasses import imageAverage
 import time
 import cv2 as cv
 import depthai as dai
 import pdb
 import pylogix 
 from pylogix import PLC
-from PLCUpdate import writePLC
+from PLCUpdate import writePLC, readPLC
 
-db_config = {
-     "hostname": "localhost",
-     "database": "imageTiming",
-     "username": "postgres",
-     "pwd": "W1nter@2023Hydro",
-     "port_id": 5432
- }
+# db_config = {
+#      "hostname": "localhost",
+#      "database": "imageTiming",
+#      "username": "postgres",
+#      "pwd": "W1nter@2023Hydro",
+#      "port_id": 5432
+#  }
+
+# Clamp at work for station#100
+clampSt100 = readPLC("Program:Sta100.Station.Cycle.Step.Bit[7]")
+# clear to enter station#100
+clrSt100 = readPLC("Sta100_OK_To_Enter")
+
+        
 
 camera = Recalibration("station100")
 device_info = dai.DeviceInfo(camera.IP)
@@ -37,12 +44,12 @@ with dai.Device(createPipeline(), device_info) as device:
     # print("start")
     
     # ask user to name each occurance in array
-    assigned_names = [1, 2, 3, 4]
-    print(assigned_names)
+    # assigned_names = [1, 2, 3, 4]
+    # print(assigned_names)
 
-    timing = imageTiming(assigned_names, db_config)
+    # timing = imageTiming(assigned_names, db_config)
 
-    arr = [0, 0, 0, 0]
+    # arr = [0, 0, 0, 0]
     
     while True:     
         
@@ -54,9 +61,9 @@ with dai.Device(createPipeline(), device_info) as device:
         # pdb.set_trace()
         result = prediction.result()
 
-        response = timing.record(result)
-        calculation = imageAverage(db_config)
-        final = calculation.average()
+        # response = timing.record(result)
+        # calculation = imageAverage(db_config)
+        # final = calculation.average()
         
         #  # write PLC value to the HMI
         writePLC("Camera_Output.1", result)

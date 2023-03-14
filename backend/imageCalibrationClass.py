@@ -49,7 +49,6 @@ class Recalibration:
         self.colPaths = params ["cols"]
         self.standardPath = params["standard"]
         self.testPath = params["test"]
-        self.errDir = params["errDir"]
     
     # this function setup params for stations
     def paramSetup(self, device):
@@ -58,7 +57,6 @@ class Recalibration:
         
         while True:
             frame = q.get().getCvFrame()
-            frame = cv.pyrDown(frame)
             frame = cv.pyrDown(frame)
             cv.imshow(self.station, frame)
             
@@ -95,22 +93,27 @@ class Recalibration:
     def maskSetup(self, device):
         q = device.getOutputQueue(name="out")
         i = 0           
-        input("load all parts")
-        startTime = time.time()
-        while ((time.time()-startTime) < 3):
-            imgFrame = q.get()
-        imgSil = imgFrame.getCvFrame()
-        # cv.imwrite(self.refPaths[i], imgSil)
+        print("load all parts and press c to capture")
+        while True:
+            imgSil = q.get().getCvFrame()
+            key = cv.waitKey(1)
+            if key == ord('c'):
+                cv.destroyAllWindows()
+                break
+            imgSil = cv.pyrDown(imgSil)
+            cv.imshow("results", imgSil)
         
         while i < len(self.parts):
-            input("load"+ self.parts[i] + "colour part.")
-            startTime = time.time()
-            while ((time.time()-startTime) < 3):
-                imgFrame = q.get()
-            imgFrame = q.get()
-            imgCol = imgFrame.getCvFrame()
-            cv.imwrite(self.colPaths[i], imgCol)
-            
+            print("load"+ self.parts[i] + "colour part and press c to capture")
+            while True:
+                imgCol = q.get().getCvFrame()
+                key = cv.waitKey(1)
+                if key == ord('c'):
+                    cv.imwrite(self.colPaths[i], imgCol)
+                    cv.destroyAllWindows()
+                    break
+                imgCol = cv.pyrDown(imgCol)
+                cv.imshow("results", imgCol)
             print("Creating a mask, this may take a minute")
             if createMask(imgSil, imgCol, self.maskPaths[i]):
                 i += 1
@@ -153,15 +156,13 @@ class Recalibration:
         q = device.getOutputQueue(name="out")
         processingObject = imageProcessing(self.station)
         self.passref = [0]*len(self.parts)
-          
+        
+        print("setting up pass references")
         for i in range(50):
             imgFrame = q.get().getCvFrame()
             processingObject.setTestImg(imgFrame)
             error = processingObject.compareImage()
-            # print(error)
-            self.passref = getPassRef(error, self.passref)
-            
-            # cv.imwrite(self.errDir + "//err" + str(i) + ".jpg", imgFrame)   
+            self.passref = getPassRef(error, self.passref)  
         return
     
     # this function should be called when the camera get turned on
@@ -184,7 +185,6 @@ class Recalibration:
         startTime = time.time()
         while ((time.time()-startTime) < 10):
             imgFrame = q.get().getCvFrame()
-            imgFrame = cv.pyrDown(imgFrame)
             imgFrame = cv.pyrDown(imgFrame)
             cv.imshow("adjusting the camera", imgFrame)
             cv.waitKey(1)
@@ -222,7 +222,6 @@ class Recalibration:
                 cv.destroyAllWindows()
                 break
             
-            imgFrame = cv.pyrDown(imgFrame)
             imgFrame = cv.pyrDown(imgFrame)
             cv.imshow("results", imgFrame)
             
