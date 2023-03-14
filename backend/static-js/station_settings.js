@@ -29,13 +29,6 @@ document.addEventListener('DOMContentLoaded', function() {
   //   socket.send(key);
   // });
 
-  var socket = io.connect('http://127.0.0.1:5000/bt1xx/paramSetup/showframe/' + stationNumberOnly.toString());
- 
-  document.addEventListener('keydown', function(event) {
-    var data = {key: event.key};
-    socket.emit('key_event', data);
-  });
-
   // function redirect the user to the url of the python program using iframe
   let btnClick = document.getElementById("show-frame-button");
   function loadContent(){
@@ -53,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // // add the iframe element to the content element
     // content.appendChild(iframe);
     // redirect the users to set up the change setting url
-    window.location.href = 'http://127.0.0.1:5000/bt1xx/paramSetup/showframe/station/' + stationNumberOnly.toString();
+    window.location.href = btnClick.getAttribute("data-url");
   }
 
   btnClick.addEventListener("click", function() {
@@ -109,24 +102,51 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('mouseup', handleMouseUp);
  });
 
- window.addEventListener('keydown', (event) => {
-  // create an ajax request to change the python function
+//  window.addEventListener('keydown', (event) => {
+//   // create an ajax request to change the python function
 
-  if(event.key == ','){
-   focalLength = Math.max(minFocalLength, focalLength-1);
-   updateIndicator();
-   inputField.value = focalLength;
-  } // decrease the focal length
-  else if (event.key == '.'){
-   focalLength = Math.max(minFocalLength, focalLength+1);
-   if(focalLength > maxFocalLength){
-    focalLength = maxFocalLength;
-    valueSpan.textContent = focalLength;
-   }
-   updateIndicator();
-   inputField.value = focalLength;
-  }
- });
+//   if(event.key == ','){
+//    focalLength = Math.max(minFocalLength, focalLength-1);
+//    updateIndicator();
+//    inputField.value = focalLength;
+//   } // decrease the focal length
+//   else if (event.key == '.'){
+//    focalLength = Math.max(minFocalLength, focalLength+1);
+//    if(focalLength > maxFocalLength){
+//     focalLength = maxFocalLength;
+//     valueSpan.textContent = focalLength;
+//    }
+//    updateIndicator();
+//    inputField.value = focalLength;
+//   }
+//  });
+
+ // Fetch request to /bt1xx/paramSetup/showframe/station/<int:station_number>/ url to get the key event
+ function updateUI() {
+  setInterval(() => {
+    fetch('http://127.0.0.1:5000/bt1xx/paramSetup/showframe/station/' + stationNumberOnly + '/') 
+      .then(response => response.json())
+      .then(data => {
+        // update the UI elements based on the key event
+        if (data.key == ','){
+          focalLength = Math.max(minFocalLength, focalLength-1);
+          updateIndicator();
+          inputField.value = focalLength;
+          console.log(`New key event: ${data.key}`);
+        } else if (data.key == '.'){
+            focalLength = Math.max(minFocalLength, focalLength+1);
+            if(focalLength > maxFocalLength){
+            focalLength = maxFocalLength;
+            valueSpan.textContent = focalLength;
+            }
+            updateIndicator();
+            inputField.value = focalLength;
+            console.log(`New key event: ${data.key}`);
+        }
+      })
+      .catch(error => console.error(error));
+  }, 1000);
+ };
 
  inputField.addEventListener('input', () => {
   const inputVal = Number(inputField.value);
