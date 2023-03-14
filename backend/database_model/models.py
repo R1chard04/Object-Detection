@@ -55,4 +55,40 @@ class Users(db.Model):
   def __repr__(self) -> str:
     return '<User %r>' % self.username % self.name
 
+# create one model for storing timestamp
+class TimingStation100(db.Model):
+  __tablename__ = 'Station100_timing'
+
+  id = db.Column(db.Integer,nullable=False, primary_key=True, autoincrement=True)
+  TopPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  LeftPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  BottomPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  RightPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  ClampState = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+  # change to EST time
+  updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+  def __repr__(self) -> str:
+    return '<Station100_timing %r>' % self.updated_at
+
+class TimingStation120(db.Model):
+  __tablename__ = 'Station120_timing'
+
+  id = db.Column(db.Integer,nullable=False, primary_key=True, autoincrement=True)
+  TopRightPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  TopLeftPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  LeftPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  BottomLeftPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  BottomRightPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  RightPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  clampState = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
+  created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+  updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+
+  def __repr__(self) -> str:
+    return '<Station120_timing %r>' % self.updated_at
+  
+
+  
 
