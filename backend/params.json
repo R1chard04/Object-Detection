@@ -14,7 +14,7 @@
             71.79668808090959,
             22.803798626260054
         ],
-        "IP": "169.254.1.201",
+        "IP": "169.254.1.203",
         "name": "1944301051766E1300",
         "masks": [
             "Photos\\Masks\\station100\\top.jpg",
@@ -66,8 +66,8 @@
         "test": "Photos\\Refs\\station5\\test.jpg"
     },
     "station120": {
-        "brightness": -1,
-        "lensPos": 108,
+        "brightness": 0,
+        "lensPos": 118,
         "parts": [
             "topRight",
             "topLeft",
@@ -84,7 +84,7 @@
             222.49012569796457,
             119.84670366799122
         ],
-        "IP": "169.254.1.203",
+        "IP": "169.254.1.201",
         "name": "19443010613C6E1300",
         "masks": [
             "Photos\\Masks\\station120\\topRight.jpg",
@@ -103,8 +103,8 @@
             "Photos\\Refs\\station120\\right.jpg"
         ],
         "cols": [
-            "Photos\\Col\\station120\\topLeft.jpg",
             "Photos\\Col\\station120\\topRight.jpg",
+            "Photos\\Col\\station120\\topLeft.jpg",
             "Photos\\Col\\station120\\left.jpg",
             "Photos\\Col\\station120\\bottomLeft.jpg",
             "Photos\\Col\\station120\\bottomRight.jpg",
