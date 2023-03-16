@@ -50,5 +50,4 @@ class timeLog:
 
             return False
 
-
         
