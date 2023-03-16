@@ -12,6 +12,9 @@ import depthai as dai
 import pdb
 import pylogix 
 from pylogix import PLC
+from PLCUpdate import writePLC
+from timeClass import timeLog, db, time_app
+    
 from PLCUpdate import writePLC, readPLC
 
 db_config = {
@@ -40,13 +43,10 @@ with dai.Device(createPipeline(), device_info) as device:
     new_partLists120 = ['TopRightPart', 'TopLeftPart', 'LeftPart', 'BottomLeftPart', 'BottomRightPart', 'RightPart']
     print(new_partLists120)
 
-    timing = imageTiming(new_partLists120, db_config)
-
-    arr = [0, 0, 0, 0, 0, 0]
-    
-    print("going into loop")
-    
-    while True:     
+    # timing = imageTiming(assigned_names, db_config)
+    arr = [0, 0, 0, 0]
+    timeObject = timeLog(camera.station, camera.parts)
+    while True:         
         
         img = camera.capture(device)
         processingObject.setTestImg(img)
@@ -56,17 +56,25 @@ with dai.Device(createPipeline(), device_info) as device:
         # pdb.set_trace()
         print(error)
         result = prediction.result()
-        
-        response = timing.record(result)
-        calculation = imageAverage(db_config)
-        final = calculation.average()
+
+        clampClosed = readPLC("Program:Sta120.Station.Cycle.Step.Bit[10]")
+
+        recorded = timeObject.result_record(result, clampClosed)
+
+        # response = timing.record(result)
+        # calculation = imageAverage(db_config)
+        # final = calculation.average()
         #  # write PLC value to the HMI
-        # writePLC("Camera_Output.1", result)
-        print(result)
-        print(final)
+        writePLC("Camera_Output.5", result)
+
+        print(arr)
 
         # transferToPLC("OP100", result)
         cv.waitKey(1)
         frame = cv.pyrDown(frame)
-        frame = cv.pyrDown(frame)
         cv.imshow(camera.IP, frame)
+
+        if recorded is True:
+            while readPLC("Sta120_OK_To_Enter") is False:
+                pass
+            timeObject = timeLog(camera.station, camera.parts)
