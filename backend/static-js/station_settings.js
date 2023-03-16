@@ -102,51 +102,66 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('mouseup', handleMouseUp);
  });
 
-//  window.addEventListener('keydown', (event) => {
-//   // create an ajax request to change the python function
+ window.addEventListener('keydown', (event) => {
+  // fetch key events as a post request onto the 'update-ui' endpoint
+  const data = {'key' : event.key};
+  fetch('http://127.0.0.1:5000/bt1xx/update-ui/', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(response => {
+    if(!response.ok){
+      throw new Error('Failed to update the key event');
+    }
+    else{
+      console.log(data)
+    }
+  })
+  .catch(error => {
+    console.error(`Error: ${error}`);
+  });
 
-//   if(event.key == ','){
-//    focalLength = Math.max(minFocalLength, focalLength-1);
-//    updateIndicator();
-//    inputField.value = focalLength;
-//   } // decrease the focal length
-//   else if (event.key == '.'){
-//    focalLength = Math.max(minFocalLength, focalLength+1);
-//    if(focalLength > maxFocalLength){
-//     focalLength = maxFocalLength;
-//     valueSpan.textContent = focalLength;
-//    }
-//    updateIndicator();
-//    inputField.value = focalLength;
-//   }
-//  });
+  if(event.key == ','){
+   focalLength = Math.max(minFocalLength, focalLength-1);
+   updateIndicator();
+   inputField.value = focalLength;
+  } // decrease the focal length
+  else if (event.key == '.'){
+   focalLength = Math.max(minFocalLength, focalLength+1);
+   if(focalLength > maxFocalLength){
+    focalLength = maxFocalLength;
+    valueSpan.textContent = focalLength;
+   }
+   updateIndicator();
+   inputField.value = focalLength;
+  }
+ });
 
- // Fetch request to /bt1xx/paramSetup/showframe/station/<int:station_number>/ url to get the key event
- function updateUI() {
-  setInterval(() => {
-    fetch('http://127.0.0.1:5000/bt1xx/paramSetup/showframe/station/' + stationNumberOnly + '/') 
-      .then(response => response.json())
-      .then(data => {
-        // update the UI elements based on the key event
-        if (data.key == ','){
-          focalLength = Math.max(minFocalLength, focalLength-1);
-          updateIndicator();
-          inputField.value = focalLength;
-          console.log(`New key event: ${data.key}`);
-        } else if (data.key == '.'){
-            focalLength = Math.max(minFocalLength, focalLength+1);
-            if(focalLength > maxFocalLength){
-            focalLength = maxFocalLength;
-            valueSpan.textContent = focalLength;
-            }
-            updateIndicator();
-            inputField.value = focalLength;
-            console.log(`New key event: ${data.key}`);
-        }
-      })
-      .catch(error => console.error(error));
-  }, 1000);
- };
+  // Fetch request to /bt1xx/paramSetup/showframe/station/<int:station_number>/ url to get the key event
+  // setInterval(() => {
+  //   fetch('http://127.0.0.1:5000/bt1xx/get-updates/') 
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       // update the UI elements based on the key event
+  //       if (data.key == ','){
+  //         focalLength = Math.max(minFocalLength, focalLength-1);
+  //         updateIndicator();
+  //         inputField.value = focalLength;
+  //         console.log(`New key event: ${data.key}`);
+  //       } else if (data.key == '.'){
+  //           focalLength = Math.max(minFocalLength, focalLength+1);
+  //           if(focalLength > maxFocalLength){
+  //           focalLength = maxFocalLength;
+  //           valueSpan.textContent = focalLength;
+  //           }
+  //           updateIndicator();
+  //           inputField.value = focalLength;
+  //           console.log(`New key event: ${data.key}`);
+  //       }
+  //     })
+  //     .catch(error => console.error(error));
+  // }, 1000);
 
  inputField.addEventListener('input', () => {
   const inputVal = Number(inputField.value);

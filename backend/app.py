@@ -177,16 +177,70 @@ def station_settings(station_number):
 
 key_event = None  
 ###################### HANDLE POST REQUEST OF KEY EVENTS FROM OPENCV ###################
+# class HandleKeyEvents(Resource):
+#   def __init__(self) -> None:
+#     super().__init__()
+  
+#   # send a post request towards the 'update-ui' url server from python
+#   def post(self):
+#     if request.method == 'POST':
+#       global key_event
+#       data = request.get_json()
+#       try:
+#         if key_event is not None:
+#           print(key_event)
+#           key_event = data.get('key')
+#           return jsonify({
+#             'success' : True,
+#             'key' : key_event
+#           })
+#         else:
+#           raise ValueError(f"No key events detected!")
+
+#       except BaseException as e:
+#         return "Error while handling POST request with an error: " + str(e)
+    
+# api.add_resource(HandleKeyEvents, '/bt1xx/update-ui/')
+
+# register the endpoint
+# handle_key_event_model = HandleKeyEvents()
 @app.route('/bt1xx/update-ui/', methods=['POST'])
-def update_ui():
+def update_event():
+    global key_event
+    data = request.get_json()
+    key_event = data.get('key')
+    return jsonify({'success': True})
+
+# class GetKeyEvent(Resource):
+#   def __init__(self) -> None:
+#     super().__init__()
+
+#   # send a get request towards the 'update-ui' url server to get the key events
+#   def get(self):
+#     if request.method == 'GET':
+#       global key_event
+#       try:
+#         if key_event is not None:
+#           return jsonify({'key': key_event})
+#         else:
+#           raise ValueError(f"No key events has been sent!")
+        
+#       except BaseException as e:
+#         return "Error while handling GET request with an error: " + str(e)
+    
+# api.add_resource(GetKeyEvent, '/bt1xx/get-updates/')
+
+# register the endpoint
+# update_key_event = GetKeyEvent()
+@app.route('/bt1xx/get-updates/', methods=['GET'])
+def get_key():
   global key_event
-  data = request.get_json()
-  key_event = data.get('key')
-  return jsonify({'success': True})
+  return jsonify({'key': key_event})
 
 ###################### STATION SHOW FRAME ######################
 @app.route('/bt1xx/paramSetup/showframe/station/<int:station_number>/', methods=['GET'])
 def show_frame_params(station_number):
+  pdb.set_trace()
   # get the IP address of the connected device depends on the station number by calling the helper function
   # loop through the stations list to find the associate IP Address
   IP = partList['station' + str(station_number)]["IP"]
@@ -210,7 +264,7 @@ def show_frame_params(station_number):
       
       # import paramSetup function to set the focal length and the brightness of the camera (camera settings)
       # brightness, lensPos = paramsSetup(station_number, captureObject, recalibrate=True, name=IP)
-      recalibration.paramSetup(device, str(station_number))
+      recalibration.paramSetup(device)
 
       # overwrite the params.json
       this_station = 'station' + str(station_number)
@@ -225,7 +279,7 @@ def show_frame_params(station_number):
 
 ###################### STATION CHANGE SETTINGS #################
 # retrieve the data from the form
-@app.route('/bt1xx/station/<int:station_number>/changeSettings', methods=['POST', 'GET'])
+@app.route('/bt1xx/station/<int:station_number>/changeSettings', methods=['POST'])
 def change_settings(station_number):
   # get the IP address of the connected device depends on the station number by calling the helper function
   IP = partList['station' + str(station_number)]["IP"]

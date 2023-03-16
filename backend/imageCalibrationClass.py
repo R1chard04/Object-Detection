@@ -10,6 +10,7 @@ import os
 import keyboard
 import websocket
 import requests
+import pdb
 
 def createPipeline():
     pipeline = dai.Pipeline()
@@ -63,66 +64,64 @@ class Recalibration:
             frame = cv.pyrDown(frame)
             cv.imshow(self.station, frame)
             
-            key = cv.waitKey(1)
-            
-            # brightness adjestment
-            if key in [ord(','), ord('.')]:
-                # send the POST request along with the key pressed to the server
-                try:
-                    url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
-                    data = {'key' : chr(key)}
-                    response = requests.post(url, json=data)
-                    if response.status_code != 200:
-                        print(f"Error sending key: {response.status_code}")
+            # key = cv.waitKey(1)
 
-                except requests.exceptions.RequestException as e:
-                    print(f"Error while sending key data: {e}")
 
-                if key == ord(','):
-                    self.lensPos -= 2
-                elif key == ord('.'):
-                    self.lensPos += 2
-                self.lensPos = clamp(self.lensPos, 0, 255)
-                print("Setting manual focus, lens position: ", self.lensPos)
-                ctrl = dai.CameraControl()
-                ctrl.setManualFocus(self.lensPos)
-                qControl.send(ctrl)
-                
-            elif key in [ord('k'), ord('l')]:
-                # send the POST request along with the key pressed to the server
-                try:
-                    url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
-                    data = {'key' : chr(key)}
-                    response = requests.post(url, json=data)
-                    if response.status_code != 200:
-                        print(f"Error sending key: {response.status_code}")
+            # send the GET request to '/bt1xx/get-updates/' url server to get the key event
+            url = 'http://127.0.0.1:5000/bt1xx/get-updates/'
 
-                except requests.exceptions.RequestException as e:
-                    print(f"Error while sending key data: {e}")
+            response = requests.get(url)
 
-                if key == ord('k'):
-                    self.brightness -= 1
-                elif key == ord('l'):
-                    self.brightness += 1
-                self.brightness = clamp(self.brightness, -10, 10)
-                print("Brightness:", self.brightness)
-                ctrl = dai.CameraControl()
-                ctrl.setBrightness(self.brightness)
-                qControl.send(ctrl) 
-            
-            if key == ord('q'):
-                # send the POST request along with the key pressed to the server
-                try:
-                    url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
-                    data = {'key' : chr(key)}
-                    response = requests.post(url, json=data)
-                    if response.status_code != 200:
-                        print(f"Error sending key: {response.status_code}")
+            if response.status_code == 200:
+                new_key = response.json()['key']
+                # convert new_key to its corresponding OpenCV key code
+                key_code = cv.waitKeyEx(1) if new_key is not None else ord(new_key)
 
-                except requests.exceptions.RequestException as e:
-                    print(f"Error while sending key data: {e}")
-                # update britness and lesPos to json file
-                return
+            # send the POST request along with the key pressed to the server
+            # try:
+            #     if key > 0 and key < 0x10FFFF:
+            #         url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
+            #         data = {'key' : chr(key)}
+            #         print(data)
+            #         response = requests.post(url, json=data)
+            #         time.sleep(10)
+            #         if response.status_code != 200:
+            #             print(f"Error sending key: {response.status_code}")
+
+            # except requests.exceptions.RequestException as e:
+            #     print(f"Error while sending key data: {e}")     
+                # check if the key_code is valid
+                if key_code != -1:
+                    # brightness adjustment
+                    if key_code in [ord(','), ord('.')]:
+                        if key_code == ord(','):  
+                            self.lensPos -= 2
+                        elif key_code == ord('.'):
+                            self.lensPos += 2
+                        self.lensPos = clamp(self.lensPos, 0, 255)
+                        print("Setting manual focus, lens position: ", self.lensPos)
+                        ctrl = dai.CameraControl()
+                        ctrl.setManualFocus(self.lensPos)
+                        qControl.send(ctrl)
+                        
+                    elif key_code in [ord('k'), ord('l')]:
+                        if key_code == ord('k'):
+                            self.brightness -= 1
+                        elif key_code == ord('l'):
+                            self.brightness += 1
+                        self.brightness = clamp(self.brightness, -10, 10)
+                        print("Brightness:", self.brightness)
+                        ctrl = dai.CameraControl()
+                        ctrl.setBrightness(self.brightness)
+                        qControl.send(ctrl) 
+                    
+                    if key_code == ord('q'):
+                        return
+                else:
+                    pass
+        
+            else:
+                return "Error while getting key events with status code: " + str(response.status_code)
     
     # this function setup masks for station
     def maskSetup(self, device):
