@@ -7,6 +7,9 @@ from imageProcessingClasses import imageProcessing
 from imagePredictionClass import MSEStabilization, getPassRef
 import pdb
 import os
+import keyboard
+import websocket
+import requests
 
 def createPipeline():
     pipeline = dai.Pipeline()
@@ -64,6 +67,17 @@ class Recalibration:
             
             # brightness adjestment
             if key in [ord(','), ord('.')]:
+                # send the POST request along with the key pressed to the server
+                try:
+                    url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
+                    data = {'key' : chr(key)}
+                    response = requests.post(url, json=data)
+                    if response.status_code != 200:
+                        print(f"Error sending key: {response.status_code}")
+
+                except requests.exceptions.RequestException as e:
+                    print(f"Error while sending key data: {e}")
+
                 if key == ord(','):
                     self.lensPos -= 2
                 elif key == ord('.'):
@@ -75,6 +89,17 @@ class Recalibration:
                 qControl.send(ctrl)
                 
             elif key in [ord('k'), ord('l')]:
+                # send the POST request along with the key pressed to the server
+                try:
+                    url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
+                    data = {'key' : chr(key)}
+                    response = requests.post(url, json=data)
+                    if response.status_code != 200:
+                        print(f"Error sending key: {response.status_code}")
+
+                except requests.exceptions.RequestException as e:
+                    print(f"Error while sending key data: {e}")
+
                 if key == ord('k'):
                     self.brightness -= 1
                 elif key == ord('l'):
@@ -86,6 +111,16 @@ class Recalibration:
                 qControl.send(ctrl) 
             
             if key == ord('q'):
+                # send the POST request along with the key pressed to the server
+                try:
+                    url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
+                    data = {'key' : chr(key)}
+                    response = requests.post(url, json=data)
+                    if response.status_code != 200:
+                        print(f"Error sending key: {response.status_code}")
+
+                except requests.exceptions.RequestException as e:
+                    print(f"Error while sending key data: {e}")
                 # update britness and lesPos to json file
                 return
     

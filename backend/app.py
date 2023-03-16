@@ -20,6 +20,7 @@ import requests
 import asyncio
 import json
 import subprocess
+import keyboard
 
 # import files
 from database_model.models import db, Station, Users
@@ -158,29 +159,39 @@ def station_detail(station_number):
     return render_template("station_details.html", station_number=station_number)
   else:
     return redirect(url_for('login'))
-  
+
 
 ###################### STATION SETTINGS ######################
-# render the station settings:
+# render the station settings
 @app.route('/bt1xx/station/<int:station_number>/settings/')
 def station_settings(station_number):
   try:
     # enable the websockets to be ready to listen for events on the client side
     # establish_websocket(station_number=station_number)
     return render_template('station_settings.html', station_number=station_number)
+  
   except Exception as e:
     print(f"Error:" + str(e))
     # catch the error of cannot perform a connection to the server
     return redirect(url_for('station_detail', station_number=station_number))
 
+key_event = None  
+###################### HANDLE POST REQUEST OF KEY EVENTS FROM OPENCV ###################
+@app.route('/bt1xx/update-ui/', methods=['POST'])
+def update_ui():
+  global key_event
+  data = request.get_json()
+  key_event = data.get('key')
+  return jsonify({'success': True})
+
 ###################### STATION SHOW FRAME ######################
-@app.route('/bt1xx/paramSetup/showframe/station/<int:station_number>/')
+@app.route('/bt1xx/paramSetup/showframe/station/<int:station_number>/', methods=['GET'])
 def show_frame_params(station_number):
   # get the IP address of the connected device depends on the station number by calling the helper function
   # loop through the stations list to find the associate IP Address
   IP = partList['station' + str(station_number)]["IP"]
   name = partList['station' + str(station_number)]["name"]
-
+  
   try:
     pipeline = createPipeline()
     print("here")
@@ -193,11 +204,13 @@ def show_frame_params(station_number):
 
     with dai.Device(pipeline, device_info) as device:
       print(f"Ayoo! What's up!")
+      global key_event
       recalibration = Recalibration(station='station' + str(station_number))
+      
       
       # import paramSetup function to set the focal length and the brightness of the camera (camera settings)
       # brightness, lensPos = paramsSetup(station_number, captureObject, recalibrate=True, name=IP)
-      recalibration.paramSetup(device)
+      recalibration.paramSetup(device, str(station_number))
 
       # overwrite the params.json
       this_station = 'station' + str(station_number)
