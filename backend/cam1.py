@@ -13,7 +13,7 @@ import pdb
 import pylogix 
 from pylogix import PLC
 from PLCUpdate import writePLC
-from time import timeLog
+from timeClass import timeLog, db, time_app
     
 from PLCUpdate import writePLC, readPLC
 
@@ -30,7 +30,7 @@ device_info = dai.DeviceInfo(camera.IP)
 
 with dai.Device(createPipeline(), device_info) as device:
     camera.adjustCamera(device)
-    # camera.pressKeyCapture(device, camera.standardPath)
+    camera.pressKeyCapture(device, camera.standardPath)
     camera.errorSetup(device)
     print("final error:")
     print(camera.passref)
@@ -44,10 +44,8 @@ with dai.Device(createPipeline(), device_info) as device:
     # print(assigned_names)
 
     # timing = imageTiming(assigned_names, db_config)
-
     arr = [0, 0, 0, 0]
-    timeObject = timeLog(camera.IP, camera['parts'])
-
+    timeObject = timeLog(camera.station, camera.parts)
     while True:         
         
         img = camera.capture(device)
@@ -60,7 +58,7 @@ with dai.Device(createPipeline(), device_info) as device:
 
         clampClosed = readPLC("Program:Sta120.Station.Cycle.Step.Bit[10]")
 
-        recorded = timeObject.record(result, clampClosed)
+        recorded = timeObject.result_record(result, clampClosed)
 
         # response = timing.record(result)
         # calculation = imageAverage(db_config)
@@ -68,7 +66,7 @@ with dai.Device(createPipeline(), device_info) as device:
         #  # write PLC value to the HMI
         writePLC("Camera_Output.5", result)
 
-        print(result)
+        print(arr)
 
         # transferToPLC("OP100", result)
         cv.waitKey(1)
@@ -78,5 +76,4 @@ with dai.Device(createPipeline(), device_info) as device:
         if recorded is True:
             while readPLC("Sta120_OK_To_Enter") is False:
                 pass
-            timeObject = timeLog(camera.IP, camera['parts'])
-                
+            timeObject = timeLog(camera.station, camera.parts)

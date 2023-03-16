@@ -24,7 +24,7 @@ import subprocess
 # import files
 from database_model.models import db, Station, Users
 from helper_functions.validate_users import validate_users, validate_username, validate_password, check_session_expiry
-from calibrations import Recalibration, createPipeline
+from imageCalibrationClass import Recalibration, createPipeline
 
 # read in the params.json file
 with open(r'params.json') as f:
