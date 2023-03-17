@@ -4,8 +4,8 @@ import depthai as dai
 from imageProcessingClasses import imageProcessing
 from imagePredictionClass import MSEStabilization
 from imageCalibrationClass import Recalibration, createPipeline
-# from imageTimingClasses import imageTiming
-# from imageAverageClasses import imageAverage
+from imageTimingClasses import imageTiming
+from imageAverageClasses import imageAverage
 import time
 import cv2 as cv
 import depthai as dai
@@ -17,20 +17,20 @@ from timeLog import timeLog
     
 from PLCUpdate import writePLC, readPLC
 
-# db_config = {
-#      "hostname": "localhost",
-#      "database": "imageTiming",
-#      "username": "postgres",
-#      "pwd": "W1nter@2023Hydro",
-#      "port_id": 5432
-#  }
+db_config = {
+     "hostname": "localhost",
+     "database": "imageTiming",
+     "username": "postgres",
+     "pwd": "W1nter@2023Hydro",
+     "port_id": 5432
+ }
 
 camera = Recalibration("station120")
 device_info = dai.DeviceInfo(camera.IP)
 
 with dai.Device(createPipeline(), device_info) as device:
     camera.adjustCamera(device)
-    # camera.pressKeyCapture(device, camera.standardPath)
+    camera.pressKeyCapture(device, camera.standardPath)
     camera.errorSetup(device)
     print("final error:")
     print(camera.passref)
@@ -40,8 +40,8 @@ with dai.Device(createPipeline(), device_info) as device:
     # print("start")
     
     # ask user to name each occurance in array
-    # assigned_names = [1, 2, 3, 4]
-    # print(assigned_names)
+    # new_partLists120 = ['TopRightPart', 'TopLeftPart', 'LeftPart', 'BottomLeftPart', 'BottomRightPart', 'RightPart']
+    # print(new_partLists120)
 
     # timing = imageTiming(assigned_names, db_config)
 
@@ -56,6 +56,7 @@ with dai.Device(createPipeline(), device_info) as device:
         frame = processingObject.displayResultPosition()     
         prediction = MSEStabilization(error, camera.passref, len(camera.parts)) 
         # pdb.set_trace()
+        print(error)
         result = prediction.result()
 
         clampClosed = readPLC("Program:Sta120.Station.Cycle.Step.Bit[10]")
@@ -68,7 +69,8 @@ with dai.Device(createPipeline(), device_info) as device:
         #  # write PLC value to the HMI
         writePLC("Camera_Output.5", result)
 
-        print(result)
+        # print(arr)
+        # print(final)
 
         # transferToPLC("OP100", result)
         cv.waitKey(1)

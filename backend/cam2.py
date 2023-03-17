@@ -4,8 +4,8 @@ import depthai as dai
 from imageProcessingClasses import imageProcessing
 from imagePredictionClass import MSEStabilization
 from imageCalibrationClass import Recalibration, createPipeline
-# from imageTimingClasses import imageTiming
-# from imageAverageClasses import imageAverage
+from imageTimingClasses import imageTiming
+from imageAverageClasses import imageAverage
 import time
 import cv2 as cv
 import depthai as dai
@@ -15,13 +15,13 @@ from pylogix import PLC
 from PLCUpdate import writePLC, readPLC
 from timeLog import timeLog
 
-# db_config = {
-#      "hostname": "localhost",
-#      "database": "imageTiming",
-#      "username": "postgres",
-#      "pwd": "W1nter@2023Hydro",
-#      "port_id": 5432
-#  }
+db_config = {
+     "hostname": "localhost",
+     "database": "imageTiming",
+     "username": "postgres",
+     "pwd": "W1nter@2023Hydro",
+     "port_id": 5432
+ }
 
 # Clamp at work for station#100
 clampSt100 = readPLC("Program:Sta100.Station.Cycle.Step.Bit[7]")
@@ -31,7 +31,7 @@ clrSt100 = readPLC("Sta100_OK_To_Enter")
         
 
 camera = Recalibration("station100")
-pdb.set_trace()
+
 device_info = dai.DeviceInfo(camera.IP)
 
 with dai.Device(createPipeline(), device_info) as device:
@@ -43,13 +43,13 @@ with dai.Device(createPipeline(), device_info) as device:
     camera.updateJson(camera.station)
     processingObject = imageProcessing("station100")
     
-    # print("start")
+    print("start")
     
-    # ask user to name each occurance in array
-    # assigned_names = [1, 2, 3, 4]
-    # print(assigned_names)
+    #ask user to name each occurance in array
+    new_partLists100 = ['TopPart', 'LeftPart', 'BottomPart', 'RightPart']
+    print(new_partLists100)
 
-    # timing = imageTiming(assigned_names, db_config)
+    timing = imageTiming(new_partLists100, db_config)
 
     # arr = [0, 0, 0, 0]
     timeObject = timeLog(camera.station, camera.parts)

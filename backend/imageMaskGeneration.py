@@ -59,9 +59,9 @@ def createMask(std, col, maskPath):
 
   #Image subtraction
   diff = cv.absdiff(std, col)
-  test = cv.pyrDown(diff)
-  cv.imshow("diff",test)
-  cv.waitKey(0)
+  # test = cv.pyrDown(diff)
+  # cv.imshow("diff",test)
+  # cv.waitKey(0)
 
   #Denoising
   denoise = np.float32(diff) / 255.0
@@ -92,9 +92,9 @@ def createMask(std, col, maskPath):
   repair = floodFill(repair)
 
   mask = repair
-  mask = cv.pyrDown(mask)
-  cv.imshow("mask", mask)
-  cv.waitKey(0)
+  # mask = cv.pyrDown(mask)
+  # cv.imshow("mask", mask)
+  # cv.waitKey(0)
   cv.imwrite(maskPath, mask)
   return True
 
