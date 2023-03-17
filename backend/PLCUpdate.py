@@ -1,5 +1,6 @@
 import pylogix
 from pylogix import PLC
+import cProfile
 
 # print(dir(pylogix))
 # help(pylogix.PLC)
@@ -9,7 +10,6 @@ def readPLC(camTagName):
         comm.IPAddress = '10.110.50.201'
         Operator_Swipe = comm.Read(camTagName)
         return Operator_Swipe.Value
-        
 
 # send one for pass and zero for fail for each feature, Run when it requires to write the value
 def writePLC(tagName, resultError):
@@ -21,7 +21,6 @@ def writePLC(tagName, resultError):
             # print("Transfer done")
     # else:
     #     print("Transfer fail - result unvalid")
-
 
 def verifyResult(station, result):
     verified = False
