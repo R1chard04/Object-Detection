@@ -240,7 +240,6 @@ def get_key():
 ###################### STATION SHOW FRAME ######################
 @app.route('/bt1xx/paramSetup/showframe/station/<int:station_number>/', methods=['GET'])
 def show_frame_params(station_number):
-  pdb.set_trace()
   # get the IP address of the connected device depends on the station number by calling the helper function
   # loop through the stations list to find the associate IP Address
   IP = partList['station' + str(station_number)]["IP"]

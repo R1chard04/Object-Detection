@@ -48,6 +48,7 @@ class Recalibration:
         self.lensPos = params["lensPos"]
         self.parts = params["parts"]
         self.IP = params["IP"]
+        self.name = params["name"]
         self.maskPaths = params["masks"]
         self.refPaths = params["refs"]
         self.colPaths = params ["cols"]
@@ -73,9 +74,12 @@ class Recalibration:
             response = requests.get(url)
 
             if response.status_code == 200:
-                new_key = response.json()['key']
+                new_key = response.json().get('key')
                 # convert new_key to its corresponding OpenCV key code
-                key_code = cv.waitKeyEx(1) if new_key is not None else ord(new_key)
+                if new_key is not None:
+                    key_code = cv.waitKeyEx(new_key)
+                else:
+                    key_code = ord(new_key)
 
             # send the POST request along with the key pressed to the server
             # try:

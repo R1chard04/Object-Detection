@@ -13,6 +13,7 @@ import pdb
 import pylogix 
 from pylogix import PLC
 from PLCUpdate import writePLC, readPLC
+from timeLog import timeLog
 
 # db_config = {
 #      "hostname": "localhost",
@@ -30,6 +31,7 @@ clrSt100 = readPLC("Sta100_OK_To_Enter")
         
 
 camera = Recalibration("station100")
+pdb.set_trace()
 device_info = dai.DeviceInfo(camera.IP)
 
 with dai.Device(createPipeline(), device_info) as device:
@@ -50,6 +52,7 @@ with dai.Device(createPipeline(), device_info) as device:
     # timing = imageTiming(assigned_names, db_config)
 
     # arr = [0, 0, 0, 0]
+    timeObject = timeLog(camera.station, camera.parts)
     
     while True:     
         
@@ -64,12 +67,22 @@ with dai.Device(createPipeline(), device_info) as device:
         # response = timing.record(result)
         # calculation = imageAverage(db_config)
         # final = calculation.average()
+
+        clampClosed = readPLC("Program:Sta100.Station.Cycle.Step.Bit[10]")
+
+        recorded = timeObject.log(result, clampClosed)
+
         
         #  # write PLC value to the HMI
         writePLC("Camera_Output.1", result)
-        # print(result)
+        print(result)
 
         # transferToPLC("OP100", result)
         cv.waitKey(1)
         frame = cv.pyrDown(frame)
         cv.imshow(camera.IP, frame)
+
+        if recorded is True:
+            while readPLC("Sta100_OK_To_Enter") is False:
+                pass
+            timeObject = timeLog(camera.station, camera.parts)

@@ -1,5 +1,5 @@
 import time
-from app import app
+from flask import Flask
 from database_model.models import db, TimingStation100, TimingStation120
 
 class timeLog:
@@ -11,7 +11,7 @@ class timeLog:
             self.maxTime = 0
             self.station = station
 
-    def record(self, results, clampClosed):
+    def log(self, results, clampClosed):
         with app.app_context():
             elapsedTime = time.time() - self.startTime
 
@@ -24,6 +24,8 @@ class timeLog:
 
             if clampClosed == True:
                 self.record[-1] = elapsedTime - self.maxTime
+
+            print(self.record)
             
             if 0 not in self.record:
                 new_partLists100 = ['TopPart', 'LeftPart', 'BottomPart', 'RightPart', 'ClampState']
