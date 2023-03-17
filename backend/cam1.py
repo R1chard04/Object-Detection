@@ -4,8 +4,6 @@ import depthai as dai
 from imageProcessingClasses import imageProcessing
 from imagePredictionClass import MSEStabilization
 from imageCalibrationClass import Recalibration, createPipeline
-from imageTimingClasses import imageTiming
-from imageAverageClasses import imageAverage
 import time
 import cv2 as cv
 import depthai as dai
@@ -17,13 +15,13 @@ from timeLog import timeLog
     
 from PLCUpdate import writePLC, readPLC
 
-db_config = {
-     "hostname": "localhost",
-     "database": "imageTiming",
-     "username": "postgres",
-     "pwd": "W1nter@2023Hydro",
-     "port_id": 5432
- }
+# db_config = {
+#      "hostname": "localhost",
+#      "database": "imageTiming",
+#      "username": "postgres",
+#      "pwd": "W1nter@2023Hydro",
+#      "port_id": 5432
+#  }
 
 camera = Recalibration("station120")
 device_info = dai.DeviceInfo(camera.IP)

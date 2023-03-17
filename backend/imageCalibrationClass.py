@@ -65,21 +65,21 @@ class Recalibration:
             frame = cv.pyrDown(frame)
             cv.imshow(self.station, frame)
             
-            # key = cv.waitKey(1)
+            key_code = cv.waitKey(1)
 
 
             # send the GET request to '/bt1xx/get-updates/' url server to get the key event
-            url = 'http://127.0.0.1:5000/bt1xx/get-updates/'
+            # url = 'http://127.0.0.1:5000/bt1xx/get-updates/'
 
-            response = requests.get(url)
+            # response = requests.get(url)
 
-            if response.status_code == 200:
-                new_key = response.json().get('key')
-                # convert new_key to its corresponding OpenCV key code
-                if new_key is not None:
-                    key_code = cv.waitKeyEx(new_key)
-                else:
-                    key_code = ord(new_key)
+            # if response.status_code == 200:
+            #     new_key = response.json().get('key')
+            #     # convert new_key to its corresponding OpenCV key code
+            #     if new_key is not None:
+            #         key_code = cv.waitKeyEx(new_key)
+            #     else:
+            #         key_code = ord(new_key)
 
             # send the POST request along with the key pressed to the server
             # try:
@@ -95,37 +95,37 @@ class Recalibration:
             # except requests.exceptions.RequestException as e:
             #     print(f"Error while sending key data: {e}")     
                 # check if the key_code is valid
-                if key_code != -1:
-                    # brightness adjustment
-                    if key_code in [ord(','), ord('.')]:
-                        if key_code == ord(','):  
-                            self.lensPos -= 2
-                        elif key_code == ord('.'):
-                            self.lensPos += 2
-                        self.lensPos = clamp(self.lensPos, 0, 255)
-                        print("Setting manual focus, lens position: ", self.lensPos)
-                        ctrl = dai.CameraControl()
-                        ctrl.setManualFocus(self.lensPos)
-                        qControl.send(ctrl)
-                        
-                    elif key_code in [ord('k'), ord('l')]:
-                        if key_code == ord('k'):
-                            self.brightness -= 1
-                        elif key_code == ord('l'):
-                            self.brightness += 1
-                        self.brightness = clamp(self.brightness, -10, 10)
-                        print("Brightness:", self.brightness)
-                        ctrl = dai.CameraControl()
-                        ctrl.setBrightness(self.brightness)
-                        qControl.send(ctrl) 
-                    
-                    if key_code == ord('q'):
-                        return
-                else:
-                    pass
-        
-            else:
-                return "Error while getting key events with status code: " + str(response.status_code)
+                # if key_code != -1:
+            # brightness adjustment
+            if key_code in [ord(','), ord('.')]:
+                if key_code == ord(','):  
+                    self.lensPos -= 2
+                elif key_code == ord('.'):
+                    self.lensPos += 2
+                self.lensPos = clamp(self.lensPos, 0, 255)
+                print("Setting manual focus, lens position: ", self.lensPos)
+                ctrl = dai.CameraControl()
+                ctrl.setManualFocus(self.lensPos)
+                qControl.send(ctrl)
+                
+            elif key_code in [ord('k'), ord('l')]:
+                if key_code == ord('k'):
+                    self.brightness -= 1
+                elif key_code == ord('l'):
+                    self.brightness += 1
+                self.brightness = clamp(self.brightness, -10, 10)
+                print("Brightness:", self.brightness)
+                ctrl = dai.CameraControl()
+                ctrl.setBrightness(self.brightness)
+                qControl.send(ctrl) 
+            
+            if key_code == ord('q'):
+                return
+        # else:
+        #     pass
+    
+        # else:
+        #     return "Error while getting key events with status code: " + str(response.status_code)
     
     # this function setup masks for station
     def maskSetup(self, device):

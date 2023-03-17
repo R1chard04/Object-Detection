@@ -7,7 +7,7 @@ time_app = Flask(__name__)
 
 db.init_app(time_app)
 
-time_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///martinrea.db'
+time_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/martinrea.db'
 
 def create_table():
     with time_app.app_context():
