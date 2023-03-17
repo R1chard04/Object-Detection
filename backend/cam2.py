@@ -68,13 +68,14 @@ with dai.Device(createPipeline(), device_info) as device:
         # calculation = imageAverage(db_config)
         # final = calculation.average()
 
-        clampClosed = readPLC("Program:Sta100.Station.Cycle.Step.Bit[10]")
+        # clampClosed = readPLC("Program:Sta100.Station.Cycle.Step.Bit[10]")
+        clampClosed = False
 
         recorded = timeObject.log(result, clampClosed)
 
         
         #  # write PLC value to the HMI
-        writePLC("Camera_Output.1", result)
+        # writePLC("Camera_Output.1", result)
         print(result)
 
         # transferToPLC("OP100", result)
