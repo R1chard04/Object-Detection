@@ -81,7 +81,7 @@ def insert_users() -> None:
     usernames3 = 'eren.yilmaz@martinrea.com'
     passwords3 = 'Erenyilmaz100$'
     # validate the username and password constraints before hashing it and put it into the database
-    if validate_username(usernames) and validate_username(usernames1) and validate_username(usernames2):
+    if validate_username(usernames) and validate_username(usernames1) and validate_username(usernames2) and validate_username(usernames3):
       hashed_password = validate_password(usernames, passwords)
       hashed_password1 = validate_password(usernames1, passwords1)
       hashed_password2 = validate_password(usernames2, passwords2)
