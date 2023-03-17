@@ -43,9 +43,10 @@ with dai.Device(createPipeline(), device_info) as device:
     new_partLists120 = ['TopRightPart', 'TopLeftPart', 'LeftPart', 'BottomLeftPart', 'BottomRightPart', 'RightPart']
     print(new_partLists120)
 
-    # timing = imageTiming(assigned_names, db_config)
-    arr = [0, 0, 0, 0]
-    timeObject = timeLog(camera.station, camera.parts)
+    timing = imageTiming(new_partLists120, db_config)
+    arr = [0, 0, 0, 0, 0, 0]
+    # timeObject = timeLog(camera.station, camera.parts)
+    print("Starting Loop")
     while True:         
         
         img = camera.capture(device)
@@ -59,22 +60,23 @@ with dai.Device(createPipeline(), device_info) as device:
 
         clampClosed = readPLC("Program:Sta120.Station.Cycle.Step.Bit[10]")
 
-        recorded = timeObject.result_record(result, clampClosed)
-
-        # response = timing.record(result)
-        # calculation = imageAverage(db_config)
-        # final = calculation.average()
-        #  # write PLC value to the HMI
+        # recorded = timeObject.result_record(result, clampClosed)
+        print("Starting time elapse")
+        response = timing.record(result)
+        calculation = imageAverage(db_config)
+        final = calculation.average()
+         # write PLC value to the HMI
         writePLC("Camera_Output.5", result)
 
         print(arr)
+        print(final)
 
         # transferToPLC("OP100", result)
         cv.waitKey(1)
         frame = cv.pyrDown(frame)
         cv.imshow(camera.IP, frame)
 
-        if recorded is True:
-            while readPLC("Sta120_OK_To_Enter") is False:
-                pass
-            timeObject = timeLog(camera.station, camera.parts)
+        # if recorded is True:
+        #     while readPLC("Sta120_OK_To_Enter") is False:
+        #         pass
+        #     timeObject = timeLog(camera.station, camera.parts)

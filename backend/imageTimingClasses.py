@@ -32,7 +32,7 @@ class imageTiming:
 
         key = cv.waitKey(10)
         
-        if key == ord('e'):
+        if key == ord('e'):]
             print("Time Elapse Started")
             conn = psycopg2.connect(conn_string)
             cur = conn.cursor()

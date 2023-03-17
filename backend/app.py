@@ -77,16 +77,21 @@ def insert_users() -> None:
     name2 = 'Jamie'
     usernames2 = 'jamie.yen@martinrea.com'
     passwords2 = 'Jamieyen12345$'
+    name3 = 'Eren'
+    usernames3 = 'eren.yilmaz@martinrea.com'
+    passwords3 = 'Erenyilmaz100$'
     # validate the username and password constraints before hashing it and put it into the database
     if validate_username(usernames) and validate_username(usernames1) and validate_username(usernames2):
       hashed_password = validate_password(usernames, passwords)
       hashed_password1 = validate_password(usernames1, passwords1)
       hashed_password2 = validate_password(usernames2, passwords2)
+      hashed_password3 = validate_password(usernames3, passwords3)
       # create an instance to insert rows into user table
       new_users = [
         Users(id=1, name=name, username=usernames, password=hashed_password, is_admin=True),
         Users(id=2, name=name1, username=usernames1, password=hashed_password1, is_admin=True),
         Users(id=3, name=name2, username=usernames2, password=hashed_password2, is_admin=True),
+        Users(id=4, name=name3, username=usernames3, password=hashed_password3, is_admin=True),
       ]
 
     # insert the new user into the session
