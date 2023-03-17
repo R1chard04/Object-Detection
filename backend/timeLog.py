@@ -1,18 +1,33 @@
 import time
 from flask import Flask
+from sqlalchemy import create_engine, MetaData, inspect
 from database_model.models import db, TimingStation100, TimingStation120
+
+time_app = Flask(__name__)
+
+db.init_app(time_app)
+
+time_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///martinrea.db'
+
+def create_table():
+    with time_app.app_context():
+        inspector = inspect(db.engine)
+        if not inspector.has_table('Station100_Timing') and not inspector.has_table('Station120_Timing'):
+            db.create_all()
+
+create_table()
 
 class timeLog:
 
     def __init__(self, station, partList) -> None:
-        with app.app_context():
+        with time_app.app_context():
             self.record = [0] * (len(partList)+1)
             self.startTime = time.time()
             self.maxTime = 0
             self.station = station
 
     def log(self, results, clampClosed):
-        with app.app_context():
+        with time_app.app_context():
             elapsedTime = time.time() - self.startTime
 
             for i in range(len(results)):
