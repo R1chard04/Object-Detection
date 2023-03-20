@@ -132,7 +132,7 @@ class Recalibration:
         q = device.getOutputQueue(name="out")
         i = 0           
         
-        while i < len(self.parts):
+        while i < len(self.parts) :
             
             print("load"+ self.parts[i] + "silver part and press c to capture")
             while True:

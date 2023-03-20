@@ -4,6 +4,7 @@ import time
 import os
 import psycopg2
 import pytz
+import cv2 as cv
 
 class imageTiming:
     def __init__(self, assigned_names, db_config):
@@ -29,50 +30,54 @@ class imageTiming:
             self.db_config["pwd"]
          )
 
-        conn = psycopg2.connect(conn_string)
-        cur = conn.cursor()
+        key = cv.waitKey(10)
         
-        curr_timestamp = datetime.datetime.now(datetime.timezone.utc)
-        new_results = []
-
-        for i, val in enumerate(new_array):
-            if self.states[i] == 0 and self.current_array[i] == 0 and val == 1:
-                time_elapsed = round((curr_timestamp - self.last_updated[i]).total_seconds(), 2)
-
-                result = {"assigned_name": self.assigned_names[i], "response": val, "time_elapsed": time_elapsed}
-                new_results.append(result)
-
-                self.last_updated[i] = curr_timestamp
-                self.states[i] = 1
-                self.current_array[i] = 1
+        if key == ord('e'):]
+            print("Time Elapse Started")
+            conn = psycopg2.connect(conn_string)
+            cur = conn.cursor()
             
-        if all(state == 1 for state in self.states):
-            self.states = [0] * len(self.assigned_names)
-            if all(val == 1 for val in new_array):
-                self.last_non_zero_array = None
-        else:
-            self.last_non_zero_array = self.current_array
-                
-        # Determine the shift based on the current time
-        curr_hour = datetime.datetime.now().hour
-        if 7 <= curr_hour < 15:
-            shift = "Day"
-        elif 15 <= curr_hour < 23:
-            shift = "Afternoon"
-        else:
-            shift = "Night"
-        
-        # Insert the results into the PostgreSQL database
-        for result in new_results:
-            cur.execute(
-                "INSERT INTO results (assigned_name, timestamp, response, time_elapsed, shift) VALUES (%s, %s, %s, %s, %s)",
-                (result["assigned_name"], curr_timestamp, result["response"], result["time_elapsed"], shift)
-            )
+            curr_timestamp = datetime.datetime.now(datetime.timezone.utc)
+            new_results = []
 
-        conn.commit()
-        
-        # Close the database cursor and connection
-        cur.close()
-        conn.close()
-        
-        return new_results
+            for i, val in enumerate(new_array):
+                if self.states[i] == 0 and self.current_array[i] == 0 and val == 1:
+                    time_elapsed = round((curr_timestamp - self.last_updated[i]).total_seconds(), 2)
+
+                    result = {"assigned_name": self.assigned_names[i], "response": val, "time_elapsed": time_elapsed}
+                    new_results.append(result)
+
+                    self.last_updated[i] = curr_timestamp
+                    self.states[i] = 1
+                    self.current_array[i] = 1
+                
+            if all(state == 1 for state in self.states):
+                self.states = [0] * len(self.assigned_names)
+                if all(val == 1 for val in new_array):
+                    self.last_non_zero_array = None
+            else:
+                self.last_non_zero_array = self.current_array
+
+            # Determine the shift based on the current time
+            curr_hour = datetime.datetime.now().hour
+            if 7 <= curr_hour < 15:
+                shift = "Day"
+            elif 15 <= curr_hour < 23:
+                shift = "Afternoon"
+            else:
+                shift = "Night"
+            
+            # Insert the results into the PostgreSQL database
+            for result in new_results:
+                cur.execute(
+                    "INSERT INTO results (assigned_name, timestamp, response, time_elapsed, shift) VALUES (%s, %s, %s, %s, %s)",
+                    (result["assigned_name"], curr_timestamp, result["response"], result["time_elapsed"], shift)
+                )
+
+            conn.commit()
+            
+            # Close the database cursor and connection
+            cur.close()
+            conn.close()
+            
+            return new_results
