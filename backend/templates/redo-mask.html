@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title id="title">
+   Mask redo process Station {{ station_number }}
+  </title>
+  <script type="text/javascript" src="{{ url_for('serve_static_js', filename = 'redo-mask.js') }}"></script>
+  <link rel="stylesheet" href="{{ url_for('serve_static_css', filename='redo-mask.css') }}">
+ </head>
+ <body>
+  <div class="heading">
+   <h1>
+    Welcome to redo mask process for station {{ station_number }}
+   </h1>
+  </div>
+  <div id="redo-mask-box">
+   <h2 id="redo-mask-instruction">
+     Please follow the following instructions to redo the mask process:
+   </h2>
+   <p>
+     Please choose which mask part you want to redo in the following options for station {{ station_number }}:
+   </p>
+   <form action="{{ url_for('handle_redo_mask', station_number=station_number) }}" method="POST" id="form-redo-mask">
+    <select name="mask-options" id="mask-option">
+     {% for option in mask_options %} 
+     <option value="{{ option.id }}">
+      {% if option.id == mask-options %} selected
+      {% endif %} 
+      {{ option.mask_options }}
+     </option>
+     {% endfor %} 
+    </select>
+
+    <!-- <input type="submit" value="Start" style="display:none;" id="submit"/> -->
+    <button type="submit" style="display: none;" id="submit">Start</button>
+   </form>
+   <div>
+    <ul>
+     <p>Make no changes?</p>
+     <li>
+      <a href="{{ url_for('station_mask_setup', station_number=station_number) }}">Station {{ station_number }} mask setting</a>
+     </li>
+    </ul>
+   </div>
+  </div>
+ </div>
+ </body>
+</html>

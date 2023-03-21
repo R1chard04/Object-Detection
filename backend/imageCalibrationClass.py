@@ -133,12 +133,21 @@ class Recalibration:
         i = 0           
         
         while i < len(self.parts) :
-            
+        
+            url = 'http://127.0.0.1:5000/bt1xx/getclickevent/'
+
             print("load"+ self.parts[i] + "silver part and press c to capture")
             while True:
                 imgSil = q.get().getCvFrame()
+                
+                # send the GET request to '/bt1xx/getclickevent/' url server to get the response
+                response = requests.get(url)
+
+                if response.status_code == 200:
+                    click = response.json().get('btnClick')
+
                 key = cv.waitKey(1)
-                if key == ord('c'):
+                if key == ord('c') and click == True:
                     cv.imwrite(self.refPaths[i], imgSil)
                     cv.destroyAllWindows()
                     break
@@ -148,8 +157,15 @@ class Recalibration:
             print("load"+ self.parts[i] + "colour part and press c to capture")
             while True:
                 imgCol = q.get().getCvFrame()
+
+                # send the GET request to '/bt1xx/getclickevent/' url server to get the response
+                response = requests.get(url)
+
+                if response.status_code == 200:
+                    click = response.json().get('btnClick')
+
                 key = cv.waitKey(1)
-                if key == ord('c'):
+                if key == ord('c') and click == True:
                     cv.imwrite(self.colPaths[i], imgCol)
                     cv.destroyAllWindows()
                     break
@@ -163,6 +179,56 @@ class Recalibration:
                 print(f"Mask is redoing!")
         
         print("all masks are done")
+        return
+    
+    # function receive the redo mask command
+    def redo_mask(self, device, part_number, part): # part number is the associate index of the part in the array
+        q = device.getOutputQueue(name="out")
+        i = 0
+
+        url = 'http://127.0.0.1:5000/bt1xx/get-redo-mask/'
+        
+        # load the silver part
+        print("Load" + part + "silver part and press C to capture")
+        while True:
+            imgSil = q.get().getCvFrame()
+
+            # send the GET request to '/bt1xx/getclickevent/' url server to get the response
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                click = response.json().get('btnClick')
+
+            key = cv.waitKey(1)
+            if key == ord('c') and click == True:
+                cv.imwrite(self.refPaths[part_number], imgSil)
+                cv.destroyAllWindows()
+                break
+            imgSil = cv.pyrDown(imgSil)
+            cv.imshow("results", imgSil)
+
+        print("Load" + part + "colour part and press C to capture")
+        while True:
+            imgCol = q.get().getCvFrame()
+
+            # send the GET request to '/bt1xx/getclickevent/' url server to get the response
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                click = response.json().get('btnClick')
+
+            key = cv.waitKey(1)
+            if key == ord('c') and click == True:
+                cv.imwrite(self.colPaths[part_number], imgCol)
+                cv.destroyAllWindows()
+                break
+            imgCol = cv.pyrDown(imgCol)
+            cv.imshow("results", imgCol)
+        print("Creating a mask, this may take a minute")
+        if createMask(imgSil, imgCol, self.maskPaths[part_number]):
+            print("Mask generated")
+    
+        print(f"Redoing mask for {part} is done")
         return
     
     # this method read all the parameters from the json again                

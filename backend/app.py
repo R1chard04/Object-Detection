@@ -333,6 +333,50 @@ def change_settings(station_number):
   
   # return render_template("successful.html", station_number=station_number)
 
+click_event = False
+redo_mask = False
+part = None
+part_number = None
+###################### SENDING CLICK EVENT #######################
+@app.route('/bt1xx/handle-click/', methods=['POST'])
+def handle_click():
+  global click_event
+  data = request.get_json()
+  click_event = data.get('btnClick')
+  return jsonify({'success' : True})
+
+##################### GETTING CLICK EVENT #######################
+@app.route('/bt1xx/getclickevent/', methods=['GET'])
+def get_click():
+  global click_event
+  return jsonify(
+    {
+      'btnClick' : click_event
+    }
+  )
+
+#################### POSTING REDO MASK COMMAND ####################
+@app.route('/bt1xx/post-redo-mask/', methods=['POST'])
+def post_mask_redo():
+  global redo_mask
+  data = request.get_json()
+  mask_redo = data.get('RedoMask')
+  return jsonify({'success' : True})
+
+#################### GETTING REDO MASK COMMAND #####################
+@app.route('/bt1xx/get-redo-mask/', methods=['GET'])
+def get_mask_redo():
+  global redo_mask
+  global part
+  global part_number
+  return jsonify(
+    {
+      'RedoMask' : True,
+      'Part' : part,
+      'Part_Number' : part_number
+    }
+  )
+
 ####################### STATION MASKS SETTINGS ###############
 # render the url for station mask setup instructions
 @app.route('/bt1xx/station/<int:station_number>/masksetup')
@@ -360,13 +404,64 @@ def create_mask(station_number):
       recalibration = Recalibration(station='station' + str(station_number))
       recalibration.upDateParams(station='station' + str(station_number))
       recalibration.maskSetup(device=device)
-    
+
     return redirect(url_for('setUpSuccessful', station_number=station_number))
 
   except:
     print(f"Error connecting to the device!")
     return redirect(url_for('station_detail', station_number=station_number))
-  
+
+part = ['selected']
+################ REDO MASK URL ################
+# this function will render the redo mask url
+@app.route('/bt1xx/redo-mask/<int:station_number>')
+def redo_mask(station_number):
+  if station_number == 100:
+    part.append('top', 'left', 'bottom', 'right')
+  elif station_number == 120:
+    part.append('topRight', 'topLeft', 'left', 'bottomLeft', 'bottomRight', 'right')
+
+  return render_template('redo-mask.html', station_number=station_number, mask_options=part)
+
+############### HANDLE REDO MASK REQUEST ###########
+# this function will handle the post request to redo the mask
+@app.route('/bt1xx/handle-redo-mask/<int:station_number>/', methods=['POST'])
+def handle_redo_mask(station_number):
+  if request.method == 'POST':
+    # call the function for connecting to the devices
+    IP = partList['station' + str(station_number)]["IP"]
+    name = partList['station' + str(station_number)]["name"]
+    part_chosen = request.form['mask-options']
+
+    # get the index of the chosen part
+    for i in len(part):
+      if(part_chosen == part[i]):
+        part_chosen_index = i
+        break
+    part_chosen_index -= 2
+
+    try:
+      pipeline = createPipeline()
+
+      device_info = dai.DeviceInfo(IP)
+      device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
+      device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+
+      for device in dai.Device.getAllAvailableDevices():
+        print(f"{device.getMxId()} {device.state}")
+
+      with dai.Device(pipeline, device_info) as device:
+        recalibration = Recalibration(station='station' + str(station_number))
+        recalibration.upDateParams(station='station' + str(station_number))
+        recalibration.redo_mask(device, part_chosen_index, part_chosen)
+    
+      return redirect(url_for('setUpSuccessful', station_number=station_number))
+
+    except:
+      print(f"Error connecting to the device!")
+      return redirect(url_for('station_mask_setup', station_number=station_number))
+    
+
 ############################### STATION ERRORS SETUP PAGE ######################
 @app.route('/bt1xx/station/<int:station_number>/errorsetup')
 def station_errors_setup(station_number):
@@ -466,14 +561,6 @@ def startPrograms():
   # run all the cameras files
   run_all_cameras()
   return render_template('view.html')
-
-# test endpoint for javascript to listen to the key event and send them to the python server
-@app.route('/handle-key-event', methods=['POST', 'GET'])
-def handle_key_event():
-  # Handle the key event
-  key = request.json['key']
-  print(f"Key pressed:" + key)
-  return 'OK'
 
 if __name__ == '__main__':
  # connect to the websocket server to listening for events sent from localhost:5000
