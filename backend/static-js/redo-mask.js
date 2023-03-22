@@ -21,14 +21,24 @@ document.addEventListener('DOMContentLoaded', function() {
   const formData = new FormData(form);
 
   // using formData here, send it to the server using fetch API
-  const response = await fetch(url)
+  const response = await fetch(url, {
+   method : 'POST',
+   body: formData,
+  });
+
+  if(response.ok) {
+   window.location.href = url;
+  }
  })
+
+ // add event listener to form submit button
+ 
 
  option.addEventListener('change', function() {
 
   if(this.value === '2'){
    submit.style.display = 'block';
-
+   
   }
  })
 

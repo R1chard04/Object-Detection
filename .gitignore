@@ -2,3 +2,8 @@ Object_Detection/Photos/DIFF/
 Object_Detection/Photos/INIT/
 backend/myenv/
 Object_Detection
+backend\instance\martinrea.db
+backend\database_model
+backend\helper_functions\validate_users.py
+backend\migrations
+backend\params.json

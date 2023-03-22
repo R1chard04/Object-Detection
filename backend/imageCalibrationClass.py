@@ -186,7 +186,7 @@ class Recalibration:
         q = device.getOutputQueue(name="out")
         i = 0
 
-        url = 'http://127.0.0.1:5000/bt1xx/get-redo-mask/'
+        url = 'http://127.0.0.1:5000/bt1xx/getclickevent/'
         
         # load the silver part
         print("Load" + part + "silver part and press C to capture")

@@ -334,10 +334,7 @@ def change_settings(station_number):
   # return render_template("successful.html", station_number=station_number)
 
 click_event = False
-redo_mask = False
-part = None
-part_number = None
-###################### SENDING CLICK EVENT #######################
+###################### SENDING CLICK EVENT FOR MASK SETUP #######################
 @app.route('/bt1xx/handle-click/', methods=['POST'])
 def handle_click():
   global click_event
@@ -345,35 +342,13 @@ def handle_click():
   click_event = data.get('btnClick')
   return jsonify({'success' : True})
 
-##################### GETTING CLICK EVENT #######################
+##################### GETTING CLICK EVENT FOR MASK SETUP #######################
 @app.route('/bt1xx/getclickevent/', methods=['GET'])
 def get_click():
   global click_event
   return jsonify(
     {
       'btnClick' : click_event
-    }
-  )
-
-#################### POSTING REDO MASK COMMAND ####################
-@app.route('/bt1xx/post-redo-mask/', methods=['POST'])
-def post_mask_redo():
-  global redo_mask
-  data = request.get_json()
-  mask_redo = data.get('RedoMask')
-  return jsonify({'success' : True})
-
-#################### GETTING REDO MASK COMMAND #####################
-@app.route('/bt1xx/get-redo-mask/', methods=['GET'])
-def get_mask_redo():
-  global redo_mask
-  global part
-  global part_number
-  return jsonify(
-    {
-      'RedoMask' : True,
-      'Part' : part,
-      'Part_Number' : part_number
     }
   )
 
@@ -431,6 +406,8 @@ def handle_redo_mask(station_number):
     # call the function for connecting to the devices
     IP = partList['station' + str(station_number)]["IP"]
     name = partList['station' + str(station_number)]["name"]
+
+    # get the form input
     part_chosen = request.form['mask-options']
 
     # get the index of the chosen part
@@ -439,6 +416,9 @@ def handle_redo_mask(station_number):
         part_chosen_index = i
         break
     part_chosen_index -= 2
+
+    # sending the form input into the database instance
+    
 
     try:
       pipeline = createPipeline()
