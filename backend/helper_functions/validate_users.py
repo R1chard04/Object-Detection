@@ -1,18 +1,8 @@
 # This is a helper function that helps validate the users
 from flask import Flask, session, redirect, url_for
-from hashlib import sha256
+import bcrypt
 import pdb
 from datetime import datetime, timedelta
-
-def validate_users(user_info, username) -> bool:
- # if the user's login fields are all validated (user's information is in the database)
- if user_info:
-  session['username'] = username
-  session['expiry_time'] = (datetime.now() + timedelta(minutes=1440)).isoformat()
-  return True
- # if the users failed to login, this might be the users are not authorized for this program or they didn't enter your username and password
- else:
-  raise ValueError(f"This user is not authorized!")
  
 # This is a helper function that helps validate the username to meet the requirements in the db before encrypted it
 def validate_username(username) -> bool:
@@ -22,24 +12,27 @@ def validate_username(username) -> bool:
     return False
 
 # This is a helper function that helps validate the password to meet the requirements in the db before encrypted it
-def validate_password(username, password) -> str:
+def validate_password(username, password, users_table) -> str:
  if password != username and len(password) >= 8 and any(char.isupper() for char in password) and any(char in '!@#$%^&*' for char in password):
-  hashed_password = sha256(password.encode('utf-8')).hexdigest()
-  return hashed_password
+  # generate the salt for hashed_password
+  salt = bcrypt.gensalt()
+  # hash the password using bcrypt hashing algorithm
+  hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+
+  decoded_salt = salt.decode('utf-8')
+  decoded_hashed_password = hashed_password.decode('utf-8')
+
+  # query the password in database to make sure the password is unique
+  password_taken = users_table.query.filter(
+    users_table.password == decoded_hashed_password
+  ).first() is not None
+
+  # check if the password already in the database
+  if password_taken:
+    print(f'Sorry! This password already exist!')
+    return 
+  else:
+    return hashed_password
  else:
   print(f"Sorry! But this password doesn't meet the requirements")
 
-# This is a helper function that pop out the user after 15 minutes of inactivity
-def check_session_expiry() -> bool:
-  # Check if user is logged in and session has not expired
-  if 'username' in session and 'expiry_time' in session:
-    expiry_time = datetime.fromisoformat(session['expiry_time'])
-    if expiry_time < datetime.now():
-      # Session has expired, log out the user
-      session.pop('username', None)
-      session.pop('expiry_time', None)
-      return True
-    else:
-      # Update expiry time
-      session['expiry_time'] = (datetime.now() + timedelta(minutes=1440)).isoformat()
-      return False

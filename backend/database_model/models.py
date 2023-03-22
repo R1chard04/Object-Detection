@@ -4,6 +4,7 @@ from sqlalchemy.schema import CheckConstraint
 from datetime import datetime
 from sqlalchemy import inspect
 import pdb
+import pytz
 
 db = SQLAlchemy()
 
@@ -19,9 +20,8 @@ class Station(db.Model):
   station_brightness = db.Column(db.Integer, nullable=False)
   white_balance_lock = db.Column(db.Boolean, nullable=False)
   auto_exposure_lock = db.Column(db.Boolean, nullable=False)
-  created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-  updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-
+  created_at = db.Column(db.DateTime, default=datetime.now(pytz.timezone('EST')), nullable=False)
+  updated_at = db.Column(db.DateTime, default=datetime.now(pytz.timezone('EST')), onupdate=datetime.utcnow, nullable=False)
   # adding arguments constraints for station table
   __table_args__ = (
     CheckConstraint('station_focalLength >= 0 AND station_focalLength <= 200', name='focalLengthCheck'),
@@ -40,8 +40,9 @@ class Users(db.Model):
   username = db.Column(db.String(100), nullable=False, unique=True) # check constraint for username
   password = db.Column(db.String(100), nullable=False, unique=True) # check constraint for password
   is_admin = db.Column(db.Boolean, nullable=False) # check if the user is admin or not
-  created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-  updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+  created_at = db.Column(db.DateTime, default=datetime.now(pytz.timezone('EST')), nullable=False)
+  updated_at = db.Column(db.DateTime, default=datetime.now(pytz.timezone('EST')), onupdate=datetime.utcnow, nullable=False)
+  permissions = db.relationship('Permission', backref='users', lazy=True)
 
   # adding arguments constraints for users table
   __table_args__ = (
@@ -54,6 +55,14 @@ class Users(db.Model):
 
   def __repr__(self) -> str:
     return '<User %r>' % self.username % self.name
+  
+# Define a permission table to have one-to-many relationship to the user table
+class Permission(db.Model):
+  __tablename__ = 'permission'
+
+  id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
+  name = db.Column(db.String(1000), nullable=False, unique=True)
+  user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 # create one model for storing timestamp
 class TimingStation100(db.Model):
@@ -65,10 +74,9 @@ class TimingStation100(db.Model):
   BottomPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
   RightPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
   ClampState = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
-  created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-  # change to EST time
-  updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-
+  created_at = db.Column(db.DateTime, default=datetime.now(pytz.timezone('EST')), nullable=False)
+  updated_at = db.Column(db.DateTime, default=datetime.now(pytz.timezone('EST')), onupdate=datetime.utcnow, nullable=False)
+  
   def __repr__(self) -> str:
     return '<Station100_timing %r>' % self.updated_at
 
@@ -83,8 +91,8 @@ class TimingStation120(db.Model):
   BottomRightPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
   RightPart = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
   clampState = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
-  created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-  updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+  created_at = db.Column(db.DateTime, default=datetime.now(pytz.timezone('EST')), nullable=False)
+  updated_at = db.Column(db.DateTime, default=datetime.now(pytz.timezone('EST')), onupdate=datetime.utcnow, nullable=False)
 
   def __repr__(self) -> str:
     return '<Station120_timing %r>' % self.updated_at

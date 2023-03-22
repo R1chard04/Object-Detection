@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, MetaData, inspect
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
 from sqlalchemy.orm import scoped_session, sessionmaker
-from hashlib import sha256
+import bcrypt
 from pyignite import Client
 import os
 import sys
@@ -24,7 +24,7 @@ import keyboard
 
 # import files
 from database_model.models import db, Station, Users
-from helper_functions.validate_users import validate_users, validate_username, validate_password, check_session_expiry
+from helper_functions.validate_users import validate_username, validate_password
 from imageCalibrationClass import Recalibration, createPipeline
 
 # read in the params.json file
@@ -59,7 +59,7 @@ def create_tables():
     # create all the tables based on the models if they didn't exist yet
     with app.app_context():
       inspector = inspect(db.engine)
-      if not inspector.has_table('station') and not inspector.has_table('users'):
+      if not inspector.has_table('station') and not inspector.has_table('users') and not inspector.has_table('permission'):
         db.create_all()
 
 create_tables()
@@ -77,21 +77,16 @@ def insert_users() -> None:
     name2 = 'Jamie'
     usernames2 = 'jamie.yen@martinrea.com'
     passwords2 = 'Jamieyen12345$'
-    name3 = 'Eren'
-    usernames3 = 'eren.yilmaz@martinrea.com'
-    passwords3 = 'Erenyilmaz100$'
     # validate the username and password constraints before hashing it and put it into the database
     if validate_username(usernames) and validate_username(usernames1) and validate_username(usernames2) and validate_username(usernames3):
       hashed_password = validate_password(usernames, passwords)
       hashed_password1 = validate_password(usernames1, passwords1)
       hashed_password2 = validate_password(usernames2, passwords2)
-      hashed_password3 = validate_password(usernames3, passwords3)
       # create an instance to insert rows into user table
       new_users = [
         Users(id=1, name=name, username=usernames, password=hashed_password, is_admin=True),
         Users(id=2, name=name1, username=usernames1, password=hashed_password1, is_admin=True),
-        Users(id=3, name=name2, username=usernames2, password=hashed_password2, is_admin=True),
-        Users(id=4, name=name3, username=usernames3, password=hashed_password3, is_admin=True),
+        Users(id=3, name=name2, username=usernames2, password=hashed_password2, is_admin=True)
       ]
 
     # insert the new user into the session
@@ -386,17 +381,21 @@ def create_mask(station_number):
     print(f"Error connecting to the device!")
     return redirect(url_for('station_detail', station_number=station_number))
 
-part = ['selected']
+part = ['--select--']
+# read in params.json file for the parts
+with open('params.json', 'r') as f:
+  partList = json.load(f)
+
 ################ REDO MASK URL ################
 # this function will render the redo mask url
 @app.route('/bt1xx/redo-mask/<int:station_number>')
 def redo_mask(station_number):
-  if station_number == 100:
-    part.append('top', 'left', 'bottom', 'right')
-  elif station_number == 120:
-    part.append('topRight', 'topLeft', 'left', 'bottomLeft', 'bottomRight', 'right')
+  params = partList['station' + str(station_number)]
+  # append the part list
+  for i in params['parts']:
+    part.append(i)
 
-  return render_template('redo-mask.html', station_number=station_number, mask_options=part)
+  return render_template('redo-mask.html', station_number=station_number, errors={}, mask_options=part)
 
 ############### HANDLE REDO MASK REQUEST ###########
 # this function will handle the post request to redo the mask
@@ -408,38 +407,41 @@ def handle_redo_mask(station_number):
     name = partList['station' + str(station_number)]["name"]
 
     # get the form input
-    part_chosen = request.form['mask-options']
+    part_chosen = request.form['mask_options_id']
+    errors = {}
+
+    # validate the form input
+    if (part_chosen == '--select--'):
+      errors['mask_options_id'] = f'You have to choose the part you want to redo the mask!'
+      return render_template('redo-mask.html', station_number = station_number, errors=errors, mask_options=part)
 
     # get the index of the chosen part
-    for i in len(part):
+    for i in range(len(part)):
       if(part_chosen == part[i]):
         part_chosen_index = i
         break
     part_chosen_index -= 2
 
-    # sending the form input into the database instance
-    
+  try:
+    pipeline = createPipeline()
 
-    try:
-      pipeline = createPipeline()
+    device_info = dai.DeviceInfo(IP)
+    device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
+    device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
 
-      device_info = dai.DeviceInfo(IP)
-      device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
-      device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
+    for device in dai.Device.getAllAvailableDevices():
+      print(f"{device.getMxId()} {device.state}")
 
-      for device in dai.Device.getAllAvailableDevices():
-        print(f"{device.getMxId()} {device.state}")
+    with dai.Device(pipeline, device_info) as device:
+      recalibration = Recalibration(station='station' + str(station_number))
+      recalibration.upDateParams(station='station' + str(station_number))
+      recalibration.redo_mask(device, part_chosen_index, part_chosen)
+  
+    return redirect(url_for('setUpSuccessful', station_number=station_number))
 
-      with dai.Device(pipeline, device_info) as device:
-        recalibration = Recalibration(station='station' + str(station_number))
-        recalibration.upDateParams(station='station' + str(station_number))
-        recalibration.redo_mask(device, part_chosen_index, part_chosen)
-    
-      return redirect(url_for('setUpSuccessful', station_number=station_number))
-
-    except:
-      print(f"Error connecting to the device!")
-      return redirect(url_for('station_mask_setup', station_number=station_number))
+  except:
+    print(f"Error connecting to the device!")
+    return redirect(url_for('station_mask_setup', station_number=station_number))
     
 
 ############################### STATION ERRORS SETUP PAGE ######################
@@ -508,16 +510,14 @@ def authentication():
       if len(password) == 0:
         errors['password'] = f"Please enter your password!"
 
-      # encryted the password when the user send it as a POST request
-      hashed_password = sha256(password.encode('utf-8')).hexdigest()
+      # query the user record from the database
+      user = Users.query.filter_by(username=username, password=password).first()
 
-      # Query the database for the user with the specified username and password
-      user = Users.query.filter_by(username=username, password=hashed_password).first()
+      # validate the user credentials
+      if user:
+        # if the username and password are found in the database
+        if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
 
-      # validate the users using the helper function
-      if(validate_users(user_info=user, username=username)):
-        # handle the post request if all the fields are validated
-        return redirect(url_for('homepage'))
 
     except ValueError:
       errors['username'] = f"Sorry! You are not authorized for this program!"

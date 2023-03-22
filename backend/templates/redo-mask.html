@@ -17,26 +17,98 @@
    <h2 id="redo-mask-instruction">
      Please follow the following instructions to redo the mask process:
    </h2>
-   <p>
+   <p id="text">
      Please choose which mask part you want to redo in the following options for station {{ station_number }}:
    </p>
    <form action="{{ url_for('handle_redo_mask', station_number=station_number) }}" method="POST" id="form-redo-mask">
-    <select name="mask-options" id="mask-option">
+    <select name="mask_options_id" id="mask-option">
      {% for option in mask_options %} 
-     <option value="{{ option.id }}">
-      {% if option.id == mask-options %} selected
-      {% endif %} 
-      {{ option.mask_options }}
+     <option value="{{ option }}" 
+      {% if option == mask_options_id %} 
+       selected 
+      {% endif %}>
+      {{ option }}
      </option>
      {% endfor %} 
-    </select>
-
-    <!-- <input type="submit" value="Start" style="display:none;" id="submit"/> -->
-    <button type="submit" style="display: none;" id="submit">Start</button>
+    </select><br>
+    {% if request.method == 'POST' and errors.get('mask_options_id') %} 
+     <span class="error" style="color:red;">{{ errors['mask_options_id'] }}</span><br>
+    {% endif %} 
+    <br>
+    <input type="submit" value="Start" id="submit"/>
    </form>
+   <div id="instructions-box">
+    {% if station_number == 100 %}
+    <div>
+      <p id="top-part" style="display:none;">Load top silver part, then press any button to continue.</p>
+      <button id="top-part-button" style="display:none;">Finish</button><br>
+      <p id="top-part-colour" style="display:none;">Load top part with colour, then press any button to continue.</p>
+      <button id="top-part-colour-button" style="display:none;">Finish</button><br>
+      <p id="top-mask" style="display:none;">Creating the top mask, please hang on tight for at least 1 minute:</p>
+      <p id="top-timer" style="display:none;">00:01:00</p>
+      <p id="left-part" style="display:none;">Load left silver part, then press any button to continue.</p>
+      <button id="left-part-button" style="display:none;">Finish</button><br>
+      <p id="left-part-colour" style="display:none;">Load left part with colour, then press any button to continue.</p>
+      <button id="left-part-colour-button" style="display:none;">Finish</button><br>
+      <p id="left-mask" style="display:none;">Creating the left mask, please hang on tight for at least 1 minute:</p>
+      <p id="left-timer" style="display:none;">00:01:00</p>
+      <p id="bottom-part" style="display:none;">Load bottom silver part, after that, press any button to move on the next part.</p>
+      <button id="bottom-part-button" style="display:none;">Finish</button><br>
+      <p id="bottom-part-colour" style="display:none;">Load bottom part with colour, then press any button to continue the process.</p>
+      <button id="bottom-part-colour-button" style="display:none;">Finish</button><br>
+      <p id="bottom-mask" style="display:none;">Creating the bottom mask, please hang on tight for at least 1 minute:</p>
+      <p id="bottom-timer" style="display:none;">00:01:00</p>
+      <p id="right-part" style="display:none;">Load right silver part, then press any button to continue.</p>
+      <button id="right-part-button" style="display:none;">Finish</button><br>
+      <p id="right-part-colour" style="display:none;">Load right silver part with colour, then press any button to continue.</p>
+      <button id="right-part-colour-button" style="display:none;">Finish</button><br>
+      <p id="right-mask" style="display:none;">Creating the right mask, please hang on tight for at least 1 minute:</p>
+      <p id="right-timer" style="display:none;">00:01:00</p>
+    </div>
+    {% elif station_number == 120 %}
+    <div>
+      <p id="topRight-part" style="display:none;">Load top right part, then press any button to continue.</p><br>
+      <button id="topRight-part-button" style="display:none;">Finish</button><br>
+      <p id="topRight-part-colour" style="display:none;">Load top right part with colour, then press any button to continue.</p><br>
+      <button id="topRight-part-colour-button" style="display:none;">Finish</button><br>
+      <p id="topRight-mask" style="display:none;">Creating the top right mask, please hang on tight for at least 1 minute:</p>
+      <p id="topRight-timer" style="display:none;">00:01:00</p>
+      <p id="topLeft-part" style="display:none;">Load top left part, then press any button to continue.</p><br>
+      <button id="topLeft-part-button" style="display:none;">Finish</button><br>
+      <p id="topLeft-part-colour" style="display:none;">Load top left part with colour, then press any button to continue.</p><br>
+      <button id="topLeft-part-colour-button" style="display:none;">Finish</button><br>
+      <p id="topLeft-mask" style="display:none;">Creating the top left mask, please hang on tight for at least 1 minute:</p>
+      <p id="topLeft-timer" style="display:none;">00:01:00</p>
+      <p id="left120-part" style="display:none;">Load left part, then press any button to continue.</p><br>
+      <button id="left120-part-button" style="display:none;">Finish</button><br>
+      <p id="left120-part-colour" style="display:none;">Load left part with colour, then press any button to continue.</p><br>
+      <button id="left120-part-colour-button" style="display:none;">Finish</button><br>
+      <p id="left120-mask" style="display:none;">Creating the left mask, please hang on tight for at least 1 minute:</p>
+      <p id="left120-timer" style="display:none;">00:01:00</p>
+      <p id="bottomLeft-part" style="display:none;">Load bottom left part, after that, press any button to move on the next part.</p><br>
+      <button id="bottomLeft-part-button" style="display:none;">Finish</button><br>
+      <p id="bottomLeft-part-colour" style="display:none;">Load bottom left part with colour, then press any button to continue the process.</p><br>
+      <button id="bottomLeft-part-colour-button" style="display:none;">Finish</button><br>
+      <p id="bottomLeft-mask" style="display:none;">Creating the bottom left mask, please hang on tight for at least 1 minute:</p>
+      <p id="bottomLeft-timer" style="display:none;">00:01:00</p>
+      <p id="bottomRight-part" style="display:none;">Load bottom right part, after that, press any button to move on the next part.</p><br>
+      <button id="bottomRight-part-button" style="display:none;">Finish</button><br>
+      <p id="bottomRight-part-colour" style="display:none;">Load bottom right part with colour, then press any button to continue the process.</p><br>
+      <button id="bottomRight-part-colour-button" style="display:none;">Finish</button><br>
+      <p id="bottomRight-mask" style="display:none;">Creating the bottom right mask, please hang on tight for at least 1 minute:</p>
+      <p id="bottomRight-timer" style="display:none;">00:01:00</p>
+      <p id="right120-part" style="display:none;">Load right part, then press any button to continue.</p><br>
+      <button id="right120-part-button" style="display:none;">Finish</button><br>
+      <p id="right120-part-colour" style="display:none;">Load right part with colour, then press any button to continue.</p><br>
+      <button id="right120-part-colour-button" style="display:none;">Finish</button><br>
+      <p id="right120-mask" style="display:none;">Creating the top mask, please hang on tight for at least 1 minute:</p>
+      <p id="right120-timer" style="display:none;">00:01:00</p>
+    </div>
+    {% endif %}
+   </div>
    <div>
     <ul>
-     <p>Make no changes?</p>
+     <h2>Make no changes?</h2>
      <li>
       <a href="{{ url_for('station_mask_setup', station_number=station_number) }}">Station {{ station_number }} mask setting</a>
      </li>

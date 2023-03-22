@@ -116,37 +116,11 @@ document.addEventListener('DOMContentLoaded', function() {
     throw new Error('Failed to handle click event');
    }
    else {
-    console.log(data)
+    console.log(data);
    }
   })
   .catch(error => {
    console.error(`Error: ${error}`);
-  })
- }
-
- // function get the command to re-do the mask and send the event to the URL server
- function handleRedoMask(part_number, part) {
-  // fetch the click event and send as a post request into 'post-redo-mask' endpoint
-  const data = {
-   'RedoMask' : true,
-   'Part' : part,
-   'Part_number' : part_number
-  }
-  fetch('http://127.0.0.1:5000/post-redo-mask/', {
-   method : 'POST',
-   headers : {'Content-Type' : 'application/json'},
-   body : JSON.stringify(data)
-  })
-  .then(response => {
-   if(!response.ok) {
-    throw new Error('Failed to send POST request to the server');
-   }
-   else {
-    console.log(data)
-   }
-  })
-  .catch(error => {
-   console.error(`Error: ${error}`)
   })
  }
 
