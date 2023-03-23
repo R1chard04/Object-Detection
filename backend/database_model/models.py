@@ -62,8 +62,11 @@ class Permission(db.Model):
   __tablename__ = 'permission'
 
   id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
-  name = db.Column(db.String(1000), nullable=False, unique=True)
+  name = db.Column(db.String(1000), nullable=False)
   user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+  def __repr__(self) -> str:
+    return '<Permission %r>' % self.id % self.name
 
 # create one model for storing timestamp
 class TimingStation100(db.Model):

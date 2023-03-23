@@ -1,34 +1,26 @@
-from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, session, flash, abort, make_response, jsonify
+# import required libraries
+from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, make_response, jsonify
 from flask_cors import CORS
-from sqlalchemy import create_engine, MetaData, inspect
-from flask_sqlalchemy import SQLAlchemy
-from flask_restful import Api, Resource
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy import create_engine
+from sqlalchemy.engine.reflection import Inspector
+from flask_restful import Api
 import bcrypt
 import jwt
 from pyignite import Client
 import os
-import sys
-import websocket
-import logging
-import traceback
-from flask_socketio import SocketIO, emit
-import pdb
 from flask_migrate import Migrate
 import secrets
 import depthai as dai
-import requests
-import asyncio
 import json
-import subprocess
-import keyboard
 from datetime import datetime, timedelta
 import pytz
+import pdb
 
 # import files
-from database_model.models import db, Station, Users
-from helper_functions.validate_users import validate_username, validate_password
+from database_model.models import db, Station, Users, Permission
+from helper_functions.validate_users import validate_username, validate_password, give_permission
 from helper_functions.middleware_function import validate_token
+from helper_functions.run_all_cameras import run_all_cameras
 from imageCalibrationClass import Recalibration, createPipeline
 
 # read in the params.json file
@@ -38,8 +30,8 @@ with open(r'params.json') as f:
 # connect flask to the database
 app = Flask(__name__)
 api = Api(app)
-socketio = SocketIO(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/martinrea.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instances/martinrea.db'
+engine = create_engine('sqlite:///instances/martinrea.db')
 app.config['SERVER_NAME'] = '127.0.0.1:5000'
 app.config['APPLICATION_ROOT'] = '/'
 app.config['PREFERRED_URL_SCHEME'] = 'http'
@@ -48,6 +40,8 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 # secret key
 app.config['SECRET_KEY'] = secrets.token_hex(16)
 CORS(app)
+
+inspector = Inspector.from_engine(engine)
 
 # generate a 32-character hexadecimal secret key for users to login their session
 app.secret_key = secrets.token_hex(16)
@@ -65,8 +59,8 @@ def create_tables():
     db.init_app(app)
     # create all the tables based on the models if they didn't exist yet
     with app.app_context():
-      inspector = inspect(db.engine)
-      if not inspector.has_table('station') and not inspector.has_table('users') and not inspector.has_table('permission'):
+      table_names = inspector.get_table_names()
+      if 'station' not in table_names and 'users' not in table_names and 'permission' not in table_names:
         db.create_all()
 
 create_tables()
@@ -75,50 +69,60 @@ create_tables()
 def insert_users() -> None:
   with app.app_context():
     # create a list of non-encoded username and passwords
-    name = 'Kent'
-    usernames = 'kent.tran@martinrea.com'
-    passwords = 'Kenttran2302$'
-    name1 = 'Leo'
-    usernames1 = 'leo.you@martinrea.com'
-    passwords1 = 'Leoyou1234$'
-    name2 = 'Jamie'
-    usernames2 = 'jamie.yen@martinrea.com'
-    passwords2 = 'Jamieyen12345$'
-    # validate the username and password constraints before hashing it and put it into the database
-    if validate_username(usernames) and validate_username(usernames1) and validate_username(usernames2):
-      decoded_salt1, hashed_password = validate_password(usernames, passwords)
-      decoded_salt2, hashed_password1 = validate_password(usernames1, passwords1)
-      decoded_salt3, hashed_password2 = validate_password(usernames2, passwords2)
-      # create an instance to insert rows into user table
-      new_users = [
-        Users(id=1, name=name, username=usernames, password=hashed_password, password_salt=decoded_salt1, is_admin=True),
-        Users(id=2, name=name1, username=usernames1, password=hashed_password1, password_salt=decoded_salt2, is_admin=True),
-        Users(id=3, name=name2, username=usernames2, password=hashed_password2, password_salt=decoded_salt3, is_admin=True)
-      ]
+    # read in the users.json file
+    with open('users.json', 'r') as f:
+      user = json.load(f)
+    
+    names = []
+    usernames = []
+    passwords = []
+    is_admin = []
 
-    # insert the new user into the session
-    for user in new_users:
-      try:
-        db.session.add(user)
-        # commit the changes to the database
-        db.session.commit()
-        print(f"User {user.username} added successfully!")
-      except:
-        db.session.rollback()
-        print(f"User {user.username} already exists in the database!")
+    # get the list of usernames and passwords
+    for i in range(5):
+      names.append(user[f'user{i}']['name'])
+      usernames.append(user[f'user{i}']['username'])
+      passwords.append(user[f'user{i}']['password'])
+      is_admin.append(user[f'user{i}']['is_admin'])
+
+    # validate the username and password constraints before hashing it and put it into the database
+    for i in range(len(usernames)):
+      if validate_username(usernames[i]):
+        decoded_salt, hashed_password = validate_password(usernames[i], passwords[i], Users)
+
+        # create an instance to insert rows into user table
+        new_users = [
+          Users(id=i+1, name=names[i], username=usernames[i], password=hashed_password, password_salt=decoded_salt, is_admin=is_admin[i])
+        ]
+
+        for user in new_users:
+          # insert the new user into the session
+          try:
+            db.session.add(user)
+            # commit the changes to the database
+            db.session.commit()
+            print(f"User {user.username} added successfully!")
+          except:
+            db.session.rollback()
+            print(f"User {user.username} already exists in the database!")
+        
+        # read in permissions.json
+        with open('permissions.json', 'r') as f:
+          permissions = json.load(f)
+
+        users_permissions_list = []
+        admin_permissions_list = []
+        # get the 2 lists of permissions
+        for i in range(2):
+          users_permissions_list.append(permissions['all_users_permissions'][f'permission{i}']['permission_name'])
+        
+        for i in range(18):
+          admin_permissions_list.append(permissions['admin_permissions'][f'permission{i}']['permission_name'])
+
+        # put the permissions into the permission table
+        give_permission(Permission, Users, users_permissions_list, admin_permissions_list, db)
 
 insert_users()
-
-# function to run all the cameras at once
-def run_all_cameras():
-  subprocess.Popen(['C:/Users/kent.tran/AppData/Local/Programs/Python/Python311/python.exe', 'cam1.py'])
-  subprocess.Popen(['C:/Users/kent.tran/AppData/Local/Programs/Python/Python311/python.exe', 'cam2.py'])
-  # subprocess.Popen(['C:/Users/kent.tran/AppData/Local/Programs/Python/Python311/python.exe', 'cam3.py'])
-
-
-@socketio.on('key_event')
-def handle_key_event(data):
-  print(f'Received key event: {data}')
 
 # include the path to javascript files
 @app.route('/static-js/<path:filename>')
@@ -143,26 +147,26 @@ def serve_static_photos(filename):
 
 ####################### HOMEPAGE ##########################
 # define the list of permissions to visit this homepage
-permission_list = ['can_view_homepage']
 # render the homepage
 @app.route('/bt1xx/home/')
-@validate_token(permissions_list=permission_list)
+@validate_token('homepage_access')
 def homepage():
   # decode the token and get the name of the user
   token = request.cookies.get('token')
   name = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['name']
   return render_template('home.html', user_name=name)
  
-
 ####################### STATION DETAILS #####################
 # render the station details depends on the click event 
 @app.route('/bt1xx/station/<int:station_number>/')
+@validate_token('station_detail')
 def station_detail(station_number):
   return render_template("station_details.html", station_number=station_number)
 
 ###################### STATION SETTINGS ######################
 # render the station settings
 @app.route('/bt1xx/station/<int:station_number>/settings/')
+@validate_token('station_settings')
 def station_settings(station_number):
   try:
     # enable the websockets to be ready to listen for events on the client side
@@ -177,6 +181,7 @@ def station_settings(station_number):
 key_event = None  
 ###################### HANDLE POST REQUEST OF KEY EVENTS FROM OPENCV ###################
 @app.route('/bt1xx/update-ui/', methods=['POST'])
+@validate_token('update_event')
 def update_event():
     global key_event
     data = request.get_json()
@@ -186,12 +191,14 @@ def update_event():
 # register the endpoint
 # update_key_event = GetKeyEvent()
 @app.route('/bt1xx/get-updates/', methods=['GET'])
+@validate_token('get_key')
 def get_key():
   global key_event
   return jsonify({'key': key_event})
 
 ###################### STATION SHOW FRAME ######################
 @app.route('/bt1xx/paramSetup/showframe/station/<int:station_number>/', methods=['GET'])
+@validate_token('show_frame_params')
 def show_frame_params(station_number):
   # get the IP address of the connected device depends on the station number by calling the helper function
   # loop through the stations list to find the associate IP Address
@@ -232,6 +239,7 @@ def show_frame_params(station_number):
 ###################### STATION CHANGE SETTINGS #################
 # retrieve the data from the form
 @app.route('/bt1xx/station/<int:station_number>/changeSettings', methods=['POST'])
+@validate_token('change_settings')
 def change_settings(station_number):
   # get the IP address of the connected device depends on the station number by calling the helper function
   IP = partList['station' + str(station_number)]["IP"]
@@ -284,6 +292,7 @@ def change_settings(station_number):
 click_event = False
 ###################### SENDING CLICK EVENT FOR MASK SETUP #######################
 @app.route('/bt1xx/handle-click/', methods=['POST'])
+@validate_token('handle_click')
 def handle_click():
   global click_event
   data = request.get_json()
@@ -292,6 +301,7 @@ def handle_click():
 
 ##################### GETTING CLICK EVENT FOR MASK SETUP #######################
 @app.route('/bt1xx/getclickevent/', methods=['GET'])
+@validate_token('get_click')
 def get_click():
   global click_event
   return jsonify(
@@ -303,11 +313,13 @@ def get_click():
 ####################### STATION MASKS SETTINGS ###############
 # render the url for station mask setup instructions
 @app.route('/bt1xx/station/<int:station_number>/masksetup')
+@validate_token('station_mask_setup')
 def station_mask_setup(station_number):
   return render_template("station_masksetup.html", station_number=station_number)
 
 # render the url for setting up the mask action
 @app.route('/bt1xx/createmask/showframe/station/<int:station_number>/')
+@validate_token('create_mask')
 def create_mask(station_number):
   # call the function for connecting to the devices
   IP = partList['station' + str(station_number)]["IP"]
@@ -342,6 +354,7 @@ with open('params.json', 'r') as f:
 ################ REDO MASK URL ################
 # this function will render the redo mask url
 @app.route('/bt1xx/redo-mask/<int:station_number>')
+@validate_token('redo_mask')
 def redo_mask(station_number):
   params = partList['station' + str(station_number)]
   # append the part list
@@ -353,6 +366,7 @@ def redo_mask(station_number):
 ############### HANDLE REDO MASK REQUEST ###########
 # this function will handle the post request to redo the mask
 @app.route('/bt1xx/handle-redo-mask/<int:station_number>/', methods=['POST'])
+@validate_token('handle_redo_mask')
 def handle_redo_mask(station_number):
   if request.method == 'POST':
     # call the function for connecting to the devices
@@ -399,11 +413,13 @@ def handle_redo_mask(station_number):
 
 ############################### STATION ERRORS SETUP PAGE ######################
 @app.route('/bt1xx/station/<int:station_number>/errorsetup')
+@validate_token('station_errors_setup')
 def station_errors_setup(station_number):
   return render_template("station_errorsetup.html", station_number=station_number)
 
 # render the url for setting up errors actions
 @app.route('/bt1xx/errors/showframe/station/<int:station_number>')
+@validate_token('create_errors')
 def create_errors(station_number):
   # call the function to connect to a device
   IP = partList['station' + str(station_number)]["IP"]
@@ -436,6 +452,7 @@ def create_errors(station_number):
 
 ################ SUCCESSFUL PAGE AFTER SETTING UP #################
 @app.route('/bt1xx/station_settings/<int:station_number>/successful/')
+@validate_token('finish_setup')
 def setUpSuccessful(station_number):
   return render_template('successful.html', station_number=station_number)
 
@@ -462,18 +479,18 @@ def authentication():
 
       if len(password) == 0:
         errors['password'] = f"Please enter your password!"
-
+      
+      # 
       # query the user record from the database
-      user = Users.query.filter_by(username=username, password=password).first()
-
+      user = Users.query.filter_by(username=username).first()
       # validate the user credentials
       if user:
         # if the username and password are found in the database
-        if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+        if bcrypt.checkpw(password.encode('utf-8'), user.password):
           # User credentials are valid
           # Generate JWT token and store it in cookies
           # query the permissions list in the user table with the user id
-          permissions = [permissions.name for permission in user.permissions]
+          permissions = [permission.name for permission in user.permissions]
           token = jwt.encode({'id' : user.id, 'name' : user.name,  'username' : user.username, 'exp': datetime.now(pytz.timezone('EST')) + timedelta(minutes=60), 'permissions' : permissions}, app.config['SECRET_KEY'], algorithm='HS256')
 
           # Store the token in a cookie
@@ -483,18 +500,26 @@ def authentication():
           # Redirect the user to the homepage and some restricted resources
           return response
 
-    except ValueError:
+      else:
+        raise ValueError
+
+    except BaseException:
       errors['username'] = f"Sorry! You are not authorized for this program!"
       return render_template('login.html', errors=errors)
 
 # If the user chooses to log out the program
 @app.route('/bt1xx/logout/')
 def logout():
-  session.pop('username', None)
-  return redirect(url_for('login'))
+  # get the token from cookies
+  token = request.cookies.get('token')
+  # set the token to be expired
+  response = make_response(redirect(url_for('login')))
+  response.set_cookie('token', value=token, expires=0, httponly=True)
+  return response
   
 ############################## RUNNING ALL THE PROGRAMS ##############################
 @app.route('/bt1xx/startallprograms/', methods=['GET'])
+@validate_token('run_cameras')
 def startPrograms():
   # run all the cameras files
   run_all_cameras()

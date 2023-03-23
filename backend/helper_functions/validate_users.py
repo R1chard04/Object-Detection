@@ -43,19 +43,21 @@ def give_permission(permission_table, user_table, all_users_permission_name, adm
 
   # grant the access to view the homepage and start all the cameras
   for user in all_users:
-    permission = permission_table.query.filter_by(user_id=user.id, name=all_users_permission_name).first()
-    if not permission:
-      permission = permission_table(name=all_users_permission_name, user_id=user.id)
-      db.session.add(permission)
+    for all_users_permission in all_users_permission_name:
+      permission = permission_table.query.filter_by(user_id=user.id, name=all_users_permission).first()
+      if not permission:
+        permission = permission_table(name=all_users_permission, user_id=user.id)
+        db.session.add(permission)
   
   # query to get all the users with administration authorities
   admins = user_table.query.filter_by(is_admin=True).all()
 
   # grant the access to view the homepage, users_login_tracking, station_detail, station_settings, update_event, get_key, show_frame_params, change_settings, handle_click, get_click, station_mask_setup, create_mask, redo_mask, handle_redo_mask, station_errors_setup, create_errors, finish_setup, startPrograms
   for admin in admins:
-    admin_permission = permission_table.query.filter_by(user_id=user.id, name=admin_permission_name).first()
-    if not admin_permission:
-      admin_permission = permission_table(name=admin_permission_name, user_id=user.id)
-      db.session.add(admin_permission)
+    for admin_permission_list in admin_permission_name:
+      admin_permission = permission_table.query.filter_by(user_id=admin.id, name=admin_permission_list).first()
+      if not admin_permission:
+        admin_permission = permission_table(name=admin_permission_list, user_id=admin.id)
+        db.session.add(admin_permission)
 
   db.session.commit()

@@ -4,7 +4,7 @@ from flask import request, jsonify, current_app, redirect, url_for
 import jwt
 import pdb
 
-def validate_token(permissions_list):
+def validate_token(permission):
  def decorator(f):
   @wraps(f)
   def decorated_function(*args, **kwargs):
@@ -15,11 +15,10 @@ def validate_token(permissions_list):
     return redirect(url_for('login'))
    try:
     data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
-    for permission in permissions_list:
-     if permission not in data['permissions']:
-      return jsonify({'message' : 'Sorry! You are not authorized to view this page!'}), 403
+    if permission not in data['permissions']:
+     return jsonify({'message' : 'Sorry! You are not authorized to view this page!'}), 403
    except:
-    return jsonify({'message' : 'Token is invalid!'}), 401
+    return redirect(url_for('login'))
    return f(*args, **kwargs)
   return decorated_function
  return decorator

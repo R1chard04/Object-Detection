@@ -7,12 +7,12 @@
   <script type="text/javascript" src="{{ url_for('serve_static_js', filename = 'station_settings.js' ) }}"></script>
   <link rel="stylesheet" href="{{ url_for('serve_static_css', filename = 'station_settings.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <link rel="icon" type="image/x-icon" href="{{ url_for('serve_static_photos', filename = 'settings.png') }}"/>
  </head>
  <body>
   <header class="header">
    <div>
-    <img id="logo" src="{{ url_for('serve_static_photos', filename = 'martinrea-logo.jpg') }}" alt="Logo" onclick="goToSettingPage()">
+    <img id="logo" src="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}" alt="Logo" onclick="goToSettingPage()">
     <h2 class="page-heading">Settings manuals for station {{ station_number }}</h2>
    </div>
   </header>

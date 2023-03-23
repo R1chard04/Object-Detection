@@ -1,0 +1,36 @@
+{
+ "user0" : {
+  "name" : "Kent",
+  "username" : "kent.tran@martinrea.com",
+  "password" : "Kenttran2302$",
+  "is_admin" : true
+ },
+
+ "user1" : {
+  "name" : "Leo",
+  "username" : "leo.you@martinrea.com",
+  "password" : "Leoyou1234$",
+  "is_admin" : true
+ },
+
+ "user2" : {
+  "name" : "Jamie",
+  "username" : "jamie.yen@martinrea.com",
+  "password" : "Jamieyen12345$",
+  "is_admin" : true
+ },
+
+ "user3" : {
+  "name" : "Shubham",
+  "username" : "shubham.savani@martinrea.com",
+  "password" : "ShubhameMartinrea@123",
+  "is_admin" : true
+ },
+
+ "user4" : {
+  "name" : "Random",
+  "username" : "random@martinrea.com",
+  "password" : "Randompersonhehe@123",
+  "is_admin" : false
+ }
+}
