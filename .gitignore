@@ -8,4 +8,3 @@ backend/helper_functions/validate_users.py
 backend/migrations
 backend/params.json
 backend/users.json
-backend/permissions.json
