@@ -1,10 +1,11 @@
-from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, session, flash, abort
+from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, session, flash, abort, make_response, jsonify
 from flask_cors import CORS
 from sqlalchemy import create_engine, MetaData, inspect
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
 from sqlalchemy.orm import scoped_session, sessionmaker
 import bcrypt
+import jwt
 from pyignite import Client
 import os
 import sys
@@ -21,10 +22,13 @@ import asyncio
 import json
 import subprocess
 import keyboard
+from datetime import datetime, timedelta
+import pytz
 
 # import files
 from database_model.models import db, Station, Users
 from helper_functions.validate_users import validate_username, validate_password
+from helper_functions.middleware_function import validate_token
 from imageCalibrationClass import Recalibration, createPipeline
 
 # read in the params.json file
@@ -40,6 +44,9 @@ app.config['SERVER_NAME'] = '127.0.0.1:5000'
 app.config['APPLICATION_ROOT'] = '/'
 app.config['PREFERRED_URL_SCHEME'] = 'http'
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+# secret key
+app.config['SECRET_KEY'] = secrets.token_hex(16)
 CORS(app)
 
 # generate a 32-character hexadecimal secret key for users to login their session
@@ -78,15 +85,15 @@ def insert_users() -> None:
     usernames2 = 'jamie.yen@martinrea.com'
     passwords2 = 'Jamieyen12345$'
     # validate the username and password constraints before hashing it and put it into the database
-    if validate_username(usernames) and validate_username(usernames1) and validate_username(usernames2) and validate_username(usernames3):
-      hashed_password = validate_password(usernames, passwords)
-      hashed_password1 = validate_password(usernames1, passwords1)
-      hashed_password2 = validate_password(usernames2, passwords2)
+    if validate_username(usernames) and validate_username(usernames1) and validate_username(usernames2):
+      decoded_salt1, hashed_password = validate_password(usernames, passwords)
+      decoded_salt2, hashed_password1 = validate_password(usernames1, passwords1)
+      decoded_salt3, hashed_password2 = validate_password(usernames2, passwords2)
       # create an instance to insert rows into user table
       new_users = [
-        Users(id=1, name=name, username=usernames, password=hashed_password, is_admin=True),
-        Users(id=2, name=name1, username=usernames1, password=hashed_password1, is_admin=True),
-        Users(id=3, name=name2, username=usernames2, password=hashed_password2, is_admin=True)
+        Users(id=1, name=name, username=usernames, password=hashed_password, password_salt=decoded_salt1, is_admin=True),
+        Users(id=2, name=name1, username=usernames1, password=hashed_password1, password_salt=decoded_salt2, is_admin=True),
+        Users(id=3, name=name2, username=usernames2, password=hashed_password2, password_salt=decoded_salt3, is_admin=True)
       ]
 
     # insert the new user into the session
@@ -134,32 +141,24 @@ def serve_static_photos(filename):
   root_dir = os.path.dirname(os.getcwd())
   return send_from_directory(os.path.join(root_dir, 'backend/Logos'), filename)
 
-# include the path to the templates files
-# @app.route('/outside_template/<path:filename>')
-# # add the templates files towards the directory path
-# def serve_static_templates(filename):
-#   root_dir = os.path.dirname(os.getcwd())
-#   return send_from_directory(os.path.join(root_dir, 'backend/outside_template'), filename)
-
 ####################### HOMEPAGE ##########################
+# define the list of permissions to visit this homepage
+permission_list = ['can_view_homepage']
 # render the homepage
 @app.route('/bt1xx/home/')
+@validate_token(permissions_list=permission_list)
 def homepage():
-  if 'username' in session:
-    return render_template("home.html")
-  else:
-    return redirect(url_for('login'))
+  # decode the token and get the name of the user
+  token = request.cookies.get('token')
+  name = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['name']
+  return render_template('home.html', user_name=name)
  
 
 ####################### STATION DETAILS #####################
 # render the station details depends on the click event 
 @app.route('/bt1xx/station/<int:station_number>/')
 def station_detail(station_number):
-  if 'username' in session:
-    return render_template("station_details.html", station_number=station_number)
-  else:
-    return redirect(url_for('login'))
-
+  return render_template("station_details.html", station_number=station_number)
 
 ###################### STATION SETTINGS ######################
 # render the station settings
@@ -177,58 +176,12 @@ def station_settings(station_number):
 
 key_event = None  
 ###################### HANDLE POST REQUEST OF KEY EVENTS FROM OPENCV ###################
-# class HandleKeyEvents(Resource):
-#   def __init__(self) -> None:
-#     super().__init__()
-  
-#   # send a post request towards the 'update-ui' url server from python
-#   def post(self):
-#     if request.method == 'POST':
-#       global key_event
-#       data = request.get_json()
-#       try:
-#         if key_event is not None:
-#           print(key_event)
-#           key_event = data.get('key')
-#           return jsonify({
-#             'success' : True,
-#             'key' : key_event
-#           })
-#         else:
-#           raise ValueError(f"No key events detected!")
-
-#       except BaseException as e:
-#         return "Error while handling POST request with an error: " + str(e)
-    
-# api.add_resource(HandleKeyEvents, '/bt1xx/update-ui/')
-
-# register the endpoint
-# handle_key_event_model = HandleKeyEvents()
 @app.route('/bt1xx/update-ui/', methods=['POST'])
 def update_event():
     global key_event
     data = request.get_json()
     key_event = data.get('key')
     return jsonify({'success': True})
-
-# class GetKeyEvent(Resource):
-#   def __init__(self) -> None:
-#     super().__init__()
-
-#   # send a get request towards the 'update-ui' url server to get the key events
-#   def get(self):
-#     if request.method == 'GET':
-#       global key_event
-#       try:
-#         if key_event is not None:
-#           return jsonify({'key': key_event})
-#         else:
-#           raise ValueError(f"No key events has been sent!")
-        
-#       except BaseException as e:
-#         return "Error while handling GET request with an error: " + str(e)
-    
-# api.add_resource(GetKeyEvent, '/bt1xx/get-updates/')
 
 # register the endpoint
 # update_key_event = GetKeyEvent()
@@ -493,7 +446,7 @@ def login():
   return render_template('login.html')
 
 # authenticate the users login
-@app.route('/bt1xx/authentication/', methods=['POST', 'GET'])
+@app.route('/bt1xx/authentication/', methods=['POST'])
 def authentication():
   # if the user is not in session then abort the users to not authorized url
   if request.method == 'POST':
@@ -517,7 +470,18 @@ def authentication():
       if user:
         # if the username and password are found in the database
         if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+          # User credentials are valid
+          # Generate JWT token and store it in cookies
+          # query the permissions list in the user table with the user id
+          permissions = [permissions.name for permission in user.permissions]
+          token = jwt.encode({'id' : user.id, 'name' : user.name,  'username' : user.username, 'exp': datetime.now(pytz.timezone('EST')) + timedelta(minutes=60), 'permissions' : permissions}, app.config['SECRET_KEY'], algorithm='HS256')
 
+          # Store the token in a cookie
+          response = make_response(redirect(url_for('homepage')))
+          response.set_cookie('token', value=token, expires=datetime.now(pytz.timezone('EST')) + timedelta(minutes=60), httponly=True)
+
+          # Redirect the user to the homepage and some restricted resources
+          return response
 
     except ValueError:
       errors['username'] = f"Sorry! You are not authorized for this program!"
@@ -528,12 +492,6 @@ def authentication():
 def logout():
   session.pop('username', None)
   return redirect(url_for('login'))
-
-# Check session expiration
-# @app.before_request
-# def checkExpiration():
-#   if(check_session_expiry()):
-#     return redirect(url_for('login'))
   
 ############################## RUNNING ALL THE PROGRAMS ##############################
 @app.route('/bt1xx/startallprograms/', methods=['GET'])

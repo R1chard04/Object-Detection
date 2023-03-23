@@ -39,6 +39,7 @@ class Users(db.Model):
   name = db.Column(db.String(50), nullable=False, unique=True)
   username = db.Column(db.String(100), nullable=False, unique=True) # check constraint for username
   password = db.Column(db.String(100), nullable=False, unique=True) # check constraint for password
+  password_salt = db.Column(db.String(100), nullable=False, unique=True) # salt password for bcrypt hashing 
   is_admin = db.Column(db.Boolean, nullable=False) # check if the user is admin or not
   created_at = db.Column(db.DateTime, default=datetime.now(pytz.timezone('EST')), nullable=False)
   updated_at = db.Column(db.DateTime, default=datetime.now(pytz.timezone('EST')), onupdate=datetime.utcnow, nullable=False)
