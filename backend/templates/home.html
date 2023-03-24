@@ -15,18 +15,21 @@
  <body>
   <header> 
    <div class="navbar">
+    <img id='home-logo' src="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}" alt="Logo"></img>
     <div class="logo">
-     <img id='home-logo' src="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}" alt="Logo"></img>
-     <a href="{{ url_for('homepage') }}">BT1XX Control Software</a>
+     <a href="{{ url_for('homepage') }}">
+      BT1XX Control Software
+     </a>
     </div>
     <ul class="links">
      <li><a href="{{ url_for('homepage') }}">Home</a></li>
-     <li><a href="#">Station 100</a></li>
-     <li><a href="#">Station 120</a></li>
+     <li><a href="/bt1xx/station/100">Station 100</a></li>
+     <li><a href="/bt1xx/station/120">Station 120</a></li>
      <li><a href="/bt1xx/about/">About</a></li>
      <li><a href="/bt1xx/contact/">Contact</a></li>
     </ul>
-    <a href="#" class="action_btn">Launch All Cameras</a>
+    <p class="action_btn">Launch All Cameras</p>
+    <a class="logout" href="{{ url_for('logout') }}">Sign Out</a>
     <div class="toggle_btn">
      <i class="fa-solid fa-bars"></i>
     </div>
@@ -34,11 +37,11 @@
    <div class="dropdown_menu">
     <ul>
      <li><a href="{{ url_for('homepage') }}">Home</a></li>
-     <li><a href="#">Station 100</a></li>
-     <li><a href="#">Station 120</a></li>
+     <li><a href="/bt1xx/station/100/"">Station 100</a></li>
+     <li><a href="/bt1xx/station/120/">Station 120</a></li>
      <li><a href="/bt1xx/about/">About</a></li>
      <li><a href="/bt1xx/contact/">Contact</a></li>
-     <li><a href="#" class="action_btn">Launch All Cameras</a></li>
+     <li><p id="start-button" class="action_btn">Launch All Cameras</p></li>
     </ul>
    </div>
   </header>
@@ -55,23 +58,6 @@
      A brief discription about BT1XX Control Software: This is a program that help you to interact with the cameras for Object Detection Project that was developed by us.
     </p>
    </section>
-   <div>
-    <ul>
-     <h2>Please choose the station you want to view</h2>
-     <li>
-      <a href="/bt1xx/station/100/">Station 100</a>
-     </li>
-     <li>
-      <a href="/bt1xx/station/120/">Station 120</a>
-     </li>
-     <li>
-      <a href="{{ url_for('logout') }}">Log Out</a>
-     </li>
-    </ul>
-   </div>
-   <div>
-    <button id="start-button" onclick="runPrograms()">Launch All Cameras</button>
-   </div>
   </main>
  </body>
 </html>

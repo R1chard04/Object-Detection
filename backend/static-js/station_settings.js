@@ -33,24 +33,49 @@ document.addEventListener('DOMContentLoaded', function() {
   let btnClick = document.getElementById("show-frame-button");
   function loadContent(){
     
-    // // get the content element
-    // var content = document.getElementById("content");
-    // let url = btnClick.getAttribute("data-url");
+    // get the content element
+    var content = document.getElementById("content");
+    let url = btnClick.getAttribute("data-url");
 
-    // // create an iframe element
-    // var iframe = document.getElementById("iframe");
-    // iframe.src = url;
-    // iframe.style.width = "50%";
-    // iframe.style.height = "100px";
+    // create an iframe element
+    var iframe = document.getElementById("iframe");
+    iframe.src = url;
+    iframe.style.width = "50%";
+    iframe.style.height = "20rem";
+    iframe.style.display = 'block';
+    btnClick.style.display = 'none';
 
-    // // add the iframe element to the content element
-    // content.appendChild(iframe);
+    // add the iframe element to the content element
+    content.appendChild(iframe);
+    
     // redirect the users to set up the change setting url
     window.location.href = btnClick.getAttribute("data-url");
   }
 
+  // function send GET fetch API to get the frame every 0.3 seconds
+  function getImage() {
+    fetch('http://127.0.0.1/bt1xx/get-frames/' + stationNumberOnly)
+      .then(response => response.blob())
+      .then(blob => {
+        // create a URL for the blob object
+        const url = URL.createObjectURL(blob);
+
+        // get the iframe element and its content document
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        // create an <img> element and set its src attribute to the URL
+        const img = doc.createElement('img');
+        img.src = url;
+
+        // add the <img> element to the document within the iframe
+        doc.body.appendChild(img);
+      });
+  }
+
   btnClick.addEventListener("click", function() {
     loadContent();
+    // call the getImage() function every 0.3 seconds
+    setInterval(getImage, 300);
   });
 
   // Update the value of the focal length in real-time when the users drag the thumb

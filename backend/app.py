@@ -1,5 +1,5 @@
 # import required libraries
-from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, make_response, jsonify
+from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, make_response, jsonify, Response
 from flask_cors import CORS
 from sqlalchemy import create_engine
 from sqlalchemy.engine.reflection import Inspector
@@ -196,7 +196,27 @@ def get_key():
   global key_event
   return jsonify({'key': key_event})
 
+image_data = None
 ###################### STATION SHOW FRAME ######################
+# an endpoint to handle the post request to post the frame jpeg to the server from the camera
+@app.route('/bt1xx/post-frames/<int:station_number>/', methods=['POST'])
+def post_frames(station_number):
+  global image_data
+  image_data = request.get_data()
+  return jsonify({'Message' : 'Image has been sent successfully!'}), 200
+
+# an endpoint to handle the get request to get the frame jpeg to the server
+@app.route('/bt1xx/get-frames/<int:station_number>', methods=['GET'])
+def get_image():
+  global image_data
+  if image_data is not None:
+    # return the image data as a binary response
+    return Response(image_data, mimetype='image/jpeg')
+  else:
+    # handle case where image data has not been sent
+    return jsonify({'Message' : 'No image data available!'}), 401
+
+
 @app.route('/bt1xx/paramSetup/showframe/station/<int:station_number>/', methods=['GET'])
 @validate_token('show_frame_params')
 def show_frame_params(station_number):
@@ -220,10 +240,9 @@ def show_frame_params(station_number):
       global key_event
       recalibration = Recalibration(station='station' + str(station_number))
       
-      
       # import paramSetup function to set the focal length and the brightness of the camera (camera settings)
       # brightness, lensPos = paramsSetup(station_number, captureObject, recalibrate=True, name=IP)
-      recalibration.paramSetup(device)
+      recalibration.paramSetup(device, str(station_number))
 
       # overwrite the params.json
       this_station = 'station' + str(station_number)

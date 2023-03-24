@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     : 'fa-solid fa-bars'
   }
  // button run all the cameras
- let btnClick = document.getElementById('start-button');
+ let btnClick = document.querySelector('.action_btn');
  function runPrograms() {
   window.location.href = "http://127.0.0.1:5000/bt1xx/startallprograms/";
  }

@@ -56,13 +56,20 @@ class Recalibration:
         self.testPath = params["test"]
     
     # this function setup params for stations
-    def paramSetup(self, device):
+    def paramSetup(self, device, stationNumber):
         q = device.getOutputQueue(name="out")
         qControl = device.getInputQueue(name="control")
         
+        # the url server to send the frame of the camera to
+        url = 'http://127.0.0.1:5000/bt1xx/post-frames/' + stationNumber + '/'
+        headers = {
+            'Content-Type' : 'image/jpeg'
+        }
+
         while True:
             frame = q.get().getCvFrame()
             frame = cv.pyrDown(frame)
+
             cv.imshow(self.station, frame)
             
             key_code = cv.waitKey(1)
@@ -126,6 +133,18 @@ class Recalibration:
     
         # else:
         #     return "Error while getting key events with status code: " + str(response.status_code)
+
+            # convert the frame to JPEG format
+            _, buffer = cv.imencode('.jpg', frame)
+            # send the frame to the server
+            response = requests.post(url, data=buffer.tobytes(), headers=headers)
+            if response.status_code == 200:
+                print('Frame uploaded successfully')
+            else: 
+                print('Error uploading frame:', response.status_code)
+            
+            # wait for 0.3 seconds before posting the next frame
+            time.sleep(0.3)
     
     # this function setup masks for station
     def maskSetup(self, device):
