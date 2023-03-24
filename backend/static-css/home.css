@@ -43,9 +43,15 @@ header {
  justify-content: space-between;
 }
 
+.navbar .logo #home-logo {
+ width: 400px;
+ height: 400px;
+}
+
 .navbar .logo a {
  font-size: 1.5rem;
  font-weight: bold;
+ margin-left: 30px;
 }
 
 .navbar .links {
@@ -88,8 +94,8 @@ header {
  position: absolute;
  right: 2rem;
  top: 60px;
- width: 300px;
  height: 0;
+ width: 300px;
  background: rgba(255, 255, 255, 0.1);
  backdrop-filter: blur(15px);
  border-radius: 10px;
@@ -97,8 +103,8 @@ header {
  transition: height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)
 }
 
-.dropdown_menu .open {
- height: 240px;
+.dropdown_menu.open {
+ height: 265px;
 }
 
 .dropdown_menu li {
@@ -114,6 +120,22 @@ header {
  justify-content: center;
 }
 
+/* Body */
+section#main-paragraph {
+ height: calc(100vh - 60px);
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center;
+ text-align: center;
+ color: #fff;
+}
+
+#main-paragraph h1 {
+ font-size: 3rem;
+ margin-bottom: 1rem;
+}
+
 /* RESPONSIVE DESIGN */
 @media (max-width: 992px) {
  .navbar .links,
@@ -127,5 +149,12 @@ header {
 
  .dropdown_menu {
   display: block;
+ }
+}
+
+@media (max-width: 576px)  {
+ .dropdown_menu {
+  left: 2rem;
+  width: unset;
  }
 }
