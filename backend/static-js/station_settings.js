@@ -129,7 +129,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
  window.addEventListener('keydown', (event) => {
   // fetch key events as a post request onto the 'update-ui' endpoint
-  const data = {'key' : event.key};
+  const data = {
+    'key' : event.key,
+    'change_frame' : true
+  };
+  
   fetch('http://127.0.0.1:5000/bt1xx/update-ui/', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},

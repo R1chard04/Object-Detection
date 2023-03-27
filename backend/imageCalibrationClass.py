@@ -66,6 +66,9 @@ class Recalibration:
             'Content-Type' : 'image/jpeg'
         }
 
+        # send the GET request to '/bt1xx/get-updates/' url server to get the key event
+        key_url = 'http://127.0.0.1:5000/bt1xx/get-updates/'
+
         while True:
             frame = q.get().getCvFrame()
             frame = cv.pyrDown(frame)
@@ -74,9 +77,6 @@ class Recalibration:
             
             key_code = cv.waitKey(1)
 
-
-            # send the GET request to '/bt1xx/get-updates/' url server to get the key event
-            # url = 'http://127.0.0.1:5000/bt1xx/get-updates/'
 
             # response = requests.get(url)
 
@@ -136,15 +136,17 @@ class Recalibration:
 
             # convert the frame to JPEG format
             _, buffer = cv.imencode('.jpg', frame)
-            # send the frame to the server
-            response = requests.post(url, data=buffer.tobytes(), headers=headers)
-            if response.status_code == 200:
-                print('Frame uploaded successfully')
-            else: 
-                print('Error uploading frame:', response.status_code)
+            # send the frame to the server, perform the request to the server to see if the key event has been detected
+            key_response = requests.get(key_url)
+            if key_response.status_code == 200:
+                change_frame = key_response.json.get('change_frame')
+                if change_frame == True:
+                    response = requests.post(url, data=buffer.tobytes(), headers=headers)
+                    if response.status_code == 200:
+                        print('Frame uploaded successfully')
+                    else: 
+                        print('Error uploading frame:', response.status_code)
             
-            # wait for 0.3 seconds before posting the next frame
-            time.sleep(0.3)
     
     # this function setup masks for station
     def maskSetup(self, device):

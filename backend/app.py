@@ -178,14 +178,17 @@ def station_settings(station_number):
     # catch the error of cannot perform a connection to the server
     return redirect(url_for('station_detail', station_number=station_number))
 
-key_event = None  
+key_event = None 
+change_frame = False 
 ###################### HANDLE POST REQUEST OF KEY EVENTS FROM OPENCV ###################
 @app.route('/bt1xx/update-ui/', methods=['POST'])
 @validate_token('update_event')
 def update_event():
     global key_event
+    global change_frame
     data = request.get_json()
     key_event = data.get('key')
+    change_frame = data.get('change_frame')
     return jsonify({'success': True})
 
 # register the endpoint
@@ -194,7 +197,11 @@ def update_event():
 @validate_token('get_key')
 def get_key():
   global key_event
-  return jsonify({'key': key_event})
+  global change_frame
+  return jsonify({
+    'key': key_event,
+    'change_frame' : change_frame
+  })
 
 image_data = None
 ###################### STATION SHOW FRAME ######################
