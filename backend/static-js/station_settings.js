@@ -54,7 +54,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // function send GET fetch API to get the frame every 0.3 seconds
   function getImage() {
-    fetch('http://127.0.0.1/bt1xx/get-frames/' + stationNumberOnly)
+    fetch('http://127.0.0.1:5000/bt1xx/get-frames/' + stationNumberOnly)
+      console.log('http://127.0.0.1:5000/bt1xx/get-frames/' + stationNumberOnly)
       .then(response => response.blob())
       .then(blob => {
         // create a URL for the blob object
