@@ -68,6 +68,8 @@ class Recalibration:
 
         # send the GET request to '/bt1xx/get-updates/' url server to get the key event
         key_url = 'http://127.0.0.1:5000/bt1xx/get-updates/'
+        # send the POST request to '/bt1xx/update-ui/' url server to change the frame and key event after the user pressed on the client side
+        update_key_url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
 
         while True:
             frame = q.get().getCvFrame()
@@ -138,12 +140,18 @@ class Recalibration:
             _, buffer = cv.imencode('.jpg', frame)
             # send the frame to the server, perform the request to the server to see if the key event has been detected
             key_response = requests.get(key_url)
-            if key_response.status_code == 200:
-                change_frame = key_response.json.get('change_frame')
+            if key_response.status_code == 200 and key_response.json() is not None:
+                change_frame = key_response.json().get('change_frame')
                 if change_frame == True:
                     response = requests.post(url, data=buffer.tobytes(), headers=headers)
                     if response.status_code == 200:
                         print('Frame uploaded successfully')
+                        new_response = requests.post(update_key_url, json={
+                            'change_frame' : False,
+                            'key' : 'a'
+                        })
+                        if new_response.status_code == 200:
+                            change_frame = False
                     else: 
                         print('Error uploading frame:', response.status_code)
             

@@ -182,7 +182,6 @@ key_event = None
 change_frame = False 
 ###################### HANDLE POST REQUEST OF KEY EVENTS FROM OPENCV ###################
 @app.route('/bt1xx/update-ui/', methods=['POST'])
-@validate_token('update_event')
 def update_event():
     global key_event
     global change_frame
@@ -194,7 +193,6 @@ def update_event():
 # register the endpoint
 # update_key_event = GetKeyEvent()
 @app.route('/bt1xx/get-updates/', methods=['GET'])
-@validate_token('get_key')
 def get_key():
   global key_event
   global change_frame
@@ -214,7 +212,7 @@ def post_frames(station_number):
 
 # an endpoint to handle the get request to get the frame jpeg to the server
 @app.route('/bt1xx/get-frames/<int:station_number>', methods=['GET'])
-def get_image():
+def get_image(station_number):
   global image_data
   if image_data is not None:
     # return the image data as a binary response
@@ -259,8 +257,7 @@ def show_frame_params(station_number):
 
   except:
     print(f"There is an error connecting to the device!")
-  
-  return redirect(url_for('station_detail', station_number=station_number))
+    return redirect(url_for('station_detail', station_number=station_number))
 
 ###################### STATION CHANGE SETTINGS #################
 # retrieve the data from the form
@@ -505,8 +502,7 @@ def authentication():
 
       if len(password) == 0:
         errors['password'] = f"Please enter your password!"
-      
-      # 
+
       # query the user record from the database
       user = Users.query.filter_by(username=username).first()
       # validate the user credentials
@@ -525,12 +521,14 @@ def authentication():
 
           # Redirect the user to the homepage and some restricted resources
           return response
-
+        else:
+          errors['password'] = f"Wrong password!"
+          raise ValueError
       else:
+        errors['username'] = f"Sorry! You are not authorized for this program!"
         raise ValueError
-
+ 
     except BaseException:
-      errors['username'] = f"Sorry! You are not authorized for this program!"
       return render_template('login.html', errors=errors)
 
 # If the user chooses to log out the program
