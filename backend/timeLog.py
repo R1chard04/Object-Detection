@@ -2,12 +2,13 @@ import time
 from flask import Flask
 from sqlalchemy import create_engine, MetaData, inspect
 from database_model.models import db, TimingStation100, TimingStation120
+import pdb
 
 time_app = Flask(__name__)
 
 db.init_app(time_app)
 
-time_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/martinrea.db'
+time_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instances/martinrea.db'
 
 def create_table():
     with time_app.app_context():
@@ -48,20 +49,28 @@ class timeLog:
                 
                 # create an instance to put it in the database
                 if self.station == 'station100':
-                    j = 0
-                    for i in new_partLists100:
-                        row = {i : self.record[j]}
-                        j += 1
-                        db.session.add(row)
-                        db.session.commit()
-                
+                    row = [
+                        TimingStation100(TopPart=self.record[0], LeftPart=self.record[1], BottomPart=self.record[2], RightPart=self.record[3], ClampState=self.record[4])
+                    ]
+                    for new_row in row:
+                        try:
+                            db.session.add(new_row)
+                            db.session.commit()
+                            print(f'New timing has been inserted successfully for station 100!')
+                        except Exception as e:
+                            db.session.rollback()
+                            print(f'Found error while inserting new timing for station 100 with error: {e}')
                 elif self.station == 'station120':
-                    k = 0
-                    for i in new_partLists120:
-                        row = {i : self.record[k]}
-                        k += 1
-                        db.session.add(row)
-                        db.session.commit()
+                    row = [
+                        TimingStation120(TopRightPart=self.record[0], TopLeftPart=self.record[1], LeftPart=self.record[2], BottomLeftPart=self.record[3], BottomRightPart=self.record[4], RightPart=self.record[5], clampState=self.record[6])
+                    ]
+                    for new_row in row:
+                        try:
+                            db.session.add(new_row)
+                            db.session.commit()
+                            print(f'New timing has been inserted successfully for station 120!')
+                        except Exception as e:
+                            print(f'Found error while inserting new timing for station 120 with error: {e}')
                 
                 return True
 
