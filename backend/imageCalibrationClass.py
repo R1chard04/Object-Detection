@@ -79,37 +79,11 @@ class Recalibration:
             
             key_code = cv.waitKey(1)
 
-
-            # response = requests.get(url)
-
-            # if response.status_code == 200:
-            #     new_key = response.json().get('key')
-            #     # convert new_key to its corresponding OpenCV key code
-            #     if new_key is not None:
-            #         key_code = cv.waitKeyEx(new_key)
-            #     else:
-            #         key_code = ord(new_key)
-
-            # send the POST request along with the key pressed to the server
-            # try:
-            #     if key > 0 and key < 0x10FFFF:
-            #         url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
-            #         data = {'key' : chr(key)}
-            #         print(data)
-            #         response = requests.post(url, json=data)
-            #         time.sleep(10)
-            #         if response.status_code != 200:
-            #             print(f"Error sending key: {response.status_code}")
-
-            # except requests.exceptions.RequestException as e:
-            #     print(f"Error while sending key data: {e}")     
-                # check if the key_code is valid
-                # if key_code != -1:
-            # brightness adjustment
-            if key_code in [ord(','), ord('.')]:
-                if key_code == ord(','):  
+            # brightness adjustment, get_key is the value of the key that was being sent after making a GET request from the key_url
+            if key_code in [ord(','), ord('.')] or get_key == ',' or get_key == '.':
+                if key_code == ord(',') and get_key == ',':  
                     self.lensPos -= 2
-                elif key_code == ord('.'):
+                elif key_code == ord('.') and get_key == '.':
                     self.lensPos += 2
                 self.lensPos = clamp(self.lensPos, 0, 255)
                 print("Setting manual focus, lens position: ", self.lensPos)
@@ -117,10 +91,10 @@ class Recalibration:
                 ctrl.setManualFocus(self.lensPos)
                 qControl.send(ctrl)
                 
-            elif key_code in [ord('k'), ord('l')]:
-                if key_code == ord('k'):
+            elif key_code in [ord('k'), ord('l')] or get_key == 'k' or get_key == 'l':
+                if key_code == ord('k') and get_key == 'k':
                     self.brightness -= 1
-                elif key_code == ord('l'):
+                elif key_code == ord('l') and get_key == 'l':
                     self.brightness += 1
                 self.brightness = clamp(self.brightness, -10, 10)
                 print("Brightness:", self.brightness)
@@ -142,6 +116,7 @@ class Recalibration:
             key_response = requests.get(key_url)
             if key_response.status_code == 200 and key_response.json() is not None:
                 change_frame = key_response.json().get('change_frame')
+                get_key = key_response.json().get('key')
                 if change_frame == True:
                     response = requests.post(url, data=buffer.tobytes(), headers=headers)
                     if response.status_code == 200:
