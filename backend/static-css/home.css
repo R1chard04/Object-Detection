@@ -23,8 +23,26 @@ a {
  font-size: 1rem;
 }
 
-a:hover {
- color: blue;
+.links a:hover,
+.logo a:hover {
+ color: #333;
+ background-image: linear-gradient(
+  -225deg,
+  #231557 0%,
+  #44107a 29%,
+  #ff1361 67%,
+  yellow 100%
+ );
+ background-size: auto auto;
+ background-clip: border-box;
+ background-size: 200% auto;
+ color: #fff;
+ background-clip: text;
+ -webkit-text-fill-color: transparent;
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ animation: textclip 2s linear infinite;
+ display: inline-block;
 }
 
 /* Headers */
@@ -77,8 +95,8 @@ header {
  content: '';
  position: absolute;
  top: 0.8rem;
- left: 33rem;
- width: 35%;
+ left: 33.2rem;
+ width: 33%;
  height: 60%;
  transition: all 0.3s ease-in-out;
  z-index: -1; /* set z-index to -1 to make sure the background element is behind the content */

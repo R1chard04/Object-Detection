@@ -1,35 +1,109 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" dir="ltr">
  <head>
+  <meta charset="UTF-8">
   <title>
    Station {{ station_number }} 
   </title>
+  <script type="text/javascript" src="{{ url_for('serve_static_js', filename='station_details.js') }}"></script>
   <link rel="stylesheet" href="{{ url_for('serve_static_css', filename='station_details.css') }}"/>
   <link rel="icon" type="image/x-icon" href="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}"/>
+  <!-- Box icons CDN Link -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
  </head>
  <body>
-  <div>
-   <h1>Welcome to station {{ station_number }}</h1>
-   <h2>Please see the below for station {{ station_number }} details</h2>
-  </div>
-  <div>
-   <p>
-    Station {{ station_number }} manuals
-   </p>
-   <ul>
+  <div class="sidebar">
+   <div class="logo-details">
+    <i class='bx bxs-wrench'></i>
+    <span class="logo_name">Station {{ station_number }}</span>
+   </div>
+   <ul class="nav-links">
     <li>
-     <a href="{{ url_for('station_settings', station_number=station_number) }}">Station {{ station_number }} settings</a>
+     <a href="{{ url_for('homepage') }}">
+      <i class="bx bx-grid-alt"></i>
+      <span class="link_name">Dashboard</span>
+     </a>
+     <ul class="sub-menu blank">
+      <li><a class="link_name" href="#">Settings</a></li>
+     </ul>
     </li>
     <li>
-     <a href="{{ url_for('station_mask_setup', station_number=station_number) }}">Mask Setup for Station {{ station_number }}</a>
+     <div class="icon-link">
+      <a href="{{ url_for('station_settings', station_number=station_number) }}">
+       <i class='bx bxs-cog' ></i>
+       <span class="link_name">Settings</span>
+      </a>
+      <i class="bx bxs-chevron-down arrow"></i>
+     </div>
+     <ul class="sub-menu">
+      <li><a class="link_name" href="{{ url_for('station_settings', station_number=station_number) }}">Settings</a></li>
+      <li><a href="#">Brightness</a></li>
+      <li><a href="#">Focal Length</a></li>
+      <li><a href="#">White Balance Lock</a></li>
+      <li><a href="#">Auto Exposure Lock</a></li>
+     </ul>
     </li>
     <li>
-     <a href="{{ url_for('station_errors_setup', station_number=station_number) }}">Errors Setup for Station {{ station_number }}</a>
+     <div class="icon-link">
+      <a href="{{ url_for('station_mask_setup', station_number=station_number) }}">
+       <i class='bx bxs-mask' ></i>
+       <span class="link_name">Mask</span>
+      </a>
+      <i class="bx bxs-chevron-down arrow"></i>
+     </div>
+     <ul class="sub-menu">
+      <li><a class="link_name" href="{{ url_for('station_mask_setup', station_number=station_number) }}">Mask</a></li>
+      <li><a href="#">Start Mask Setup</a></li>
+      <li><a href="#">Redo Mask</a></li>
+     </ul>
     </li>
     <li>
-     <a href="{{ url_for('homepage') }}">Home</a>
+     <a href="{{ url_for('station_errors_setup', station_number=station_number) }}">
+      <i class='bx bx-math' ></i>
+      <span class="link_name">Errors</span>
+     </a>
+     <ul class="sub-menu blank">
+      <li><a class="link_name" href="#">Errors</a></li>
+     </ul>
+    </li>
+    <li>
+     <a href="#">
+      <i class='bx bx-cool'></i>
+      <span class="link_name">About</span>
+     </a>
+     <ul class="sub-menu blank">
+      <li><a class="link_name" href="#">About</a></li>
+     </ul>
+    </li>
+    <li>
+     <a href="#">
+      <i class='bx bxs-contact' ></i>
+      <span class="link_name">Contact</span>
+     </a>
+     <ul class="sub-menu blank">
+      <li><a class="link_name" href="#">Contact</a></li>
+     </ul>
+    </li>
+    <li>
+     <div class="profile-details">
+      <div class="profile-content">
+       <img src="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}" alt="profile">
+      </div>
+       <div class="name-job">
+        <div class="profile-name">{{ user_name }}</div>
+        <div class="job">Admin</div>
+       </div>
+       <i class="bx bx-log-out"></i>
+      </div>
     </li>
    </ul>
   </div>
+  <section class="home-section">
+   <div class="home-content">
+    <i class="bx bx-menu"></i>
+    <span class="text">Drop Down Sidebar</span>
+   </div>
+  </section>
  </body>
 </html>

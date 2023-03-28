@@ -161,7 +161,10 @@ def homepage():
 @app.route('/bt1xx/station/<int:station_number>/')
 @validate_token('station_detail')
 def station_detail(station_number):
-  return render_template("station_details.html", station_number=station_number)
+  # get the token from cookies
+  token = request.cookies.get('token')
+  name = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['name']
+  return render_template("station_details.html", station_number=station_number, user_name=name)
 
 ###################### STATION SETTINGS ######################
 # render the station settings
