@@ -45,6 +45,12 @@ a {
  display: inline-block;
 }
 
+@keyframes textclip {
+ to {
+  background-position: 200% center;
+ }
+}
+
 /* Headers */
 header {
  position: relative;
@@ -95,7 +101,7 @@ header {
  content: '';
  position: absolute;
  top: 0.8rem;
- left: 33.2rem;
+ left: 33.3rem;
  width: 33%;
  height: 60%;
  transition: all 0.3s ease-in-out;
