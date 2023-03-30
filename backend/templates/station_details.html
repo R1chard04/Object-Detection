@@ -6,6 +6,8 @@
    Station {{ station_number }} 
   </title>
   <script type="text/javascript" src="{{ url_for('serve_static_js', filename='station_details.js') }}"></script>
+  <!-- JQuery library -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="{{ url_for('serve_static_css', filename='station_details.css') }}"/>
   <link rel="icon" type="image/x-icon" href="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}"/>
   <!-- Box icons CDN Link -->
@@ -108,12 +110,14 @@
     <!-- Station Details Dashboard -->
     <!-- Setting status for each station -->
     <section class="settings-section">
-      <h1>
-        Settings status
-      </h1>
-      <h2>
-        This is where you can view the status of the camera
-      </h2>
+      <div class="settings-headings">
+        <h1>
+          Settings status
+        </h1>
+        <h2>
+          This is where you can view the status of the camera
+        </h2>
+      </div>
       <div class="grid-container">
         <div class="gridbox" id="box1">
           
@@ -131,12 +135,14 @@
     </section>
     <!-- Mask status for each station -->
     <section class="mask-section">
-      <h1>
-        Mask status
-      </h1>
-      <h2>
-        This is where you can view the status of the mask setup progress
-      </h2>
+      <div class="mask-headings">
+        <h1>
+          Mask status
+        </h1>
+        <h2>
+          This is where you can view the status of the mask setup progress
+        </h2>
+      </div>
       <!-- A carousel with an image of each mask -->
       <div class="container">
         {% if station_number == 100 %}
@@ -177,35 +183,35 @@
                   <div class="title">Top Mask</div>
                   <div class="sub-line">
                     <div class="subtitle">Station {{ station_number }} top mask</div>
-                    <div class="inline-status">{{ station100_top_status }}</div>
+                    <div class="inline-status">1</div>
                   </div>
                 </label>
                 <label class="mask-info" id="left-mask-info">
                   <div class="title">Left Mask</div>
                   <div class="sub-line">
                     <div class="subtitle">Station {{ station_number }} left mask</div>
-                    <div class="inline-status">{{ station100_left_status }}</div>
+                    <div class="inline-status">2</div>
                   </div>
                 </label>
                 <label class="mask-info" id="bottom-mask-info">
                   <div class="title">Bottom Mask</div>
                   <div class="sub-line">
                     <div class="subtitle">Station {{ station_number }} bottom mask</div>
-                    <div class="inline-status">{{ station100_bottom_status }}</div>
+                    <div class="inline-status">3</div>
                   </div>
                 </label>
                 <label class="mask-info" id="right-mask-info">
                   <div class="title">Right Mask</div>
                   <div class="sub-line">
                     <div class="subtitle">Station {{ station_number }} right mask</div>
-                    <div class="inline-status">{{ station100_right_status }}</div>
+                    <div class="inline-status">4</div>
                   </div>
                 </label>
                 <label class="mask-info" id="ref-mask-info">
                   <div class="title">Reference Image</div>
                   <div class="sub-line">
                     <div class="subtitle">Station {{ station_number }} ref image</div>
-                    <div class="inline-status">{{ station100_ref_status }}</div>
+                    <div class="inline-status">5</div>
                   </div>
                 </label>
               </div>
@@ -215,42 +221,106 @@
             </div>
           </div>
         {% elif station_number == 120 %}
-          <input type="radio" name="slider" id="top-right-mask-120" checked>
-          <input type="radio" name="slider" id="top-left-mask-120">
+          <input type="radio" name="slider" id="top-right-mask" checked>
+          <input type="radio" name="slider" id="top-left-mask">
           <input type="radio" name="slider" id="left-mask-120">
-          <input type="radio" name="slider" id="bottom-left-mask-120">
-          <input type="radio" name="slider" id="bottom-right-mask-120">
+          <input type="radio" name="slider" id="bottom-left-mask">
+          <input type="radio" name="slider" id="bottom-right-mask">
           <input type="radio" name="slider" id="right-mask-120">
           <input type="radio" name="slider" id="ref-mask-120">
           <!-- Cards -->
-          <div class="cards-120">
-            <label class="card-120" for="top-right-mask-120" id="top-right-mask-card-120">
-              <img src="" alt="image">
+          <div class="cards">
+            <label class="card" for="top-right-mask" id="top-right-mask-card">
+              <img src="{{ url_for('serve_static_mask_120', filename = 'topRight.jpg') }}" alt="image">
             </label>
-            <label class="card-120" for="top-left-mask-120" id="top-left-mask-card-120">
-              <img src="" alt="image">
+            <label class="card" for="top-left-mask" id="top-left-mask-card">
+              <img src="{{ url_for('serve_static_mask_120', filename = 'topLeft.jpg') }}" alt="image">
             </label>
-            <label class="card-120" for="left-mask-120" id="left-mask-card-120">
-              <img src="" alt="image">
+            <label class="card" for="left-mask-120" id="left-mask-card-120">
+              <img src="{{ url_for('serve_static_mask_120', filename = 'left.jpg') }}" alt="image">
             </label>
-            <label class="card-120" for="bottom-left-mask-120" id="bottom-left-mask-card-120">
-              <img src="" alt="image">
+            <label class="card" for="bottom-left-mask" id="bottom-left-mask-card">
+              <img src="{{ url_for('serve_static_mask_120', filename = 'bottomLeft.jpg') }}" alt="image">
             </label>
-            <label class="card-120" for="bottom-right-mask-120" id="bottom-right-mask-card-120">
-              <img src="" alt="image">
+            <label class="card" for="bottom-right-mask" id="bottom-right-mask-card">
+              <img src="{{ url_for('serve_static_mask_120', filename = 'bottomRight.jpg') }}" alt="image">
             </label>
-            <label class="card-120" for="right-mask-120" id="right-mask-card-120">
-              <img src="" alt="image">
+            <label class="card" for="right-mask-120" id="right-mask-card-120">
+              <img src="{{ url_for('serve_static_mask_120', filename = 'right.jpg') }}" alt="image">
             </label>
-            <label class="card-120" for="ref-mask-120" id="ref-mask-card-120">
-              <img src="" alt="image"> 
+            <label class="card" for="ref-mask-120" id="ref-mask-card-120">
+              <img src="{{ url_for('serve_static_ref_120', filename = 'STD.jpg') }}" alt="image"> 
             </label>
+          </div>
+          <!-- information and status -->
+          <div class="status">
+            <div class="upper-part">
+              <div class="play-icon">
+                <svg width="20" height="20" fill="#2992dc" stroke="#2992dc" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="feather feather-play" viewBox="0 0 24 24">
+                  <defs/>
+                  <path d="M5 3l14 9-14 9V3z"/>
+                </svg>
+              </div>
+              <div class="info-area" id="test">
+                <label class="mask-info" id="top-right-mask-info">
+                  <div class="title">Top Right Mask</div>
+                  <div class="sub-line">
+                    <div class="subtitle">Station {{ station_number }} top right mask</div>
+                    <div class="inline-status">1</div>
+                  </div>
+                </label>
+                <label class="mask-info" id="top-left-mask-info">
+                  <div class="title">Top Left Mask</div>
+                  <div class="sub-line">
+                    <div class="subtitle">Station {{ station_number }} top left mask</div>
+                    <div class="inline-status">2</div>
+                  </div>
+                </label>
+                <label class="mask-info" id="left-mask-info-120">
+                  <div class="title">Left Mask</div>
+                  <div class="sub-line">
+                    <div class="subtitle">Station {{ station_number }} left mask</div>
+                    <div class="inline-status">3</div>
+                  </div>
+                </label>
+                <label class="mask-info" id="bottom-left-mask-info">
+                  <div class="title">Bottom Left Mask</div>
+                  <div class="sub-line">
+                    <div class="subtitle">Station {{ station_number }} bottom left mask</div>
+                    <div class="inline-status">4</div>
+                  </div>
+                </label>
+                <label class="mask-info" id="bottom-right-mask-info">
+                  <div class="title">Bottom Right Mask</div>
+                  <div class="sub-line">
+                    <div class="subtitle">Station {{ station_number }} bottom right mask</div>
+                    <div class="inline-status">5</div>
+                  </div>
+                </label>
+                <label class="mask-info" id="right-mask-info">
+                  <div class="title">Right Mask</div>
+                  <div class="sub-line">
+                    <div class="subtitle">Station {{ station_number }} right mask</div>
+                    <div class="inline-status">6</div>
+                  </div>
+                </label>
+                <label class="mask-info" id="ref-mask-info-120">
+                  <div class="title">Reference Image</div>
+                  <div class="sub-line">
+                    <div class="subtitle">Station {{ station_number }} ref image</div>
+                    <div class="inline-status">7</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <div class="progress-bar">
+              <span class="progress"></span>
+            </div>
           </div>
         {% endif %}
       </div>
     </section>
    </div>
-   
   </section>
  </body>
 </html>

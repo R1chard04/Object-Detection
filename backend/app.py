@@ -211,6 +211,7 @@ def station_settings(station_number):
 
 key_event = None 
 change_frame = False 
+
 ###################### HANDLE POST REQUEST OF KEY EVENTS FROM OPENCV ###################
 @app.route('/bt1xx/update-ui/', methods=['POST'])
 def update_event():
@@ -346,7 +347,6 @@ def change_settings(station_number):
 click_event = False
 ###################### SENDING CLICK EVENT FOR MASK SETUP #######################
 @app.route('/bt1xx/handle-click/', methods=['POST'])
-@validate_token('handle_click')
 def handle_click():
   global click_event
   data = request.get_json()
@@ -355,7 +355,6 @@ def handle_click():
 
 ##################### GETTING CLICK EVENT FOR MASK SETUP #######################
 @app.route('/bt1xx/getclickevent/', methods=['GET'])
-@validate_token('get_click')
 def get_click():
   global click_event
   return jsonify(

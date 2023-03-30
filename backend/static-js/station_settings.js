@@ -146,31 +146,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
  });
 
-  // Fetch request to /bt1xx/paramSetup/showframe/station/<int:station_number>/ url to get the key event
-  // setInterval(() => {
-  //   fetch('http://127.0.0.1:5000/bt1xx/get-updates/') 
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       // update the UI elements based on the key event
-  //       if (data.key == ','){
-  //         focalLength = Math.max(minFocalLength, focalLength-1);
-  //         updateIndicator();
-  //         inputField.value = focalLength;
-  //         console.log(`New key event: ${data.key}`);
-  //       } else if (data.key == '.'){
-  //           focalLength = Math.max(minFocalLength, focalLength+1);
-  //           if(focalLength > maxFocalLength){
-  //           focalLength = maxFocalLength;
-  //           valueSpan.textContent = focalLength;
-  //           }
-  //           updateIndicator();
-  //           inputField.value = focalLength;
-  //           console.log(`New key event: ${data.key}`);
-  //       }
-  //     })
-  //     .catch(error => console.error(error));
-  // }, 1000);
-
  inputField.addEventListener('input', () => {
   const inputVal = Number(inputField.value);
   if(isNaN(inputVal) || inputVal < minFocalLength || inputVal > maxFocalLength){

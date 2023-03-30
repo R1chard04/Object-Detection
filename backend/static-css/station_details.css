@@ -263,7 +263,7 @@
 .home-section {
  position: relative;
  background: #e4e9f7;
- height: 100vh;
+ height: 300vh;
  left: 260px;
  width: calc(100% - 260px);
  transition: all 0.5s ease;
@@ -329,23 +329,32 @@
 .settings-section {
  position: relative;
  top: 20px;
- height: calc(100% - 20px);
+ height: 115vh;
  align-items: center;
  background-color: aliceblue;
+ /* Fade-in effect */
+ opacity: 0;
+ transform: translateY(50px);
+ transition: opacity 1s ease-out, transform 1s ease-out;
 }
 
-.settings-section h1 {
- font-size: 20px;
+/* Fade in effect when scrolling down the webpage */
+.settings-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.settings-headings h1 {
+ font-size: 30px;
  font-weight: 600;
  text-align: center;
- margin: auto;
 }
 
-.settings-section h2 {
+.settings-headings h2 {
  font-size: 18px;
  font-weight: 500;
  text-align: center;
- margin-top: auto;
+ margin-top: 20px;
 }
 
 /* Gridbox styling */
@@ -395,21 +404,31 @@
 /* Styling for station's mask carousels */
 .mask-section {
   position: relative;
-  margin-bottom: 3rem;
   align-items: center;
   background-color: #c394f8;
   transition: all 0.4s ease;
+  margin: auto;
+  height: 100vh;
+  /* Fade-in effect */
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
 }
 
-.mask-section .blue {
+/* Fade in effect when scrolling down the webpage */
+.mask-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mask-section.blue {
   background-color: #428aa6;
 }
 
 .mask-section h1 {
-  font-size: 20px;
+  font-size: 30px;
   font-weight: 600;
   text-align: center;
-  margin: auto;
  }
  
 .mask-section h2 {
@@ -467,7 +486,7 @@ img {
  object-fit: cover;
 }
 
-#top-mask:checked ~ .cards #bottom-mask-card,
+/* #top-mask:checked ~ .cards #bottom-mask-card,
 #left-mask:checked ~ .cards #top-mask-card,
 #bottom-mask:checked ~ .cards #left-mask-card,
 #right-mask:checked ~ .cards #ref-mask-card,
@@ -475,8 +494,33 @@ img {
   transform: translateX(-40%) scale(.8);
   opacity: .4;
   z-index: 0;
+} */
+
+/* Station 100 */
+#top-mask:checked ~ .cards #bottom-mask-card,
+#left-mask:checked ~ .cards #top-mask-card,
+#bottom-mask:checked ~ .cards #left-mask-card,
+#right-mask:checked ~ .cards #ref-mask-card,
+#ref-mask:checked ~ .cards #right-mask-card {
+  transform: translateX(-60%) scale(.8);
+  opacity: .4;
+  z-index: 0;
 }
 
+/* Station 120 */
+#top-right-mask:checked ~ .cards #left-mask-card-120,
+#top-left-mask:checked ~ .cards #top-right-mask-card,
+#left-mask-120:checked ~ .cards #top-left-mask-card,
+#bottom-left-mask:checked ~ .cards #bottom-right-mask-card,
+#bottom-right-mask:checked ~ .cards #bottom-left-mask,
+#right-mask-120:checked ~ .cards #ref-mask-card-120,
+#ref-mask-120:checked ~ .cards #right-mask-card-120 {
+  transform: translateX(-60%) scale(.8);
+  opacity: .4;
+  z-index: 0;
+}
+
+/* Station 100 */
 #top-mask:checked ~ .cards #left-mask-card,
 #left-mask:checked ~ .cards #bottom-mask-card,
 #bottom-mask:checked ~ .cards #right-mask-card,
@@ -487,6 +531,20 @@ img {
   z-index: 0;
 }
 
+/* Station 120 */
+#top-right-mask:checked ~ .cards #top-left-mask-card,
+#top-left-mask:checked ~ .cards #left-mask-card-120,
+#left-mask-120:checked ~ .cards #bottom-left-mask-card,
+#bottom-left-mask:checked ~ .cards #bottom-right-mask-card,
+#bottom-right-mask:checked ~ .cards #right-mask-card-120,
+#right-mask:checked ~ .cards #ref-mask-card-120,
+#ref-mask-120:checked ~ .cards #top-right-mask-card {
+  transform: translatex(40%) scale(.8);
+  opacity: .4;
+  z-index: 0;
+}
+
+/* Station 100 */
 #top-mask:checked ~ .cards #top-mask-card, 
 #left-mask:checked ~ .cards #left-mask-card, 
 #bottom-mask:checked ~ .cards #bottom-mask-card, 
@@ -497,11 +555,34 @@ img {
   z-index: 1;
 }
 
+/* Station 120 */
+#top-right-mask:checked ~ .cards #top-right-mask-card,
+#top-left-mask:checked ~ .cards #top-left-mask-card,
+#left-mask-120:checked ~ .cards #left-mask-card-120,
+#bottom-left-mask:checked ~ .cards #bottom-left-mask-card,
+#bottom-right-mask:checked ~ .cards #bottom-right-mask-card,
+#right-mask-120:checked ~ .cards #right-mask-card-120 {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  z-index: 1;
+}
+
+/* Station 100 */
 #top-mask:checked ~ .cards #top-mask-card img, 
 #left-mask:checked ~ .cards #left-mask-card img, 
 #bottom-mask:checked ~ .cards #bottom-mask-card img, 
 #right-mask:checked ~ .cards #right-mask-card img,
 #ref-mask:checked ~ .cards #ref-mask-card img {
+  box-shadow: 0px 0px 5px 0px rgba(81, 81, 81, 0.47);
+}
+
+/* Station 120 */
+#top-right-mask:checked ~ .cards #top-right-mask-card img,
+#top-left-mask:checked ~ .cards #top-left-mask-card img,
+#left-mask-120:checked ~ .cards #left-mask-card-120 img,
+#bottom-left-mask:checked ~ .cards #bottom-left-mask img,
+#bottom-right-mask:checked ~ .cards #bottom-right-mask img,
+#right-mask-120:checked ~ .cards #right-mask-card-120 img {
   box-shadow: 0px 0px 5px 0px rgba(81, 81, 81, 0.47);
 }
 
@@ -582,6 +663,7 @@ img {
   transition: transform .4s ease-in;
 }
 
+/* Station 100 */
 #left-mask:checked ~ .status #test {
   transform: translateY(0);
 }
@@ -600,4 +682,33 @@ img {
 
 #ref-mask:checked ~ .status #test {
   transform: translateY(-160px);
+}
+
+/* Station 120 */
+#top-left-mask:checked ~ .status #test {
+  transform: translateY(0);
+}
+
+#top-left-mask:checked ~ .status #test {
+  transform: translateY(-40px);
+}
+
+#left-mask-120:checked ~ .status #test {
+  transform: translateY(-80px);
+}
+
+#bottom-left-mask:checked ~ .status #test {
+  transform: translateY(-120px);
+}
+
+#bottom-right-mask:checked ~ .status #test {
+  transform: translateY(-160px);
+}
+
+#right-mask-120:checked ~ .status #test {
+  transform: translateY(-200px);
+}
+
+#ref-mask-120:checked ~ .status #test {
+  transform: translateY(-240px);
 }

@@ -79,6 +79,12 @@ class Recalibration:
             
             key_code = cv.waitKey(1)
 
+             # send the frame to the server, perform the request to the server to see if the key event has been detected
+            key_response = requests.get(key_url)
+            if key_response.status_code == 200 and key_response.json() is not None:
+                change_frame = key_response.json().get('change_frame')
+                get_key = key_response.json().get('key')
+
             # brightness adjustment, get_key is the value of the key that was being sent after making a GET request from the key_url
             if key_code in [ord(','), ord('.')] or get_key == ',' or get_key == '.':
                 if key_code == ord(',') or get_key == ',':  
@@ -90,7 +96,9 @@ class Recalibration:
                 ctrl = dai.CameraControl()
                 ctrl.setManualFocus(self.lensPos)
                 qControl.send(ctrl)
-                
+            
+
+            # focal length adjustment, get_key is the value of the key that was being sent after making a GET request from the key_url    
             elif key_code in [ord('k'), ord('l')] or get_key == 'k' or get_key == 'l':
                 if key_code == ord('k') or get_key == 'k':
                     self.brightness -= 1
@@ -112,44 +120,43 @@ class Recalibration:
 
             # convert the frame to JPEG format
             _, buffer = cv.imencode('.jpg', frame)
-            # send the frame to the server, perform the request to the server to see if the key event has been detected
-            key_response = requests.get(key_url)
-            if key_response.status_code == 200 and key_response.json() is not None:
-                change_frame = key_response.json().get('change_frame')
-                get_key = key_response.json().get('key')
-                if change_frame == True:
-                    response = requests.post(url, data=buffer.tobytes(), headers=headers)
-                    if response.status_code == 200:
-                        print('Frame uploaded successfully')
-                        new_response = requests.post(update_key_url, json={ # Fix this to PUT request instead of POST request
-                            'change_frame' : False,
-                            'key' : 'a'
-                        })
-                        if new_response.status_code == 200:
-                            change_frame = False
-                    else: 
-                        print('Error uploading frame:', response.status_code)
+            if change_frame == True:
+                response = requests.post(url, data=buffer.tobytes(), headers=headers)
+                if response.status_code == 200:
+                    print('Frame uploaded successfully')
+                    new_response = requests.post(update_key_url, json={ # Fix this to PUT request instead of POST request
+                        'change_frame' : False,
+                        'key' : 'a'
+                    })
+                    if new_response.status_code == 200:
+                        change_frame = False
+                else: 
+                    print('Error uploading frame:', response.status_code)
             
     
     # this function setup masks for station
     def maskSetup(self, device):
         q = device.getOutputQueue(name="out")
         i = 0           
-        
-        while i < len(self.parts):
-        
-            get_url = 'http://127.0.0.1:5000/bt1xx/getclickevent/'
-            post_url = 'http://127.0.0.1:5000/bt1xx/handle-click/'
+        get_url = 'http://127.0.0.1:5000/bt1xx/getclickevent/'
+        post_url = 'http://127.0.0.1:5000/bt1xx/handle-click/'
 
+        click = None
+
+        while i < len(self.parts):
             print("load"+ self.parts[i] + "silver part and press c to capture")
             while True:
                 imgSil = q.get().getCvFrame()
-                
+
                 # send the GET request to '/bt1xx/getclickevent/' url server to get the response
                 response = requests.get(get_url)
-
+        
                 if response.status_code == 200:
-                    click = response.json().get('btnClick')
+                    try:
+                        print('Detect a button clicked!') 
+                        click = response.json().get('btnClick')
+                    except json.decoder.JSONDecodeError:
+                        pass
 
                 key = cv.waitKey(1)
                 if key == ord('c') or click == True:
