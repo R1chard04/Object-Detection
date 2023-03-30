@@ -81,9 +81,9 @@ class Recalibration:
 
             # brightness adjustment, get_key is the value of the key that was being sent after making a GET request from the key_url
             if key_code in [ord(','), ord('.')] or get_key == ',' or get_key == '.':
-                if key_code == ord(',') and get_key == ',':  
+                if key_code == ord(',') or get_key == ',':  
                     self.lensPos -= 2
-                elif key_code == ord('.') and get_key == '.':
+                elif key_code == ord('.') or get_key == '.':
                     self.lensPos += 2
                 self.lensPos = clamp(self.lensPos, 0, 255)
                 print("Setting manual focus, lens position: ", self.lensPos)
@@ -92,9 +92,9 @@ class Recalibration:
                 qControl.send(ctrl)
                 
             elif key_code in [ord('k'), ord('l')] or get_key == 'k' or get_key == 'l':
-                if key_code == ord('k') and get_key == 'k':
+                if key_code == ord('k') or get_key == 'k':
                     self.brightness -= 1
-                elif key_code == ord('l') and get_key == 'l':
+                elif key_code == ord('l') or get_key == 'l':
                     self.brightness += 1
                 self.brightness = clamp(self.brightness, -10, 10)
                 print("Brightness:", self.brightness)
@@ -121,7 +121,7 @@ class Recalibration:
                     response = requests.post(url, data=buffer.tobytes(), headers=headers)
                     if response.status_code == 200:
                         print('Frame uploaded successfully')
-                        new_response = requests.post(update_key_url, json={
+                        new_response = requests.post(update_key_url, json={ # Fix this to PUT request instead of POST request
                             'change_frame' : False,
                             'key' : 'a'
                         })
@@ -136,25 +136,31 @@ class Recalibration:
         q = device.getOutputQueue(name="out")
         i = 0           
         
-        while i < len(self.parts) :
+        while i < len(self.parts):
         
-            url = 'http://127.0.0.1:5000/bt1xx/getclickevent/'
+            get_url = 'http://127.0.0.1:5000/bt1xx/getclickevent/'
+            post_url = 'http://127.0.0.1:5000/bt1xx/handle-click/'
 
             print("load"+ self.parts[i] + "silver part and press c to capture")
             while True:
                 imgSil = q.get().getCvFrame()
                 
                 # send the GET request to '/bt1xx/getclickevent/' url server to get the response
-                response = requests.get(url)
+                response = requests.get(get_url)
 
                 if response.status_code == 200:
                     click = response.json().get('btnClick')
 
                 key = cv.waitKey(1)
-                if key == ord('c') and click == True:
+                if key == ord('c') or click == True:
                     cv.imwrite(self.refPaths[i], imgSil)
                     cv.destroyAllWindows()
-                    break
+                    # send the POST request to '/bt1xx/handle-click/' url server to update the btn click (fix this to PUT request)
+                    new_response = requests.post(post_url, json={
+                        'btnClick' : False
+                    })
+                    if new_response.status_code == 200:      
+                        break
                 imgSil = cv.pyrDown(imgSil)
                 cv.imshow("results", imgSil)
                 
@@ -163,22 +169,28 @@ class Recalibration:
                 imgCol = q.get().getCvFrame()
 
                 # send the GET request to '/bt1xx/getclickevent/' url server to get the response
-                response = requests.get(url)
+                response = requests.get(get_url)
 
                 if response.status_code == 200:
                     click = response.json().get('btnClick')
 
                 key = cv.waitKey(1)
-                if key == ord('c') and click == True:
+                if key == ord('c') or click == True:
                     cv.imwrite(self.colPaths[i], imgCol)
                     cv.destroyAllWindows()
-                    break
+                    # send the POST request to '/bt1xx/handle-click/' url server to update the btn click (fix this to PUT request)
+                    new_response = requests.post(post_url, json={
+                        'btnClick' : False
+                    })
+                    if new_response.status_code == 200:      
+                        break
                 imgCol = cv.pyrDown(imgCol)
                 cv.imshow("results", imgCol)
             print("Creating a mask, this may take a minute")
             if createMask(imgSil, imgCol, self.maskPaths[i]):
                 i += 1
                 print("Mask generated")
+                # send a post request towards 
             else:
                 print(f"Mask failed. Retrying")
         
@@ -191,6 +203,7 @@ class Recalibration:
         i = 0
 
         url = 'http://127.0.0.1:5000/bt1xx/getclickevent/'
+        post_url = 'http://127.0.0.1:5000/bt1xx/handle-click/'
         
         # load the silver part
         print("Load" + part + "silver part and press C to capture")
@@ -207,7 +220,12 @@ class Recalibration:
             if key == ord('c') and click == True:
                 cv.imwrite(self.refPaths[part_number], imgSil)
                 cv.destroyAllWindows()
-                break
+                # send the POST request to '/bt1xx/handle-click/' url server to update the btn click (fix this to PUT request)
+                new_response = requests.post(post_url, json={
+                    'btnClick' : False
+                })
+                if new_response.status_code == 200:      
+                    break
             imgSil = cv.pyrDown(imgSil)
             cv.imshow("results", imgSil)
 
@@ -225,7 +243,12 @@ class Recalibration:
             if key == ord('c') and click == True:
                 cv.imwrite(self.colPaths[part_number], imgCol)
                 cv.destroyAllWindows()
-                break
+                # send the POST request to '/bt1xx/handle-click/' url server to update the btn click (fix this to PUT request)
+                new_response = requests.post(post_url, json={
+                    'btnClick' : False
+                })
+                if new_response.status_code == 200:      
+                    break
             imgCol = cv.pyrDown(imgCol)
             cv.imshow("results", imgCol)
         print("Creating a mask, this may take a minute")
@@ -335,4 +358,3 @@ class Recalibration:
             
             imgFrame = cv.pyrDown(imgFrame)
             cv.imshow("results", imgFrame)
-            
