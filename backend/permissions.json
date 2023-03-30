@@ -1,0 +1,67 @@
+{
+ "all_users_permissions" : {
+  "permission0" : {
+   "permission_name" : "homepage_access"
+  },
+  "permission1" : {
+   "permission_name" : "run_cameras"
+  }
+ },
+
+ "admin_permissions" : {
+  "permission0" : {
+   "permission_name" : "homepage_access"
+  },
+  "permission1" : {
+   "permission_name" : "users_login_tracking"
+  },
+  "permission2" : {
+   "permission_name" : "station_detail"
+  },
+  "permission3" : {
+   "permission_name" : "station_settings"
+  },
+  "permission4" : {
+   "permission_name" : "update_event"
+  },
+  "permission5" : {
+   "permission_name" : "get_key"
+  },
+  "permission6" : {
+   "permission_name" : "show_frame_params"
+  },
+  "permission7" : {
+   "permission_name" : "change_settings"
+  },
+  "permission8" : {
+   "permission_name" : "handle_click"
+  },
+  "permission9" : {
+   "permission_name" : "get_click"
+  },
+  "permission10" : {
+   "permission_name" : "station_mask_setup"
+  },
+  "permission11" : {
+   "permission_name" : "create_mask"
+  },
+  "permission12" : {
+   "permission_name" : "redo_mask"
+  },
+  "permission13" : {
+   "permission_name" : "handle_redo_mask"
+  },
+  "permission14" : {
+   "permission_name" : "station_errors_setup"
+  },
+  "permission15" : {
+   "permission_name" : "create_errors"
+  },
+  "permission16" : {
+   "permission_name" : "finish_setup"
+  },
+  "permission17" : {
+   "permission_name" : "run_cameras"
+  }
+ }
+}

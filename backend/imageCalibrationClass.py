@@ -56,51 +56,34 @@ class Recalibration:
         self.testPath = params["test"]
     
     # this function setup params for stations
-    def paramSetup(self, device):
+    def paramSetup(self, device, stationNumber):
         q = device.getOutputQueue(name="out")
         qControl = device.getInputQueue(name="control")
         
+        # the url server to send the frame of the camera to
+        url = 'http://127.0.0.1:5000/bt1xx/post-frames/' + stationNumber + '/'
+        headers = {
+            'Content-Type' : 'image/jpeg'
+        }
+
+        # send the GET request to '/bt1xx/get-updates/' url server to get the key event
+        key_url = 'http://127.0.0.1:5000/bt1xx/get-updates/'
+        # send the POST request to '/bt1xx/update-ui/' url server to change the frame and key event after the user pressed on the client side
+        update_key_url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
+
         while True:
             frame = q.get().getCvFrame()
             frame = cv.pyrDown(frame)
+
             cv.imshow(self.station, frame)
             
             key_code = cv.waitKey(1)
 
-
-            # send the GET request to '/bt1xx/get-updates/' url server to get the key event
-            # url = 'http://127.0.0.1:5000/bt1xx/get-updates/'
-
-            # response = requests.get(url)
-
-            # if response.status_code == 200:
-            #     new_key = response.json().get('key')
-            #     # convert new_key to its corresponding OpenCV key code
-            #     if new_key is not None:
-            #         key_code = cv.waitKeyEx(new_key)
-            #     else:
-            #         key_code = ord(new_key)
-
-            # send the POST request along with the key pressed to the server
-            # try:
-            #     if key > 0 and key < 0x10FFFF:
-            #         url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
-            #         data = {'key' : chr(key)}
-            #         print(data)
-            #         response = requests.post(url, json=data)
-            #         time.sleep(10)
-            #         if response.status_code != 200:
-            #             print(f"Error sending key: {response.status_code}")
-
-            # except requests.exceptions.RequestException as e:
-            #     print(f"Error while sending key data: {e}")     
-                # check if the key_code is valid
-                # if key_code != -1:
-            # brightness adjustment
-            if key_code in [ord(','), ord('.')]:
-                if key_code == ord(','):  
+            # brightness adjustment, get_key is the value of the key that was being sent after making a GET request from the key_url
+            if key_code in [ord(','), ord('.')] or get_key == ',' or get_key == '.':
+                if key_code == ord(',') and get_key == ',':  
                     self.lensPos -= 2
-                elif key_code == ord('.'):
+                elif key_code == ord('.') and get_key == '.':
                     self.lensPos += 2
                 self.lensPos = clamp(self.lensPos, 0, 255)
                 print("Setting manual focus, lens position: ", self.lensPos)
@@ -108,10 +91,10 @@ class Recalibration:
                 ctrl.setManualFocus(self.lensPos)
                 qControl.send(ctrl)
                 
-            elif key_code in [ord('k'), ord('l')]:
-                if key_code == ord('k'):
+            elif key_code in [ord('k'), ord('l')] or get_key == 'k' or get_key == 'l':
+                if key_code == ord('k') and get_key == 'k':
                     self.brightness -= 1
-                elif key_code == ord('l'):
+                elif key_code == ord('l') and get_key == 'l':
                     self.brightness += 1
                 self.brightness = clamp(self.brightness, -10, 10)
                 print("Brightness:", self.brightness)
@@ -126,19 +109,49 @@ class Recalibration:
     
         # else:
         #     return "Error while getting key events with status code: " + str(response.status_code)
+
+            # convert the frame to JPEG format
+            _, buffer = cv.imencode('.jpg', frame)
+            # send the frame to the server, perform the request to the server to see if the key event has been detected
+            key_response = requests.get(key_url)
+            if key_response.status_code == 200 and key_response.json() is not None:
+                change_frame = key_response.json().get('change_frame')
+                get_key = key_response.json().get('key')
+                if change_frame == True:
+                    response = requests.post(url, data=buffer.tobytes(), headers=headers)
+                    if response.status_code == 200:
+                        print('Frame uploaded successfully')
+                        new_response = requests.post(update_key_url, json={
+                            'change_frame' : False,
+                            'key' : 'a'
+                        })
+                        if new_response.status_code == 200:
+                            change_frame = False
+                    else: 
+                        print('Error uploading frame:', response.status_code)
+            
     
     # this function setup masks for station
     def maskSetup(self, device):
         q = device.getOutputQueue(name="out")
         i = 0           
         
-        while i < len(self.parts):
-            
+        while i < len(self.parts) :
+        
+            url = 'http://127.0.0.1:5000/bt1xx/getclickevent/'
+
             print("load"+ self.parts[i] + "silver part and press c to capture")
             while True:
                 imgSil = q.get().getCvFrame()
+                
+                # send the GET request to '/bt1xx/getclickevent/' url server to get the response
+                response = requests.get(url)
+
+                if response.status_code == 200:
+                    click = response.json().get('btnClick')
+
                 key = cv.waitKey(1)
-                if key == ord('c'):
+                if key == ord('c') and click == True:
                     cv.imwrite(self.refPaths[i], imgSil)
                     cv.destroyAllWindows()
                     break
@@ -148,8 +161,15 @@ class Recalibration:
             print("load"+ self.parts[i] + "colour part and press c to capture")
             while True:
                 imgCol = q.get().getCvFrame()
+
+                # send the GET request to '/bt1xx/getclickevent/' url server to get the response
+                response = requests.get(url)
+
+                if response.status_code == 200:
+                    click = response.json().get('btnClick')
+
                 key = cv.waitKey(1)
-                if key == ord('c'):
+                if key == ord('c') and click == True:
                     cv.imwrite(self.colPaths[i], imgCol)
                     cv.destroyAllWindows()
                     break
@@ -163,6 +183,56 @@ class Recalibration:
                 print(f"Mask failed. Retrying")
         
         print("all masks are done")
+        return
+    
+    # function receive the redo mask command
+    def redo_mask(self, device, part_number, part): # part number is the associate index of the part in the array
+        q = device.getOutputQueue(name="out")
+        i = 0
+
+        url = 'http://127.0.0.1:5000/bt1xx/getclickevent/'
+        
+        # load the silver part
+        print("Load" + part + "silver part and press C to capture")
+        while True:
+            imgSil = q.get().getCvFrame()
+
+            # send the GET request to '/bt1xx/getclickevent/' url server to get the response
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                click = response.json().get('btnClick')
+
+            key = cv.waitKey(1)
+            if key == ord('c') and click == True:
+                cv.imwrite(self.refPaths[part_number], imgSil)
+                cv.destroyAllWindows()
+                break
+            imgSil = cv.pyrDown(imgSil)
+            cv.imshow("results", imgSil)
+
+        print("Load" + part + "colour part and press C to capture")
+        while True:
+            imgCol = q.get().getCvFrame()
+
+            # send the GET request to '/bt1xx/getclickevent/' url server to get the response
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                click = response.json().get('btnClick')
+
+            key = cv.waitKey(1)
+            if key == ord('c') and click == True:
+                cv.imwrite(self.colPaths[part_number], imgCol)
+                cv.destroyAllWindows()
+                break
+            imgCol = cv.pyrDown(imgCol)
+            cv.imshow("results", imgCol)
+        print("Creating a mask, this may take a minute")
+        if createMask(imgSil, imgCol, self.maskPaths[part_number]):
+            print("Mask generated")
+    
+        print(f"Redoing mask for {part} is done")
         return
     
     # this method read all the parameters from the json again                

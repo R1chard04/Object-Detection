@@ -9,7 +9,7 @@
 
  .page-heading {
   vertical-align: middle;
-  margin-left: 200px;
+  margin-left: 100px;
   font-family: 'Montserrat', sans-serif;
   font-size: 50px;
   line-height: 2;
@@ -35,18 +35,19 @@
  }
 
  #logo {
-  width: 120px;
-  height: 120px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   vertical-align: middle;
   object-fit: contain;
+  margin-left: 1rem;
   background-color: transparent;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
  }
 
  #logo:hover {
-  transform: scale(1.08);
+  transform: scale(1.1);
  }
 
  @keyframes textclip {
@@ -59,6 +60,10 @@
 /* CSS styling for the show frame button */
 #show-frame-button {
   margin-left: 40rem;
+}
+
+#content {
+  margin-left: 16rem;
 }
 
 /* CSS styling for the footer */

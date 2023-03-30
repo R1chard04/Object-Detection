@@ -1,52 +1,52 @@
-// Create a new WebSocket connection to the Python server
-// var socket = io.connect('http://127.0.0.1:5000/bt1xx/station/<int:station_number>/settings');
-
 document.addEventListener('DOMContentLoaded', function() {
-  // Enable websocket to connect the localhost server (client) to Python server
+  // get the station number from html (100 or 120)
   const stationElement = document.querySelector('#station');
-  // cut out the station number in the url
   const stationNumber = stationElement.textContent.trim();
   const numberPattern = /\d+/; // match one or more digits
   const matches = stationNumber.match(numberPattern);
   const stationNumberOnly = matches ? matches[0] : null;
 
-  // var socket = new WebSocket("ws://127.0.0.1:5000/bt1xx/station/" + stationNumberOnly.toString() + "/settings");
-
-  // socket.onopen = function(event) {
-  //   console.log("Connection established!");
-  // };
-
-  // socket.onerror = function(event) {
-  //   console.error("WebSocket error observed:", event);
-  // };
-
-  // socket.onmessage = function(event) {
-  //   console.log("Server says: ", event.data);
-  // };
-
-  // document.addEventListener('keydown', function(event) {
-  //   var key = String.fromCharCode(event.key);
-  //   socket.send(key);
-  // });
-
   // function redirect the user to the url of the python program using iframe
   let btnClick = document.getElementById("show-frame-button");
   function loadContent(){
     
-    // // get the content element
-    // var content = document.getElementById("content");
-    // let url = btnClick.getAttribute("data-url");
+    // get the content element
+    var content = document.getElementById("content");
+    let url = btnClick.getAttribute("data-url");
 
-    // // create an iframe element
-    // var iframe = document.getElementById("iframe");
-    // iframe.src = url;
-    // iframe.style.width = "50%";
-    // iframe.style.height = "100px";
+    // create an iframe element
+    var iframe = document.getElementById("iframe");
+    iframe.src = url;
+    iframe.style.width = "82%";
+    iframe.style.height = "35rem";
+    iframe.style.display = 'block';
+    btnClick.style.display = 'none';
 
-    // // add the iframe element to the content element
-    // content.appendChild(iframe);
+    // add the iframe element to the content element
+    content.appendChild(iframe);
+    
     // redirect the users to set up the change setting url
     window.location.href = btnClick.getAttribute("data-url");
+  }
+
+  // function send GET fetch API to get the frame every 0.3 seconds
+  function getImage() {
+    fetch('http://127.0.0.1:5000/bt1xx/get-frames/' + stationNumberOnly)
+      .then(response => response.blob())
+      .then(blob => {
+        // create a URL for the blob object
+        const url = URL.createObjectURL(blob);
+
+        // get the iframe element and its content document
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+        // create an <img> element and set its src attribute to the URL
+        const img = doc.createElement('img');
+        img.src = url;
+
+        // add the <img> element to the document within the iframe
+        doc.body.appendChild(img);
+      });
   }
 
   btnClick.addEventListener("click", function() {
@@ -104,7 +104,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
  window.addEventListener('keydown', (event) => {
   // fetch key events as a post request onto the 'update-ui' endpoint
-  const data = {'key' : event.key};
+  const data = {
+    'key' : event.key,
+    'change_frame' : true
+  };
+  
   fetch('http://127.0.0.1:5000/bt1xx/update-ui/', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -126,6 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
    focalLength = Math.max(minFocalLength, focalLength-1);
    updateIndicator();
    inputField.value = focalLength;
+   // call the function to update the image
+   getImage();
   } // decrease the focal length
   else if (event.key == '.'){
    focalLength = Math.max(minFocalLength, focalLength+1);
@@ -135,6 +141,8 @@ document.addEventListener('DOMContentLoaded', function() {
    }
    updateIndicator();
    inputField.value = focalLength;
+   // call the function to update the image
+   getImage();
   }
  });
 
@@ -227,7 +235,9 @@ document.addEventListener('DOMContentLoaded', function() {
   if(event.key == 'k'){
    brightness = Math.max(minBrightness, brightness-1);
    updateBrightnessIndicator(); 
-   inputField_brightness.value = brightness;  
+   inputField_brightness.value = brightness;
+    // call the function to update the image
+    getImage();  
   } // decrease the focal length
   else if (event.key == 'l'){
    brightness = Math.max(minBrightness, brightness+1);
@@ -237,6 +247,8 @@ document.addEventListener('DOMContentLoaded', function() {
    }
    updateBrightnessIndicator();
    inputField_brightness.value = brightness;
+   // call the function to update the image
+   getImage();
   }
  });
 
