@@ -6,11 +6,30 @@ import json
 
 def mse(img1, img2, pixels):
     # height, width = img1.shape
-    diffImg = cv.absdiff(img1, img2)
+    #Converting the image to HSV
+    img1 = cv.cvtColor(img1, cv.COLOR_BGR2HSV)
+    img2 = cv.cvtColor(img2, cv.COLOR_BGR2HSV)
+
+    h1,s1,v1 = cv.split(img1)
+    h2,s2,v2 = cv.split(img2)
+
+    feed1 = v1
+    feed2 = v2
+    
+    #Comparing
+    diffImg = cv.absdiff(feed1, feed2)
     err = np.sum(diffImg**2)
     ans = err/ float(pixels)
     #Closer to 0 is better
     return ans
+
+def findV(img):
+    feed = cv.cvtColor(img,cv.COLOR_BGR2HSV)
+    h,s,v = cv.split(feed)
+    feed = v
+
+    return feed
+    
 
 class imageProcessing:
     def __init__(self, station) -> None:

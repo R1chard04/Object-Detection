@@ -192,7 +192,7 @@ class Recalibration:
                 print("Mask generated")
                 # send a post request towards 
             else:
-                print(f"Mask is redoing!")
+                print(f"Mask failed. Retrying")
         
         print("all masks are done")
         return
