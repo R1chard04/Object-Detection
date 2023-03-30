@@ -175,16 +175,22 @@ class Recalibration:
                     click = response.json().get('btnClick')
 
                 key = cv.waitKey(1)
-                if key == ord('c') and click == True:
+                if key == ord('c') or click == True:
                     cv.imwrite(self.colPaths[i], imgCol)
                     cv.destroyAllWindows()
-                    break
+                    # send the POST request to '/bt1xx/handle-click/' url server to update the btn click (fix this to PUT request)
+                    new_response = requests.post(post_url, json={
+                        'btnClick' : False
+                    })
+                    if new_response.status_code == 200:      
+                        break
                 imgCol = cv.pyrDown(imgCol)
                 cv.imshow("results", imgCol)
             print("Creating a mask, this may take a minute")
             if createMask(imgSil, imgCol, self.maskPaths[i]):
                 i += 1
                 print("Mask generated")
+                # send a post request towards 
             else:
                 print(f"Mask is redoing!")
         
@@ -197,6 +203,7 @@ class Recalibration:
         i = 0
 
         url = 'http://127.0.0.1:5000/bt1xx/getclickevent/'
+        post_url = 'http://127.0.0.1:5000/bt1xx/handle-click/'
         
         # load the silver part
         print("Load" + part + "silver part and press C to capture")
@@ -213,7 +220,12 @@ class Recalibration:
             if key == ord('c') and click == True:
                 cv.imwrite(self.refPaths[part_number], imgSil)
                 cv.destroyAllWindows()
-                break
+                # send the POST request to '/bt1xx/handle-click/' url server to update the btn click (fix this to PUT request)
+                new_response = requests.post(post_url, json={
+                    'btnClick' : False
+                })
+                if new_response.status_code == 200:      
+                    break
             imgSil = cv.pyrDown(imgSil)
             cv.imshow("results", imgSil)
 
@@ -231,7 +243,12 @@ class Recalibration:
             if key == ord('c') and click == True:
                 cv.imwrite(self.colPaths[part_number], imgCol)
                 cv.destroyAllWindows()
-                break
+                # send the POST request to '/bt1xx/handle-click/' url server to update the btn click (fix this to PUT request)
+                new_response = requests.post(post_url, json={
+                    'btnClick' : False
+                })
+                if new_response.status_code == 200:      
+                    break
             imgCol = cv.pyrDown(imgCol)
             cv.imshow("results", imgCol)
         print("Creating a mask, this may take a minute")
@@ -341,4 +358,3 @@ class Recalibration:
             
             imgFrame = cv.pyrDown(imgFrame)
             cv.imshow("results", imgFrame)
-            
