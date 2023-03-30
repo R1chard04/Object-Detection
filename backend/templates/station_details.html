@@ -144,6 +144,7 @@
           <input type="radio" name="slider" id="left-mask">
           <input type="radio" name="slider" id="bottom-mask">
           <input type="radio" name="slider" id="right-mask">
+          <input type="radio" name="slider" id="ref-mask">
           <!-- Cards -->
           <div class="cards">
             <label class="card" for="top-mask" id="top-mask-card">
@@ -157,6 +158,9 @@
             </label>
             <label class="card" for="right-mask" id="right-mask-card">
               <img src="{{ url_for('serve_static_mask_100', filename = 'right.jpg') }}" alt="image">
+            </label>
+            <label class="card" for="ref-mask" id="ref-mask-card">
+              <img src="{{ url_for('serve_static_ref_100', filename='STD.jpg') }}" alt="image">
             </label>
           </div>
           <!-- information and status -->
@@ -173,28 +177,35 @@
                   <div class="title">Top Mask</div>
                   <div class="sub-line">
                     <div class="subtitle">Station {{ station_number }} top mask</div>
-                    <div class="status">{{ station100_top_status }}</div>
+                    <div class="inline-status">{{ station100_top_status }}</div>
                   </div>
                 </label>
                 <label class="mask-info" id="left-mask-info">
                   <div class="title">Left Mask</div>
                   <div class="sub-line">
                     <div class="subtitle">Station {{ station_number }} left mask</div>
-                    <div class="status">{{ station100_left_status }}</div>
+                    <div class="inline-status">{{ station100_left_status }}</div>
                   </div>
                 </label>
                 <label class="mask-info" id="bottom-mask-info">
                   <div class="title">Bottom Mask</div>
                   <div class="sub-line">
                     <div class="subtitle">Station {{ station_number }} bottom mask</div>
-                    <div class="status">{{ station100_bottom_status }}</div>
+                    <div class="inline-status">{{ station100_bottom_status }}</div>
                   </div>
                 </label>
                 <label class="mask-info" id="right-mask-info">
                   <div class="title">Right Mask</div>
                   <div class="sub-line">
                     <div class="subtitle">Station {{ station_number }} right mask</div>
-                    <div class="status">{{ station100_right_status }}</div>
+                    <div class="inline-status">{{ station100_right_status }}</div>
+                  </div>
+                </label>
+                <label class="mask-info" id="ref-mask-info">
+                  <div class="title">Reference Image</div>
+                  <div class="sub-line">
+                    <div class="subtitle">Station {{ station_number }} ref image</div>
+                    <div class="inline-status">{{ station100_ref_status }}</div>
                   </div>
                 </label>
               </div>
@@ -204,31 +215,35 @@
             </div>
           </div>
         {% elif station_number == 120 %}
-          <input type="radio" name="slider" id="top-right-mask" checked>
-          <input type="radio" name="slider" id="top-left-mask">
-          <input type="radio" name="slider" id="left-mask">
-          <input type="radio" name="slider" id="bottom-left-mask">
-          <input type="radio" name="slider" id="bottom-right-mask">
-          <input type="radio" name="slider" id="right-mask">
+          <input type="radio" name="slider" id="top-right-mask-120" checked>
+          <input type="radio" name="slider" id="top-left-mask-120">
+          <input type="radio" name="slider" id="left-mask-120">
+          <input type="radio" name="slider" id="bottom-left-mask-120">
+          <input type="radio" name="slider" id="bottom-right-mask-120">
+          <input type="radio" name="slider" id="right-mask-120">
+          <input type="radio" name="slider" id="ref-mask-120">
           <!-- Cards -->
-          <div class="cards">
-            <label class="card" for="top-right-mask" id="top-right-mask-card">
+          <div class="cards-120">
+            <label class="card-120" for="top-right-mask-120" id="top-right-mask-card-120">
               <img src="" alt="image">
             </label>
-            <label class="card" for="top-left-mask" id="top-left-mask-card">
+            <label class="card-120" for="top-left-mask-120" id="top-left-mask-card-120">
               <img src="" alt="image">
             </label>
-            <label class="card" for="left-mask" id="left-mask-card">
+            <label class="card-120" for="left-mask-120" id="left-mask-card-120">
               <img src="" alt="image">
             </label>
-            <label class="card" for="bottom-left-mask" id="bottom-left-mask-card">
+            <label class="card-120" for="bottom-left-mask-120" id="bottom-left-mask-card-120">
               <img src="" alt="image">
             </label>
-            <label class="card" for="bottom-right-mask" id="bottom-right-mask-card">
+            <label class="card-120" for="bottom-right-mask-120" id="bottom-right-mask-card-120">
               <img src="" alt="image">
             </label>
-            <label class="card" for="right-mask" id="right-mask-card">
+            <label class="card-120" for="right-mask-120" id="right-mask-card-120">
               <img src="" alt="image">
+            </label>
+            <label class="card-120" for="ref-mask-120" id="ref-mask-card-120">
+              <img src="" alt="image"> 
             </label>
           </div>
         {% endif %}

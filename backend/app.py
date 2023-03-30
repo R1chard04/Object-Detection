@@ -157,7 +157,21 @@ def serve_static_mask_100(filename):
 # add the photo files path towards the html
 def serve_static_mask_120(filename):
   root_dir = os.path.dirname(os.getcwd())
-  return send_from_directory(os.path.join(root_dir, 'backend/Photots/Masks/station120'), filename)
+  return send_from_directory(os.path.join(root_dir, 'backend/Photos/Masks/station120'), filename)
+
+# include the path to the photo folder to get the files in the station 100 ref folder
+@app.route('/Photos/Refs/station100/<path:filename>')
+# add the photo files path towards the html
+def serve_static_ref_100(filename):
+  root_dir = os.path.dirname(os.getcwd())
+  return send_from_directory(os.path.join(root_dir, 'backend/Photos/Refs/station100'), filename)
+
+# include the path to the photo folder to get the files in the station 120 ref folder
+@app.route('/Photots/Refs/station120/<path:filename>')
+# add the photo files path towards the html
+def serve_static_ref_120(filename):
+  root_dir = os.path.dirname(os.getcwd())
+  return send_from_directory(os.path.join(root_dir, 'backend/Photos/Refs/station120'), filename)
 
 ####################### HOMEPAGE ##########################
 # define the list of permissions to visit this homepage
