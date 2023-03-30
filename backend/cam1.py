@@ -1,17 +1,13 @@
 import cv2 as cv
-import time
 import depthai as dai
 from imageProcessingClasses import imageProcessing
 from imagePredictionClass import MSEStabilization
 from imageCalibrationClass import Recalibration, createPipeline
-import time
-import cv2 as cv
-import depthai as dai
 import pdb
 import pylogix 
 from pylogix import PLC
 from PLCUpdate import writePLC
-from timeLog import timeLog
+from imageTimingClasses import timeLog
     
 from PLCUpdate import writePLC, readPLC
 
