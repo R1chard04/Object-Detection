@@ -160,7 +160,7 @@ class Recalibration:
                 i += 1
                 print("Mask generated")
             else:
-                print(f"Mask is redoing!")
+                print(f"Mask failed. Retrying")
         
         print("all masks are done")
         return
