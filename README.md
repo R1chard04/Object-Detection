@@ -34,6 +34,10 @@
     * Bulding Flask routes to trigger all Python functions in our main program.
     * Protect the users from security risk by using API Security Practice.
     * Fetch and Rest API to listen for request and response from JavaScript client to Python server for events from the user-interface.
+    
+### DEMO:
+## Here are a few demo images of what we have so far:
+
   
   
 ### Requirements for development and contribution:
