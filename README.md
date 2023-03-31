@@ -37,7 +37,7 @@
     
 ### DEMO:
 Here are a few demo images of what we have so far:
-
+![Our mask demo](https://your-copied-image-address)
   
   
 ## Requirements for development and contribution:
