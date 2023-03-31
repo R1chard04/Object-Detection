@@ -1,6 +1,6 @@
 # Winter Workterm 2023 - Parts Present Detection Project
 
-## What we do?
+### What we do?
 
 + Main program:
   - DepthAI cameras are using for connecting to our computer vision program.
@@ -12,7 +12,7 @@
   - A website is designed for the users to interact with the computer vision program.
   - Provides a user-friendly way for viewing the output of the program and interacting with the cameras.
 
-## Our process:
+### Our process:
 
 + Main program:
   - Technical: [Python OpenCV](https://pypi.org/project/opencv-python/)
@@ -35,8 +35,8 @@
     * Protect the users from security risk by using API Security Practice.
     * Fetch and Rest API to listen for request and response from JavaScript client to Python server for events from the user-interface.
     
-## DEMO:
-### Here are a few demo images of what we have so far:
+### DEMO:
+# Here are a few demo images of what we have so far:
 
   
   
@@ -49,7 +49,7 @@
 - [NodeJS 16](https://nodejs.org/en/download/) is required.
 - Other dependencies are covered in requirements.txt files.
 
-## Local Development:
+### Local Development:
 
 ```
 # Clone the repo
