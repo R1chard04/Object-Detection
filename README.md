@@ -38,6 +38,8 @@
 ### DEMO:
 Here are a few demo images of what we have so far:
 ![Our mask demo](https://github.com/Kenttrann2302/Object-Detection/blob/main/backend/Photos/Masks/station100/top.jpg?raw=true)
+![Our output demo]()
+![Our website demo]()
   
   
 ## Requirements for development and contribution:
