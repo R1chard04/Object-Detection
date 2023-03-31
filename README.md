@@ -36,7 +36,7 @@
     * Fetch and Rest API to listen for request and response from JavaScript client to Python server for events from the user-interface.
     
 ### DEMO:
-# Here are a few demo images of what we have so far:
+Here are a few demo images of what we have so far:
 
   
   
