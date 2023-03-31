@@ -192,7 +192,19 @@ def station_detail(station_number):
   # get the token from cookies
   token = request.cookies.get('token')
   name = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['name']
-  return render_template("station_details.html", station_number=station_number, user_name=name)
+  # query the database to get the latest focal length, brightness, white balanace lock and auto exposure lock
+  find_latest_settings = Station.query.filter_by(station_number=station_number).order_by(Station.id.desc()).first()
+  if find_latest_settings:
+    latest_focal_length = find_latest_settings.station_focalLength
+    latest_brightness = find_latest_settings.station_brightness
+    latest_white_balance_lock = find_latest_settings.white_balance_lock
+    latest_auto_exposure = find_latest_settings.auto_exposure_lock
+    # if the station is station 100:
+    if station_number == 100:
+      return render_template("station_details.html", station_number=station_number, user_name=name, focal_length_100=latest_focal_length, brightness_100=latest_brightness, white_balance_100=latest_white_balance_lock, exposure_lock_100=latest_auto_exposure)
+  else:
+    print('No status found!')
+    return render_template("station_details.html", station_number=station_number)
 
 ###################### STATION SETTINGS ######################
 # render the station settings
@@ -329,8 +341,7 @@ def change_settings(station_number):
 
       if result:
         print(f"Data has been inserted successfully!")
-        
-        return redirect(url_for('station_detail', station_number = station_number))
+        return redirect(url_for('setUpSuccessful'))
       
       else:
         print(f"Error inserting data into the database")

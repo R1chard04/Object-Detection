@@ -115,21 +115,93 @@
           Settings status
         </h1>
         <h2>
-          This is where you can view the status of the camera
+          This is where you can view the status of the camera configuration
         </h2>
       </div>
       <div class="grid-container">
         <div class="gridbox" id="box1">
-          
+          <div class="box-heading">
+            <h1>
+              Focal length progress
+            </h1>
+          </div>
+          <div class="focal-length">
+            <div class="indicator">
+              <div class="bar"></div>
+            </div>
+            <div class="label">Focal Length: 
+              <span id="focal-length-value">
+              {% if station_number == 100 %}
+                {{ focal_length_100 }}
+              {% elif station_number == 120 %} 
+                {{ focal_length_120 }}
+              {% endif %}
+              </span>
+            </div>
+          </div>
         </div>
         <div class="gridbox" id="box2">
-          
+          <div class="box-heading">
+            <h1>
+              Brightness progress
+            </h1>
+          </div>
+          <div class="brightness">
+            <div class="indicator">
+              <div class="bar"></div>
+            </div>
+            <div class="label">Brightness: 
+              <span id="brightness-value">
+              {% if station_number == 100 %}
+                {{ brightness_100 }}
+              {% elif station_number == 120 %} 
+                {{ brightness_120 }}
+              {% endif %}
+              </span>
+            </div>
+          </div>
         </div>
         <div class="gridbox" id="box3">
-          
+          <div class="under-box-heading">
+            <h1>
+              White Balance Lock progress
+            </h1>
+          </div>
+          <!-- Create an indicator to indicate the current state of the white balance lock -->
+          <div>
+            <label class="switch">
+              <input type="checkbox" id="white_balance_lock" name="white_balance_lock" disabled>
+              <span class="slider"></span>
+              <span id="white_balance_lock_input" style="display: none;">
+                {% if station_number == 100 %} 
+                  {{ white_balance_100 }}
+                {% elif station_number == 120 %} 
+                  {{ white_balance_120 }}
+                {% endif %}
+              </span>
+            </label>
+          </div>
         </div>
         <div class="gridbox" id="box4">
-          
+          <div class="under-box-heading">
+            <h1>
+              Auto Exposure Lock progress
+            </h1>
+          </div>
+          <!-- Create an indicator to indicate the current state of the auto exposure lock -->
+          <div>
+            <label class="switch"> 
+              <input type="checkbox" id="auto_exposure_lock" name="auto_exposure_lock" disabled>
+              <span class="slider"></span>
+              <span id="auto-exposure-input" style="display: none;">
+                {% if station_number == 100 %} 
+                  {{ exposure_lock_100 }}
+                {% elif station_number == 120 %} 
+                  {{ exposure_lock_120 }} 
+                {% endif %} 
+              </span>
+            </label>
+          </div>      
         </div>
       </div>
     </section>
@@ -318,6 +390,22 @@
             </div>
           </div>
         {% endif %}
+      </div>
+    </section>
+    <!-- Error section -->
+    <section class="error-section">
+      <!-- Headings -->
+      <div class="errors-headings">
+        <h1>
+          MSE status
+        </h1>
+        <h2>
+          This is where you can see the status for the Mean Square Algorithm set up process
+        </h2>
+      </div>
+      <!-- Progress tracking error setup section -->
+      <div>
+
       </div>
     </section>
    </div>

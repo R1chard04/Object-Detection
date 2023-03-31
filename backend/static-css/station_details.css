@@ -328,10 +328,11 @@
 /* Styling for Station Details Dashboard */
 .settings-section {
  position: relative;
- top: 20px;
+ margin-top: 2px;
  height: 115vh;
  align-items: center;
  background-color: aliceblue;
+ border-radius: 30px;
  /* Fade-in effect */
  opacity: 0;
  transform: translateY(50px);
@@ -374,9 +375,10 @@
  height: 15rem;
  width: 20rem;
  color: white;
- margin: 0;
  margin-right: 7rem;
  margin-top: 3rem;
+ border: 5px solid transparent;
+ border-image: linear-gradient(45deg, purple, orange) 1;
 }
 
 .grid-container #box1 { 
@@ -389,16 +391,221 @@
  background-size: cover;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+/* upper box headings */
+.grid-container .box-heading {
+  position: absolute;
+  color: black;
+  font-size: 13px;
+  font-family: 'Bebas Neue', cursive;
+  font-weight: 100;
+  /* transform: translate(-50%, -50%); */
+  background-image: linear-gradient(gold, gold);
+  background-size: 100% 10px;
+  background-repeat: no-repeat;
+  background-position: 100% 0%;
+  transition: background-size .7s, background-position .5s ease-in-out;
+  margin-top: 7.5rem;
+  margin-left: 5rem;
+}
+
+.grid-container .box-heading:hover {
+  background-size: 100% 100%;
+  background-position: 0% 100%;
+  transition: background-position .7s, background-size .5s ease-in-out;
+}
+
+/* focal length status bar */
+.focal-length {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin-top: 10rem;
+  margin-left: 2.25rem;
+}
+
+.focal-length .indicator {
+  position: relative;
+  width: 250px;
+  height: 20px;
+  background-color: black;
+  border-radius: 10px;
+  box-shadow: inset 0px 0px 5px #bfbfbb;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+.focal-length .indicator .bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #007bff;
+}
+
+.focal-length:hover {
+  transform: scale(1.05);
+}
+
+.focal-length .label {
+  margin-top: 12px;
+  margin-left: 20px;
+  font-size: 14px;
+  color: blue;
+}
+
+#focal-length-value {
+  font-weight: bold;
+}
+
+/* Brightness status bar */
+.brightness {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  margin-top: 10rem;
+  margin-left: 2.25rem;
+}
+
+.brightness .indicator {
+  position: relative;
+  width: 250px;
+  height: 20px;
+  background-color: black;
+  border-radius: 10px;
+  box-shadow: inset 0px 0px 5px #bfbfbb;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+.brightness .indicator .bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: orange;
+}
+
+.brightness:hover {
+  transform: scale(1.05);
+}
+
+.brightness .label {
+  margin-top: 12px;
+  margin-left: 20px;
+  font-size: 14px;
+  color: red;
+}
+
+#brightness-value {
+  font-weight: bold;
+}
+
 .grid-container #box3 {
- background-image: url('https://i.postimg.cc/bwb7TrNr/white-balance.png');
+ background-image: url('https://i.postimg.cc/Jnfzmg85/White-balance-1.png');
  background-size: cover;
  margin-bottom: 30px;
 }
 
 .grid-container #box4 {
- background-image: url('https://i.postimg.cc/853Wh9gV/exposure-lock.png');
+ background-image: url('https://i.postimg.cc/mr0sFHnb/White-balance-2.png');
  background-size: cover;
  margin-bottom: 30px;
+}
+
+.grid-container .under-box-heading {
+  color: black;
+  font-size: 13px;
+  font-family: system-ui, sans-serif;
+  font-weight: 100;
+  text-align: center;
+  cursor: pointer;
+  --s: 0.1em;   /* the thickness of the line */
+  --c: #2c4bff; /* the color */
+  
+  color: #0000;
+  padding-bottom: var(--s);
+  background: 
+    linear-gradient(90deg,var(--c) 50%,#000 0) calc(100% - var(--_p,0%))/200% 100%,
+    linear-gradient(var(--c) 0 0) 0% 100%/var(--_p,0%) var(--s) no-repeat;
+  -webkit-background-clip: text,padding-box;
+          background-clip: text,padding-box;
+  transition: 0.5s;
+  display: grid;
+  place-content: center;
+  margin-top: 10px;
+}
+
+.grid-container .under-box-heading:hover {
+  --_p: 100%;
+}
+
+/* Sliders for both white balance lock and auto exposure lock */
+/* The switch - the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  margin-top: 20px;
+  margin-left: 7.5rem;
+}
+
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
 
 /* Styling for station's mask carousels */
@@ -409,6 +616,7 @@
   transition: all 0.4s ease;
   margin: auto;
   height: 100vh;
+  border-radius: 30px;
   /* Fade-in effect */
   opacity: 0;
   transform: translateY(50px);
@@ -587,7 +795,7 @@ img {
 }
 
 .status {
-  margin-top: 25rem;
+  margin-bottom: 5rem;
   background-color: #fff;
   border-radius: 8px;
   min-width: 320px;
