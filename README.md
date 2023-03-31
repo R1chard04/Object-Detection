@@ -37,7 +37,7 @@
     
 ### DEMO:
 Here are a few demo images of what we have so far:
-![Our mask demo](https://your-copied-image-address)
+![Our mask demo](https://github.com/Kenttrann2302/Object-Detection/blob/main/backend/Photos/Masks/station100/top.jpg?raw=true)
   
   
 ## Requirements for development and contribution:
