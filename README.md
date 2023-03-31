@@ -50,12 +50,15 @@
 ```
 # Clone the repo
 $ git clone https://github.com/Kenttrann2302/Object-Detection/
+
 # Move into directories 
 $ cd <directory-name>
+
 # Install the requirements to run the program
 $ cd backend
 $ cd txt_files
 $ pip install -r requirements1.txt
+
 # Start the program on bash and have fun!!!
 $ python cam1.py & cam2.py (assume 2 cameras are installed)
 ```
@@ -64,25 +67,32 @@ $ python cam1.py & cam2.py (assume 2 cameras are installed)
 # Install virtual environment on local machine
 # Unix/MacOS:
 $ python3 -m venv env
+
 # Window:
 > py -m venv env
+
 # Activating the a virtual environment
 # Unix/MacOS:
 $ cd backend
 $ source myenv/bin/activate
+
 # Windows:
 > cd backend
 > .\myenv\Scripts\activate
-# Insalling the packages in virtual environment
+
+# Installing the packages in virtual environment
 # For both Windows and Unix/MacOS
 $ cd txt_files
 $ pip install -r requirements1.txt
+
 # Start the server that listening on port 5000
 # change directory back to the root directory
 $ python app.py
+
 # To deactivate the virtual environment
 # For both Windows and Unix/MacOS:
 $ deactivate
+
 # Note: For best experience, enable Flask debugging mode for local development and disable for production due to security risks.
 ```
 
