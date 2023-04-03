@@ -171,7 +171,7 @@ class Recalibration:
                 imgSil = cv.pyrDown(imgSil)
                 cv.imshow("results", imgSil)
                 
-            print("load"+ self.parts[i] + "colour part and press c to capture")
+            print("load"+ self.parts[i] + "colour part and press c to capture. If the part lies below others, load those as well")
             while True:
                 imgCol = q.get().getCvFrame()
 
@@ -213,7 +213,7 @@ class Recalibration:
         post_url = 'http://127.0.0.1:5000/bt1xx/handle-click/'
         
         # load the silver part
-        print("Load" + part + "silver part and press C to capture")
+        print("Load" + part + "silver part and press C to capture. If the part lies below others, load those as well.")
         while True:
             imgSil = q.get().getCvFrame()
 
@@ -236,7 +236,7 @@ class Recalibration:
             imgSil = cv.pyrDown(imgSil)
             cv.imshow("results", imgSil)
 
-        print("Load" + part + "colour part and press C to capture")
+        print("Load" + part + "colour part and press C to capture. If the part lies below others, load those as well")
         while True:
             imgCol = q.get().getCvFrame()
 

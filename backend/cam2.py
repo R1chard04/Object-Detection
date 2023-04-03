@@ -9,19 +9,6 @@ from PLCUpdate import writePLC, readPLC
 from imageTimingClasses import timeLog
 import cProfile
 
-# db_config = {
-#      "hostname": "localhost",
-#      "database": "imageTiming",
-#      "username": "postgres",
-#      "pwd": "W1nter@2023Hydro",
-#      "port_id": 5432
-#  }
-
-# Clamp at work for station#100
-# clampSt100 = readPLC("Program:Sta100.Station.Cycle.Step.Bit[7]")
-# clear to enter station#100
-# clrSt100 = readPLC("Sta100_OK_To_Enter")    
-
 camera = Recalibration("station100")
 device_info = dai.DeviceInfo(camera.IP)
 
@@ -35,13 +22,6 @@ while True:
             # print(camera.passref)
             # camera.updateJson(camera.station)
             processingObject = imageProcessing("station100")
-            
-            print("start")
-            
-            #ask user to name each occurance in array
-            # timing = imageTiming(new_partLists100, db_config)
-
-            # arr = [0, 0, 0, 0]
             timeObject = timeLog(camera.station, camera.parts)
             
             while True:     
@@ -51,12 +31,7 @@ while True:
                 error = processingObject.compareImage()
                 frame = processingObject.displayResultPosition()     
                 prediction = MSEStabilization(error, camera.passref, len(camera.parts)) 
-                # pdb.set_trace()
                 result = prediction.result()
-
-                # response = timing.record(result)
-                # calculation = imageAverage(db_config)
-                # final = calculation.average()
 
                 print("Check clamp start")
                 start = time.time()
@@ -79,8 +54,8 @@ while True:
                 print(time.time()-start)
 
                 print(result)
-
                 # transferToPLC("OP100", result)
+                
                 cv.waitKey(1)
                 frame = cv.pyrDown(frame)
                 cv.imshow(camera.IP, frame)
