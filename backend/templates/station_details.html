@@ -56,8 +56,8 @@
      </div>
      <ul class="sub-menu">
       <li><a class="link_name" href="{{ url_for('station_mask_setup', station_number=station_number) }}">Mask</a></li>
-      <li><a href="#">Start Mask Setup</a></li>
-      <li><a href="#">Redo Mask</a></li>
+      <li><a href="{{ url_for('station_mask_setup', station_number=station_number) }}">Start Mask Setup</a></li>
+      <li><a href="{{ url_for('redo_mask', station_number=station_number) }}">Redo Mask</a></li>
      </ul>
     </li>
     <li>
@@ -66,7 +66,7 @@
       <span class="link_name">Errors</span>
      </a>
      <ul class="sub-menu blank">
-      <li><a class="link_name" href="#">Errors</a></li>
+      <li><a class="link_name" href="{{ url_for('station_errors_setup', station_number=station_number) }}">Errors</a></li>
      </ul>
     </li>
     <li>
@@ -405,7 +405,10 @@
       </div>
       <!-- Progress tracking error setup section -->
       <div>
-        
+        <svg>
+          <circle class="bg" cx="57" cy="57" r="56" />
+          <circle class="meter-1" cx="57" cy="57" r="56" />
+        </svg>
       </div>
     </section>
    </div>
