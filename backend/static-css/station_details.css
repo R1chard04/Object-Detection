@@ -932,10 +932,10 @@ img {
 /* Styling for station errors setup */
 .error-section {
   position: relative;
-  margin-top: 2px;
+  margin-top: auto;
   height: 50vh;
   align-items: center;
-  background-color: green;
+  background-color: lightgreen;
   border-radius: 10px;
   /* Fade-in effect */
   opacity: 0;

@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
       $(errorSection).addClass('visible');
      }
     if (scrollTop < errorsectionHeight - windowHeight + errorsectionHeight / 2) {
-    $(errorSection).removeClass('visible');
+      $(errorSection).removeClass('visible');
     }
   });
 });

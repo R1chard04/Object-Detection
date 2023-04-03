@@ -415,6 +415,7 @@ def create_mask(station_number):
     with dai.Device(pipeline, device_info) as device:
       recalibration = Recalibration(station='station' + str(station_number))
       recalibration.upDateParams(station='station' + str(station_number))
+      recalibration.adjustCamera(device=device)
       recalibration.maskSetup(device=device)
 
     return redirect(url_for('setUpSuccessful', station_number=station_number))
