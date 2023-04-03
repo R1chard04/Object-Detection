@@ -147,7 +147,7 @@ class Recalibration:
             print("load"+ self.parts[i] + "silver part and press c to capture")
             while True:
                 imgSil = q.get().getCvFrame()
-
+                
                 # send the GET request to '/bt1xx/getclickevent/' url server to get the response
                 response = requests.get(get_url)
         

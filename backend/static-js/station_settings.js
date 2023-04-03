@@ -240,54 +240,37 @@ document.addEventListener('DOMContentLoaded', function() {
  // listen to the input event when the user click 1
  const switchCheckBox = document.querySelector('.switch input[type="checkbox"]');
  let switchCheckBox_input = document.getElementById('white_balance_lock_input');
-  if(switchCheckBox.value == 'on'){
-    switchCheckBox_input.value = 1;
-    
-    switchCheckBox_input.value = !!(switchCheckBox_input.value)
-  }
-  else {
-    switchCheckBox_input.value = 0;
-    switchCheckBox_input.value = !!(switchCheckBox_input.value)
-  }
 
  document.addEventListener('keydown', event => {
   if(event.key == '1') {
-    switchCheckBox.checked = !switchCheckBox.checked;
-    if(switchCheckBox.value == 'on'){
-      switchCheckBox_input.value = 1;
-      switchCheckBox_input.value = !!(switchCheckBox_input.value)
-    }
-    else {
-      switchCheckBox_input.value = 0;
-      switchCheckBox_input.value = !!(switchCheckBox_input.value)
-    }
+    switchCheckBox.checked = true;
+    switchCheckBox_input.value = 'true';  
+  }
+  else if(event.key == '2') {
+    switchCheckBox.checked = false;
+    switchCheckBox_input.value = 'false';
   }
  });
+
 
  // listen to the input event when the user click 2
  const lock = document.querySelector('.lock');
  const unlock = document.querySelector('.unlock');
 
- let isLocked = true;
-  document.getElementById("auto_exposure_lock_input").value = isLocked;
+ let autoExposure = document.getElementById('auto_exposure_lock_input');
 
- function toggleLock() {
-  isLocked = !isLocked;
-  if(isLocked) {
+ document.getElementById("auto_exposure_lock_input").value = 'true';
+
+ document.addEventListener('keydown', (event) => {
+  if(event.key == '3') {
     lock.classList.remove('unlock');
     unlock.style.display = 'none';
-  } else {
+    autoExposure.value = 'true';
+  }
+  else if (event.key == '4') {
     lock.classList.add('unlock');
     unlock.style.display = 'block';
-  }
- }
-
- lock.addEventListener('click', toggleLock);
- unlock.addEventListener('click', toggleLock);
- document.addEventListener('keydown', (event) => {
-  if(event.key == '2') {
-    toggleLock();
-    document.getElementById("auto_exposure_lock_input").value = isLocked;
+    autoExposure.value = 'false';
   }
  });
 

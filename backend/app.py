@@ -194,14 +194,19 @@ def station_detail(station_number):
   name = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['name']
   # query the database to get the latest focal length, brightness, white balanace lock and auto exposure lock
   find_latest_settings = Station.query.filter_by(station_number=station_number).order_by(Station.id.desc()).first()
+  print(find_latest_settings)
   if find_latest_settings:
     latest_focal_length = find_latest_settings.station_focalLength
     latest_brightness = find_latest_settings.station_brightness
     latest_white_balance_lock = find_latest_settings.white_balance_lock
+    print(latest_white_balance_lock)
     latest_auto_exposure = find_latest_settings.auto_exposure_lock
+    print(latest_auto_exposure)
     # if the station is station 100:
     if station_number == 100:
       return render_template("station_details.html", station_number=station_number, user_name=name, focal_length_100=latest_focal_length, brightness_100=latest_brightness, white_balance_100=latest_white_balance_lock, exposure_lock_100=latest_auto_exposure)
+    else:
+      return render_template("station_details.html", station_number=station_number, user_name=name, focal_length_120=latest_focal_length, brightness_120=latest_brightness, white_balance_120=latest_white_balance_lock, exposure_lock_120=latest_auto_exposure)
   else:
     print('No status found!')
     return render_template("station_details.html", station_number=station_number)
@@ -212,8 +217,6 @@ def station_detail(station_number):
 @validate_token('station_settings')
 def station_settings(station_number):
   try:
-    # enable the websockets to be ready to listen for events on the client side
-    # establish_websocket(station_number=station_number)
     return render_template('station_settings.html', station_number=station_number)
   
   except Exception as e:
@@ -318,8 +321,18 @@ def change_settings(station_number):
       station_selected = station_number
       focal_length_settings = request.form['focal_length_setting_input']
       brightness_setting = request.form['brightness_setting_input']
-      white_balance_lock_data = bool(request.form['white_balance_lock_input'])
-      auto_exposure_lock_data = bool(request.form['auto_exposure_lock'])
+      white_balance_lock_data = request.form['white_balance_lock_input']
+      auto_exposure_lock_data = request.form['auto_exposure_lock_input']
+
+      if white_balance_lock_data == 'false':
+        white_balance_lock_data = False
+      else:
+        white_balance_lock_data = True
+
+      if auto_exposure_lock_data == 'false':
+        auto_exposure_lock_data = False
+      else:
+        auto_exposure_lock_data = True
 
       # create a list of new setting instance
       new_settings = [
@@ -341,7 +354,7 @@ def change_settings(station_number):
 
       if result:
         print(f"Data has been inserted successfully!")
-        return redirect(url_for('setUpSuccessful'))
+        return redirect(url_for('setUpSuccessful', station_number=station_number))
       
       else:
         print(f"Error inserting data into the database")

@@ -4,6 +4,8 @@
   <title id="station">
    Station {{ station_number }}
   </title>
+  <!-- JQuery library -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script type="text/javascript" src="{{ url_for('serve_static_js', filename = 'station_settings.js' ) }}"></script>
   <link rel="stylesheet" href="{{ url_for('serve_static_css', filename = 'station_settings.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
@@ -77,7 +79,8 @@
     </div>
     <div class="white-balance-lock-section-div">
      <section class="white-balance-lock-section">
-      <label id="white-balance-lock-text" for="white_balance_lock">Press "1" to turn on/off white balance lock</label>
+      <label id="white-balance-lock-text" for="white_balance_lock">Press "1" to turn on white balance lock</label><br>
+      <label id="white-balance-lock-text-2" for="white_balance_lock">Press "2" to turn off white balance lock</label>
       <!-- Create an indicator to indicate the current state of the white balance lock -->
       <div>
        <label class="switch">
@@ -91,12 +94,13 @@
     </div>
     <div class="auto-exposure-lock-section-div">
      <section class="auto-exposure-lock-section">
-      <label id="auto-exposure-lock-text" for="auto_exposure_lock">Press "2" to turn on/off auto exposure lock</label>
+      <label id="auto-exposure-lock-text" for="auto_exposure_lock">Press "3" to turn on auto exposure lock</label><br>
+      <label id="auto-exposure-lock-text-2" for="auto_exposure_lock">Press "4" to turn off auto exposure lock</label>
       <!-- Create an indicator to indicate the current state of the auto exposure lock -->
       <div class="lock-container">
        <img src="{{ url_for('serve_static_photos', filename = 'lock-closed.png') }}" class="lock" alt="Lock">
        <img src="{{ url_for('serve_static_photos', filename = 'lock-opened.png') }}" class="unlock" alt="Unlock" style="display: none">
-       <input type="hidden" id="auto_exposure_lock_input" name="auto_exposure_lock"/>
+       <input type="hidden" id="auto_exposure_lock_input" name="auto_exposure_lock_input"/>
       </div>
      </section>
     </div>

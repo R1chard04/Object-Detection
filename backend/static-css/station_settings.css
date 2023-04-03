@@ -478,6 +478,15 @@ input[type="number"] {
  display: inline-block;
 }
 
+#white-balance-lock-text-2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #333;
+  display: inline-block;
+  margin-top: auto;
+ }
+
 /* Setting up the switch indicator for white balance lock */
 .switch {
  position: relative;
@@ -557,6 +566,15 @@ input:checked + .slider::before {
  color: #333;
  display: inline-block;
 }
+
+#auto-exposure-lock-text-2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  line-height: 1.6;
+  color: #333;
+  display: inline-block;
+  margin-top: auto;
+ }
 
 /* Setting up the lock image for the auto-exposure indicator */
 .lock-container {
