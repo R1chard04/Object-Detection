@@ -22,15 +22,7 @@ def mse(img1, img2, pixels):
     ans = err/ float(pixels)
     #Closer to 0 is better
     return ans
-
-def findV(img):
-    feed = cv.cvtColor(img,cv.COLOR_BGR2HSV)
-    h,s,v = cv.split(feed)
-    feed = v
-
-    return feed
     
-
 class imageProcessing:
     def __init__(self, station) -> None:
         # maskArray, ref, test, partList
