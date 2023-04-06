@@ -5,7 +5,7 @@ import pdb
 
 
 #------------------------------------------------------------------------------------------------#
-
+#Repairs a broken mask by filling the spaces between white pixels up to a distance of 10 pixels either horizonatlly or vertically
 def fillByLine(img, direction):
   if direction == "H":
     for row in range(img.shape[0]):
@@ -39,6 +39,7 @@ def fillByLine(img, direction):
     
   return img 
 
+#Repairs a mask by floodfilling enclosed spaces with white pixels
 def floodFill(imgThresh):
   fillMask = imgThresh.copy()
   height, width = imgThresh.shape[:2]
@@ -50,9 +51,9 @@ def floodFill(imgThresh):
 
 #------------------------------------------------------------------------------------------------#
 
-    
+  #function to create a mask 
 def createMask(std, col, maskPath):
-  #Creating ref image
+  #Creating ref image (black image of the same size) that can be drawn on later
   ref = cv.cvtColor(std, cv.COLOR_BGR2GRAY)
   ref[ref != 0] = 0
   __, ref = cv.threshold(ref, 0, 255, cv.THRESH_BINARY)
@@ -69,7 +70,7 @@ def createMask(std, col, maskPath):
   #Convert to gray
   gray = cv.cvtColor(denoise, cv.COLOR_BGR2GRAY)
 
-  #Convert to binary
+  #Perform morphological transformations and convert to binary
   kernel = np.ones((5, 5), np.uint8)
   opening = cv.morphologyEx(gray, cv.MORPH_OPEN, kernel)
   __, binary = cv.threshold(opening, 1, 255, cv.THRESH_TRIANGLE)
@@ -77,11 +78,9 @@ def createMask(std, col, maskPath):
   #Finding Contours
   contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
   contours = sorted(contours, key=cv.contourArea, reverse=True)
-  # if len(contours) == 0:
-  #   return False
-  # else:
+  #getting the largest contour
   largest_contour = contours[0]
-  cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 7)
+  cv.drawContours(ref, largest_contour, -1, (255, 255, 255), 7) #drawing the contour on the ref canvas
 
   #Reparing contoured
   repair = fillByLine(ref, "V")

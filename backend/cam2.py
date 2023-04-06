@@ -1,3 +1,4 @@
+#THis is cam1.py except it has a try except
 import cv2 as cv
 import depthai as dai
 from imageProcessingClasses import imageProcessing
