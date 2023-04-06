@@ -31,7 +31,7 @@ with dai.Device(createPipeline(), device_info) as device:
         error = processingObject.compareImage()
         frame = processingObject.displayResultPosition()     
         prediction = MSEStabilization(error, camera.passref, len(camera.parts)) 
-
+        
         print(error)
         result = prediction.result()
         print(result)

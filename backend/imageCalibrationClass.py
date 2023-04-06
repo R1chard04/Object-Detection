@@ -1,3 +1,4 @@
+# a class that apply all the methods on the camera 
 import json
 import depthai as dai
 import cv2 as cv
@@ -12,6 +13,7 @@ import websocket
 import requests
 import pdb
 
+# this function is responsible for creating the pipeline that is connected the machine to the camera
 def createPipeline():
     pipeline = dai.Pipeline()
     # This might improve reducing the latency on some systems
@@ -34,13 +36,14 @@ def createPipeline():
 def clamp(num, v0, v1):
     return max(v0, min(num, v1))
 
-# set up the mask, control and errors
+# camera's set up contains: set up the camera settings (focal length, brightness), mask setup process, redo mask setup process and set up the errors algorithm for the camera
 class Recalibration:
     def __init__(self, station) -> None:
         with open (r'params.json') as f:
               partList = json.load(f)
               
         # select which station to use here
+        # all the values associate with the camera and the station
         self.station = station
         params = partList[station]
         self.passref = params["passref"]
@@ -55,12 +58,16 @@ class Recalibration:
         self.standardPath = params["standard"]
         self.testPath = params["test"]
     
-    # this function setup params for stations
+    # this function setup params for stations (focal length, brightness, white balance lock, auto exposure lock)
     def paramSetup(self, device, stationNumber):
+        # push the device into the queue
         q = device.getOutputQueue(name="out")
         qControl = device.getInputQueue(name="control")
         
-        # the url server to send the frame of the camera to
+        # the idea here is in order to establish the interaction between the Python (server - where the camera's program is running) and JavaScript (client), we need to use JavaScript to detects the key press on the client side and send it as a HTTP request to the Python server, here, Python will perform a GET request to the Python server to get the key pressed and update the camera's params accordingly.
+
+        # the idea would be the same for Python to send the decoded image to the Python server whenever the new frame is updated, then JavaScript will act like a client to perform a GET request from the Python server to get the frame and update it accordingly on the iframe element
+        # the url server to send the frame of the camera to 
         url = 'http://127.0.0.1:5000/bt1xx/post-frames/' + stationNumber + '/'
         headers = {
             'Content-Type' : 'image/jpeg'
@@ -72,18 +79,23 @@ class Recalibration:
         update_key_url = 'http://127.0.0.1:5000/bt1xx/update-ui/'
 
         while True:
+            # get the frame from the queue
             frame = q.get().getCvFrame()
             frame = cv.pyrDown(frame)
 
             cv.imshow(self.station, frame)
             
-            key_code = cv.waitKey(1)
+            key_code = cv.waitKey(1) # wait for the key to be pressed if the focus is on the PyLauncher Window
 
              # send the frame to the server, perform the request to the server to see if the key event has been detected
             key_response = requests.get(key_url)
             if key_response.status_code == 200 and key_response.json() is not None:
                 change_frame = key_response.json().get('change_frame')
                 get_key = key_response.json().get('key')
+            
+            else: 
+                print(f"There is an error while getting the key event from the server with status code: {response.status_code}")
+                pass
 
             # brightness adjustment, get_key is the value of the key that was being sent after making a GET request from the key_url
             if key_code in [ord(','), ord('.')] or get_key == ',' or get_key == '.':
@@ -110,32 +122,31 @@ class Recalibration:
                 ctrl.setBrightness(self.brightness)
                 qControl.send(ctrl) 
             
-            if key_code == ord('q'):
-                return
-        # else:
-        #     pass
-    
-        # else:
-        #     return "Error while getting key events with status code: " + str(response.status_code)
-
+            # if the key pressed is "q" then we destroy the frame and save the settings for the camera
+            if key_code == ord('q') or get_key == 'q':
+                return 
+            
             # convert the frame to JPEG format
             _, buffer = cv.imencode('.jpg', frame)
             if change_frame == True:
+                # send a POST request to the server along with the decoded frame 
                 response = requests.post(url, data=buffer.tobytes(), headers=headers)
                 if response.status_code == 200:
                     print('Frame uploaded successfully')
-                    new_response = requests.post(update_key_url, json={ # Fix this to PUT request instead of POST request
+                    # send back a post request to let the server knows that we don't need to update a frame anymore since the key is not being pressed
+                    new_response = requests.post(update_key_url, json={ # Fix this to PATCH request instead of POST request
                         'change_frame' : False,
                         'key' : 'a'
                     })
                     if new_response.status_code == 200:
-                        change_frame = False
+                        change_frame = False # get out of the loop
                 else: 
                     print('Error uploading frame:', response.status_code)
             
     
     # this function setup masks for station
     def maskSetup(self, device):
+        # the idea here is going to be the same as the paramSetup function, we send a GET and POST request to the server in order to get the button clicked from JavaScript POST FETCH API to let the program knows that the part has been loaded and the picture for generating the mask can be captured now
         q = device.getOutputQueue(name="out")
         i = 0           
         get_url = 'http://127.0.0.1:5000/bt1xx/getclickevent/'
@@ -147,14 +158,14 @@ class Recalibration:
             print("load"+ self.parts[i] + "silver part and press c to capture")
             while True:
                 imgSil = q.get().getCvFrame()
-                
-                # send the GET request to '/bt1xx/getclickevent/' url server to get the response
+
+                # send the GET request to '/bt1xx/getclickevent/' url server to get the response which boolean of the btn clicked 
                 response = requests.get(get_url)
         
                 if response.status_code == 200:
                     try:
-                        print('Detect a button clicked!') 
-                        click = response.json().get('btnClick')
+                        print('Detect a button clicked!')
+                        click = response.json().get('btnClick') 
                     except json.decoder.JSONDecodeError:
                         pass
 
