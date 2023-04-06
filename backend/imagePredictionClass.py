@@ -30,7 +30,3 @@ class MSEStabilization:
                 totalResultBool.append(0)
                 
         return totalResultBool
-
-
-        
-    

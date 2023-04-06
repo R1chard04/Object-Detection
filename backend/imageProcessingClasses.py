@@ -4,8 +4,8 @@ import json
 
 # from imagePredictionClass import Prediction
 
+#MSE function that compares the intensity values of the images and spits out an error value
 def mse(img1, img2, pixels):
-    # height, width = img1.shape
     #Converting the image to HSV
     img1 = cv.cvtColor(img1, cv.COLOR_BGR2HSV)
     img2 = cv.cvtColor(img2, cv.COLOR_BGR2HSV)
@@ -22,7 +22,8 @@ def mse(img1, img2, pixels):
     ans = err/ float(pixels)
     #Closer to 0 is better
     return ans
-    
+
+#Class for image processing. It runs the comparison and the display frame. Its pretty self-explanatory    
 class imageProcessing:
     def __init__(self, station) -> None:
         # maskArray, ref, test, partList

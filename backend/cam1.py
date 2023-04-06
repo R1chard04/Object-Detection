@@ -6,52 +6,57 @@ from imageCalibrationClass import Recalibration, createPipeline
 from pylogix import PLC
 from PLCUpdate import writePLC
 from imageTimingClasses import timeLog
-from PLCUpdate import writePLC, readPLC
+from PLCUpdate import writePLC, readPLC, transferToPLC
 import time
 from passref import create_pass_ref
 
-
+#Establishing conection to the camera
 camera = Recalibration("station120")
 device_info = dai.DeviceInfo(camera.IP)
 
 
-
-# create_pass_ref(camera=camera, device_info=device_info)
+#Creatin ghte array of pass values (pass ref)
+create_pass_ref(camera=camera, device_info=device_info)
 input("here: ")
 time.sleep(10)
-with dai.Device(createPipeline(), device_info) as device:
-    camera.adjustCamera(device)
-    processingObject = imageProcessing("station120")
-    timeObject = timeLog(camera.station, camera.parts)
 
-    while True:         
+#After establishing the connection, enter the main program
+with dai.Device(createPipeline(), device_info) as device:
+    camera.adjustCamera(device) #adjusting camera fram to brightness and FOV
+    processingObject = imageProcessing("station120") #init for processing
+    timeObject = timeLog(camera.station, camera.parts) #init for timing
+
+    while True:         #main loop
         print("started loop")
         img = camera.capture(device)
-        processingObject.setTestImg(img)
-        error = processingObject.compareImage()
-        frame = processingObject.displayResultPosition()     
-        prediction = MSEStabilization(error, camera.passref, len(camera.parts)) 
+        processingObject.setTestImg(img) #capture and set the testing frame
+        error = processingObject.compareImage() #acquiring the error/diff of the test relative to the ref image
+        frame = processingObject.displayResultPosition()    #frame gen 
+        prediction = MSEStabilization(error, camera.passref, len(camera.parts)) #producing a pass prediction of boolean values
 
         print(error)
-        result = prediction.result()
+        result = prediction.result()  #grabbing the result of the pass/fail
         print(result)
         
-        clampClosed = False
-        # clampClosed = readPLC("Program:Sta120.Station.Cycle.Step.Bit[10]")
+        #The code below checks if the clamp is closed at the station from the PLC. Lots of the PLC code makes the code run really slow
+        clampClosed = readPLC("Program:Sta120.Station.Cycle.Step.Bit[10]")
 
-        recorded = timeObject.log(result, clampClosed)
+        recorded = timeObject.log(result, clampClosed) #takes the result and finds the time it takes for each part to appear
 
         # write PLC value to the HMI
-        # writePLC("Camera_Output.5", result)
+        writePLC("Camera_Output.5", result)
 
         # print(arr)
         # print(final)
 
-        # transferToPLC("OP100", result)
+        transferToPLC("OP100", result) #sending results to PLC
         cv.waitKey(1)
         frame = cv.pyrDown(frame)
         cv.imshow(camera.IP, frame)
 
+        #Code below is commented out for testing. During main implementation, this code will stall while the station is not
+        #safe to enter. Once it is, it will reset the timing and proceed.
+        
         # if recorded is True:
         #     while readPLC("Sta120_OK_To_Enter") is False:
         #         pass

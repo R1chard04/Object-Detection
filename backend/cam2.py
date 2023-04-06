@@ -1,3 +1,4 @@
+#THis is cam1.py except it has a try except
 import cv2 as cv
 import time
 import depthai as dai

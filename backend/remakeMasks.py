@@ -1,3 +1,4 @@
+#Manual mask making that was used in testing a lot.
 import cv2 as cv
 import time
 import depthai as dai

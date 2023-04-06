@@ -1,3 +1,5 @@
+#Code for sending/receiving signals to the PLC
+
 import pylogix
 from pylogix import PLC
 import cProfile

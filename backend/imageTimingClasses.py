@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, MetaData, inspect
 from database_model.models import db, TimingStation100, TimingStation120
 import pdb
 
+#Database stuff
 time_app = Flask(__name__)
 
 db.init_app(time_app)
@@ -18,6 +19,7 @@ def create_table():
 
 create_table()
 
+#Class for timing
 class timeLog:
 
     def __init__(self, station, partList) -> None:
@@ -27,6 +29,8 @@ class timeLog:
             self.maxTime = 0
             self.station = station
 
+    #Method that checks when the a part is first confirmed in a cycle. After a part is placed, it is assumed it is not removed and the timing will no longer update for it
+    #THe timing array has one more than the number of aprts and thats to see how long it takes between final part palcement and clamp closing
     def log(self, results, clampClosed):
         with time_app.app_context():
             elapsedTime = time.time() - self.startTime
@@ -38,11 +42,12 @@ class timeLog:
                     if elapsedTime > self.maxTime:
                         self.maxTime = elapsedTime
 
-            if clampClosed == True:
+            if clampClosed == True: 
                 self.record[-1] = elapsedTime - self.maxTime
 
             print(self.record)
             
+            #More database stuff
             if 0 not in self.record:
                 new_partLists100 = ['TopPart', 'LeftPart', 'BottomPart', 'RightPart', 'ClampState']
                 new_partLists120 = ['TopRightPart', 'TopLeftPart', 'LeftPart', 'BottomLeftPart', 'BottomRightPart', 'RightPart', 'ClampState']
