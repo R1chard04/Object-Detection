@@ -59,7 +59,79 @@
 
 /* CSS styling for the show frame button */
 #show-frame-button {
-  margin-left: 40rem;
+ font-family: 'Ubuntu', sans-serif;
+ position: absolute;
+ top: 37%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ 
+ width: 300px;
+ height: 40px;
+ line-height: 1;
+ font-size: 18px;
+ font-weight: bold;
+ letter-spacing: 1px;
+ border: 3px solid #8C82FC;
+ background: #fff;
+ color: #8C82FC;
+ border-radius: 40px;
+ cursor: pointer;
+ overflow: hidden;
+ transition: all .35s;
+}
+
+#show-frame-button:hover{
+  background: #8C82FC;
+  color: #fff;
+}
+ 
+#show-frame-button span{
+  opacity: 1;
+  visibility: visible;
+  transition: all .35s;
+}
+ 
+.success{
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: #fff;
+border-radius: 50%;
+z-index: 1;
+opacity: 0;
+visibility: hidden;
+transition: all .35s;
+}
+
+.success svg{
+width: 20px;
+height: 20px;
+fill: yellowgreen;
+transform-origin: 50% 50%;
+transform: translateY(-50%) rotate(0deg) scale(0);
+transition: all .35s;
+}
+
+#show-frame-button.is_active{
+width: 40px;
+height: 40px;
+}
+
+#show-frame-button.is_active .success{
+opacity: 1;
+visibility: visible;
+}
+
+#shoe-frame-button.is_active .success svg{
+margin-top: 50%;
+transform: translateY(-50%) rotate(720deg) scale(1);
+}
+
+#show-frame-button.is_active span{
+opacity: 0;
+visibility: hidden;
 }
 
 #content {
@@ -100,7 +172,7 @@
   position: relative;
   display: flex;
   margin-top: 1rem;
-  margin-left: 31rem;
+  margin-left: 43rem;
   gap: 30px;
 }
 
@@ -243,12 +315,15 @@
  margin-left: 10px;
 }
 
+.form {
+  align-items: center;
+}
+
 /* Creating styling for the focal length input field */
 .focal_length_setting {
  font-size: 16px;
  font-weight: bold;
- margin-right: 10px;
- margin-top: 2rem;
+ margin: auto;
 }
 
 input[type="number"] {
@@ -267,8 +342,14 @@ input[type="number"]:focus {
 }
 
 /* Style the 2 instruction labels for focal length */
+.focal-length-section-div {
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+
 .focal-length-section {
- transition: transform 2s ease-in-out;
+ transition: transform 0.3s ease-in-out;
  text-align: center;
 }
 
@@ -373,6 +454,12 @@ input[type="number"] {
 }
 
 /* Style 2 instructions labels for brightness */
+.brightness-section-div {
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+
 .brightness-section {
  margin-top: 5rem;
 }
@@ -402,7 +489,7 @@ input[type="number"] {
 .brightness {
  display: flex;
  flex-direction: column;
- margin-top: 20px;
+ margin-top: auto;
  align-items: center;
 }
 
@@ -459,8 +546,15 @@ input[type="number"] {
 }
 
 /* Setting up the instruction for white balance lock */
+.white-balance-lock-section-div {
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+
 .white-balance-lock-section {
- margin-top: 80px;
+ /* margin-top: 80px; */
+ margin: auto;
  align-items: center;
  text-align: center;
  transition: transform 2s ease-in-out;
@@ -548,8 +642,15 @@ input:checked + .slider::before {
 }
 
 /* Setting up the instruction for the auto exposure lock */
+.auto-exposure-lock-section-div {
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+
 .auto-exposure-lock-section {
- margin-top: 80px;
+ /* margin-top: 80px; */
+ margin: auto;
  align-items: center;
  text-align: center;
  transition: all 0.3s ease-in-out;
@@ -730,7 +831,8 @@ input:checked + .slider::before {
 
 /* Styling css for save button */
 .save-button p {
- margin-left: 550px;
+ position: relative;
+ padding-left: 45rem;
  font-family: 'Montserrat', sans-serif;
  font-size: 18px;
  line-height: 1.6;

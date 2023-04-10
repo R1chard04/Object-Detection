@@ -2,10 +2,12 @@
 <html lang="en" dir="ltr">
  <head>
   <meta charset="UTF-8">
-  <title>
+  <title id="station">
    Station {{ station_number }} 
   </title>
   <script type="text/javascript" src="{{ url_for('serve_static_js', filename='station_details.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('serve_static_json', filename='params.json') }}" id="json_file"></script>
+  
   <!-- JQuery library -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="{{ url_for('serve_static_css', filename='station_details.css') }}"/>
@@ -112,7 +114,7 @@
     <section class="settings-section">
       <div class="settings-headings">
         <h1>
-          Settings status
+          Settings Status
         </h1>
         <h2>
           This is where you can view the status of the camera configuration
@@ -122,7 +124,7 @@
         <div class="gridbox" id="box1">
           <div class="box-heading">
             <h1>
-              Focal length progress
+              Focal Length
             </h1>
           </div>
           <div class="focal-length">
@@ -143,7 +145,7 @@
         <div class="gridbox" id="box2">
           <div class="box-heading">
             <h1>
-              Brightness progress
+              Brightness
             </h1>
           </div>
           <div class="brightness">
@@ -164,7 +166,7 @@
         <div class="gridbox" id="box3">
           <div class="under-box-heading">
             <h1>
-              White Balance Lock progress
+              White Balance Lock
             </h1>
           </div>
           <!-- Create an indicator to indicate the current state of the white balance lock -->
@@ -185,7 +187,7 @@
         <div class="gridbox" id="box4">
           <div class="under-box-heading">
             <h1>
-              Auto Exposure Lock progress
+              Auto Exposure Lock
             </h1>
           </div>
           <!-- Create an indicator to indicate the current state of the auto exposure lock -->
@@ -209,7 +211,7 @@
     <section class="mask-section">
       <div class="mask-headings">
         <h1>
-          Mask status
+          Mask Gallery
         </h1>
         <h2>
           This is where you can view the status of the mask setup progress
@@ -397,18 +399,15 @@
       <!-- Headings -->
       <div class="errors-headings">
         <h1>
-          MSE status
+          Error Setup status
         </h1>
         <h2>
           This is where you can see the status for the Mean Square Algorithm set up process
         </h2>
       </div>
       <!-- Progress tracking error setup section -->
-      <div>
-        <svg>
-          <circle class="bg" cx="57" cy="57" r="56" />
-          <circle class="meter-1" cx="57" cy="57" r="56" />
-        </svg>
+      <div class="passref-section">
+        
       </div>
     </section>
    </div>

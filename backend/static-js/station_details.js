@@ -1,4 +1,51 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+ // get the station number from html (100 or 120)
+ const stationElement = document.querySelector('#station');
+ const stationNumber = stationElement.textContent.trim();
+ const numberPattern = /\d+/; // match one or more digits
+ const matches = stationNumber.match(numberPattern);
+ const stationNumberOnly = matches ? matches[0] : null;
+
+ // read in the params.json file using Fetch API
+ const json_url = 'http://127.0.0.1:5000/params.json';
+ console.log(json_url);
+
+ const passref_section = document.querySelector('.passref-section');
+
+ fetch(json_url)
+  .then((response) => response.json())
+  .then((json => passRef(json=json)))
+  .catch(error => {
+    console.log(`Error: ${error}`)
+  });
+
+ // add the css styles for passref section
+ var styles = `
+  #passref_station${stationNumberOnly} {
+    font-weight: bold;
+    font-size: 25px;
+    space-between: 20rem;
+  }
+ `
+ var stylesheet = document.createElement("style");
+ stylesheet.innerText = styles;
+ document.head.appendChild(stylesheet);
+
+ function passRef(json) { // this is a function that append the HTML elements as a list of the passrefs depend on the parts
+  const partList = json[`station${stationNumberOnly}`]['parts']; // the list of all the parts for .this station
+  const passref_list = json[`station${stationNumberOnly}`]['passref']; // passref for .this station
+  for(var i = 0; i < partList.length; i++) {
+    const node = document.createElement("p");
+    const newPartList = partList[i].charAt(0).toUpperCase() + partList[i].slice(1);
+    const TextNode = document.createTextNode(`${newPartList}          :       ${passref_list[i]}`);
+    node.appendChild(TextNode);
+    // set the id for our node
+    node.setAttribute('id', `passref_station${stationNumberOnly}`);  
+    passref_section.appendChild(node);
+  }
+ }
+ 
  let arrow = document.querySelectorAll('.arrow');
  for(var i = 0; i < arrow.length; i++) {
   arrow[i].addEventListener("click", (e) => {

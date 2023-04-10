@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
  let btnClick = document.getElementById('show-frame-button');
  let redoMaskBtn = document.getElementById('redo-mask-chosen');
+ let redoMaskSection = document.getElementById('redo-mask-option');
 
  redoMaskBtn.addEventListener('click', function() {
   window.location.href = 'http://127.0.0.1:5000/bt1xx/redo-mask/' + stationNumberOnly;
@@ -81,6 +82,24 @@ document.addEventListener('DOMContentLoaded', function() {
  const right120Mask = document.getElementById('right120-mask');
  const right120Timer = document.getElementById('right120-timer');
 
+ // get the sand hour glass loading effect
+ const sandHourGlass = document.querySelector('.sand-hourglass');
+
+ // function setting the time for loading to wait the response from the server
+ async function LoadingTimer() {
+  let remainingTime = 15; // loading for 15 seconds
+  const intervalId = setInterval(() => {
+   sandHourGlass.style.display = 'inline-block';
+   remainingTime--;
+
+   if(remainingTime < 0) {
+    clearInterval(intervalId);
+    sandHourGlass.style.display = 'none';
+   }
+  }, 1000);
+ }
+
+
  // function setting the time for generating masks
  async function Timer(mask, timer, text, button) {
   let remainingTime = 30;
@@ -129,7 +148,10 @@ document.addEventListener('DOMContentLoaded', function() {
  }
 
  btnClick.addEventListener('click', function() {
+  LoadingTimer();
   loadContent();
+  btnClick.style.display = 'none';
+  redoMaskSection.style.display = 'none';
   if (stationNumberOnly === '100'){
    station100_top_text.style.display = 'block';
    station100_top.style.display = 'block';

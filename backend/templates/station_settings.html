@@ -8,7 +8,7 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script type="text/javascript" src="{{ url_for('serve_static_js', filename = 'station_settings.js' ) }}"></script>
   <link rel="stylesheet" href="{{ url_for('serve_static_css', filename = 'station_settings.css') }}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="icon" type="image/x-icon" href="{{ url_for('serve_static_photos', filename = 'settings.png') }}"/>
  </head>
  <body>
@@ -46,20 +46,20 @@
     </div>
    <form action="{{ url_for('change_settings', station_number=station_number) }}" method="POST" class="form">
     <div class="focal-length-section-div">
-     <section class="focal-length-section">
-      <label class = "focal-length-increase" for="focal_length_increase">Press "." to increase the focal length</label><br>
-      <label class = "focal-length-decrease" for="focal_length_decrease">Press "," to decrease the focal length</label><br>
-      <div class="focal-length">
-       <div class="indicator">
-        <div class="bar"></div>
-        <div class="thumb"></div>
-       </div>
-       <div class="label">Focal Length: <span id="focal-length-value">100</span></div>
-      </div>
-      <!-- Create a bar indicator to indicate the event when the user click either of the keys -->
-      <label class = "focal_length_setting" for="focal_length_setting">You can also input the focal length setting manually</label>
-      <input type="number" id = "focal_length_setting_input" min = "0" max = "200" value="108" name="focal_length_setting_input"/>
-     </section>
+      <section class="focal-length-section">
+        <label class = "focal-length-increase" for="focal_length_increase">Press "." to increase the focal length</label><br>
+        <label class = "focal-length-decrease" for="focal_length_decrease">Press "," to decrease the focal length</label><br>
+        <div class="focal-length">
+          <div class="indicator">
+          <div class="bar"></div>
+          <div class="thumb"></div>
+          </div>
+          <div class="label">Focal Length: <span id="focal-length-value">100</span></div>
+        </div>
+        <!-- Create a bar indicator to indicate the event when the user click either of the keys -->
+        <label class = "focal_length_setting" for="focal_length_setting">You can also input the focal length setting manually</label>
+        <input type="number" id = "focal_length_setting_input" min = "0" max = "200" value="108" name="focal_length_setting_input"/>
+      </section>
     </div>
     <div class="brightness-section-div">
      <section class="brightness-section">

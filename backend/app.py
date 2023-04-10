@@ -173,6 +173,13 @@ def serve_static_ref_120(filename):
   root_dir = os.path.dirname(os.getcwd())
   return send_from_directory(os.path.join(root_dir, 'backend/Photos/Refs/station120'), filename)
 
+# include the path to all the json files
+@app.route('/<path:filename>')
+# add the json file path towards the templates
+def serve_static_json(filename):
+  root_dir = os.path.dirname(os.getcwd())
+  return send_from_directory(os.path.join(root_dir, 'backend/'), filename)
+
 ####################### HOMEPAGE ##########################
 # define the list of permissions to visit this homepage
 # render the homepage
@@ -194,22 +201,24 @@ def station_detail(station_number):
   name = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['name']
   # query the database to get the latest focal length, brightness, white balanace lock and auto exposure lock
   find_latest_settings = Station.query.filter_by(station_number=station_number).order_by(Station.id.desc()).first()
-  print(find_latest_settings)
+
+  # get the passref from the json
+  station_passref = partList[f"station{station_number}"]['passref']
+
   if find_latest_settings:
     latest_focal_length = find_latest_settings.station_focalLength
     latest_brightness = find_latest_settings.station_brightness
     latest_white_balance_lock = find_latest_settings.white_balance_lock
-    print(latest_white_balance_lock)
     latest_auto_exposure = find_latest_settings.auto_exposure_lock
-    print(latest_auto_exposure)
+
     # if the station is station 100:
     if station_number == 100:
-      return render_template("station_details.html", station_number=station_number, user_name=name, focal_length_100=latest_focal_length, brightness_100=latest_brightness, white_balance_100=latest_white_balance_lock, exposure_lock_100=latest_auto_exposure)
+      return render_template("station_details.html", station_number=station_number, user_name=name, focal_length_100=latest_focal_length, brightness_100=latest_brightness, white_balance_100=latest_white_balance_lock, exposure_lock_100=latest_auto_exposure, station_passref=station_passref)
     else:
-      return render_template("station_details.html", station_number=station_number, user_name=name, focal_length_120=latest_focal_length, brightness_120=latest_brightness, white_balance_120=latest_white_balance_lock, exposure_lock_120=latest_auto_exposure)
+      return render_template("station_details.html", station_number=station_number, user_name=name, focal_length_120=latest_focal_length, brightness_120=latest_brightness, white_balance_120=latest_white_balance_lock, exposure_lock_120=latest_auto_exposure, station_passref=station_passref)
   else:
     print('No status found!')
-    return render_template("station_details.html", station_number=station_number)
+    return render_template("station_details.html", station_number=station_number, user_name=name, station_passref=station_passref)
 
 ###################### STATION SETTINGS ######################
 # render the station settings
