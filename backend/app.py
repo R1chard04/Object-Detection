@@ -488,7 +488,6 @@ def handle_redo_mask(station_number):
     print(f"Error connecting to the device!")
     return redirect(url_for('station_mask_setup', station_number=station_number))
     
-
 ############################### STATION ERRORS SETUP PAGE ######################
 @app.route('/bt1xx/station/<int:station_number>/errorsetup')
 @validate_token('station_errors_setup')

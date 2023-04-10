@@ -306,10 +306,41 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // press the submit button -> send the key pressed "q" to the server
+  submit = document.querySelector('.button')
+  submit.addEventListener('click', event => {
+    // send the key pressed q to the server
+    const data = {
+      'key' : 'q',
+      'change_frame' : true
+    };
+
+    fetch('http://127.0.0.1:5000/bt1xx/update-ui/', {
+      method: 'POST',
+      'headers' : {
+        'Content-Type' : 'application/json',
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if(!response.ok) {
+        throw new Error('Failed to update the key event');
+      }
+      else{ 
+        console.log(data)
+      }
+    })
+    .catch(error => {
+      console.log(`Error: ${error}`);
+    });
+  });
+
+
   // after the users submit the form
   document.querySelector("#form").addEventListener("submit", function(event) {
     event.preventDefault();
     // send all the input fields to the database when the users hit submit button
     document.querySelector("#form").submit()
+
   });
 });

@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
  // function setting the time for generating masks
  async function Timer(mask, timer, text, button) {
-  let remainingTime = 60;
+  let remainingTime = 30;
   mask.style.display = 'inline-block';
   const intervalId = setInterval(() => {
    timer.style.display = 'inline-block'
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
  // function detect the 'click' event and send the event to the URL server
  function handleClickEvent() {
   // fetch the click event as a post request onto the 'handle-click' endpoint
-  const data = {'btnclick' : true}
+  const data = {'btnClick' : true}
   fetch('http://127.0.0.1:5000/bt1xx/handle-click/', {
    method : 'POST',
    headers: {'Content-Type' : 'application/json'},
