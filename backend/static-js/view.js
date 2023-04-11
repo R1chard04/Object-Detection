@@ -1,10 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
- if (!window.fetch) {
-  // If fetch is not available, load a polyfill
-  // You can use any polyfill library you prefer
-  import('whatwg-fetch');
-}
-
  // fetch to get the number of stations are running
  const get_cameras_url = 'http://127.0.0.1:5000/bt1xx/startallprograms/';
 
@@ -15,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     'Content-Type' : 'application/json'
    }
   })
-  .this(response => {
+  .then(response => {
    if(!response.ok) {
     throw new Error(`Failed to get the response from the server!`);
    }
