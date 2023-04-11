@@ -86,19 +86,15 @@ document.addEventListener('DOMContentLoaded', function() {
  const sandHourGlass = document.querySelector('.sand-hourglass');
 
  // function setting the time for loading to wait the response from the server
- async function LoadingTimer() {
-  let remainingTime = 15; // loading for 15 seconds
-  const intervalId = setInterval(() => {
-   sandHourGlass.style.display = 'inline-block';
-   remainingTime--;
-
-   if(remainingTime < 0) {
-    clearInterval(intervalId);
-    sandHourGlass.style.display = 'none';
-   }
-  }, 1000);
+ function LoadingTimer() {
+  let remainingTime = 15000; // display for 15 seconds
+  return new Promise(resolve => {
+   setTimeout(() => {
+    resolve('Successfully got the response from the server!');
+   }, remainingTime);
+  })
  }
-
+ LoadingTimer().catch(() => {}); // attempt to swallow all the errors while waiting for the server response
 
  // function setting the time for generating masks
  async function Timer(mask, timer, text, button) {
@@ -144,14 +140,24 @@ document.addEventListener('DOMContentLoaded', function() {
  }
 
  function loadContent(){
+  sandHourGlass.style.display = 'inline-block';
+  btnClick.style.display = 'none';
+  redoMaskSection.style.display = 'none';
   window.location.href = "http://127.0.0.1:5000/bt1xx/createmask/showframe/station/" + stationNumberOnly.toString();
  }
 
- btnClick.addEventListener('click', function() {
-  LoadingTimer();
+ // async function that calls the loadingTimer() function to wait for the response from the server
+ async function callBack() {
   loadContent();
-  btnClick.style.display = 'none';
-  redoMaskSection.style.display = 'none';
+  console.log('Waiting for the response from the server ...');
+  const waitLoading = await LoadingTimer();
+  console.log(waitLoading);
+
+  sandHourGlass.style.display = 'none'; // hide the loading effect after receiving the response from the server
+ };
+
+ btnClick.addEventListener('click', function() {
+  callBack();
   if (stationNumberOnly === '100'){
    station100_top_text.style.display = 'block';
    station100_top.style.display = 'block';
@@ -159,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
     handleClickEvent();
     station100_top_colour_text.style.display = 'block';
     station100_top_color.style.display = 'block';
-    if(station100_top_color.addEventListener('click', async function() {
+    if(station100_top_color.addEventListener('click', function() {
      handleClickEvent();
      Timer(topMask, topTimer, station100_left_text, station100_left);
      if(station100_left.addEventListener('click', function() {
