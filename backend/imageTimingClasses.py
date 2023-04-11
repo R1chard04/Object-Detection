@@ -3,6 +3,7 @@ from flask import Flask
 from sqlalchemy import create_engine, MetaData, inspect
 from database_model.models import db, TimingStation100, TimingStation120
 import pdb
+import xlwings as xw
 
 #Database stuff
 time_app = Flask(__name__)
@@ -77,6 +78,37 @@ class timeLog:
                         except Exception as e:
                             print(f'Found error while inserting new timing for station 120 with error: {e}')
                 
+                
+                ### Excel stuff
+                wb = xw.Book("stationsExcel.xlsx")
+                if self.station == 'station100':
+                    sht = wb.sheets['100']
+                    i = 2
+                    while sht['A{}'.format(i)].value !=None:
+                        i+=1
+                    sht['A{}'.format(i)].value = self.record[0]
+                    sht['B{}'.format(i)].value = self.record[1]
+                    sht['C{}'.format(i)].value = self.record[2]
+                    sht['D{}'.format(i)].value = self.record[3]
+                    sht['E{}'.format(i)].value = self.record[4]
+                    
+
+                elif self.station == 'station120':
+                    sht = wb.sheets['120']
+                    i = 2
+                    while sht['A{}'.format(i)].value !=None:
+                        i+=1
+                    sht['A{}'.format(i)].value = self.record[0]
+                    sht['B{}'.format(i)].value = self.record[1]
+                    sht['C{}'.format(i)].value = self.record[2]
+                    sht['D{}'.format(i)].value = self.record[3]
+                    sht['E{}'.format(i)].value = self.record[4]
+                    sht['E{}'.format(i)].value = self.record[5]
+                    sht['E{}'.format(i)].value = self.record[6]
+           
+                wb.save(r"stationsExcel.xlsx")
+                wb.close()
+
                 return True
 
             return False
