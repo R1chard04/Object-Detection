@@ -26,10 +26,10 @@
     <li>
      <a href="{{ url_for('homepage') }}">
       <i class="bx bx-grid-alt"></i>
-      <span class="link_name">Dashboard</span>
+      <span class="link_name">Home</span>
      </a>
      <ul class="sub-menu blank">
-      <li><a class="link_name" href="#">Dashboard</a></li>
+      <li><a class="link_name" href="{{ url_for('homepage') }}">Home</a></li>
      </ul>
     </li>
     <li>
@@ -98,7 +98,7 @@
         <div class="profile-name">{{ user_name }}</div>
         <div class="job">Admin</div>
        </div>
-       <i class="bx bx-log-out"></i>
+       <i class="bx bx-log-out" id="logout-button"></i>
       </div>
     </li>
    </ul>
@@ -406,9 +406,7 @@
         </h2>
       </div>
       <!-- Progress tracking error setup section -->
-      <div class="passref-section">
-        
-      </div>
+      <div class="passref-section"></div>
     </section>
    </div>
   </section>

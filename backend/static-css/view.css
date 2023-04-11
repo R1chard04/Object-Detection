@@ -1,0 +1,144 @@
+.header {
+ background-color: #171942;
+ color: silver;
+ padding: 50px;
+ border-radius: 10px;
+}
+
+.page-heading {
+ vertical-align: middle;
+ margin-left: 500px;
+ font-family: 'Montserrat', sans-serif;
+ font-size: 50px;
+ line-height: 2;
+ word-spacing: 5px;
+ color: #333;
+ background-image: linear-gradient(
+  -225deg,
+  #231557 0%,
+  #44107a 29%,
+  #ff1361 67%,
+  yellow 100%
+ );
+ background-size: auto auto;
+ background-clip: border-box;
+ background-size: 200% auto;
+ color: #fff;
+ background-clip: text;
+ -webkit-text-fill-color: transparent;
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ animation: textclip 2s linear infinite;
+ display: inline-block;
+}
+
+#logo {
+ width: 200px;
+ height: 200px;
+ border-radius: 50%;
+ vertical-align: middle;
+ object-fit: contain;
+ margin-left: 1rem;
+ background-color: transparent;
+ cursor: pointer;
+ transition: all 0.3s ease-in-out;
+}
+
+#logo:hover {
+ transform: scale(1.1);
+}
+
+@keyframes textclip {
+ to {
+  background-position: 200% center;
+ }
+}
+
+/* Styling the navbar */
+#menu__toggle {
+ opacity: 0;
+}
+#menu__toggle:checked + .menu__btn > span {
+ transform: rotate(45deg);
+}
+#menu__toggle:checked + .menu__btn > span::before {
+ top: 0;
+ transform: rotate(0deg);
+}
+#menu__toggle:checked + .menu__btn > span::after {
+ top: 0;
+ transform: rotate(90deg);
+}
+#menu__toggle:checked ~ .menu__box {
+ left: 0 !important;
+}
+
+.menu__btn {
+ position: fixed;
+ top: 350px;
+ left: 20px;
+ width: 26px;
+ height: 26px;
+ cursor: pointer;
+ z-index: 1;
+ transition: all 0.3s ease-in-out;
+}
+
+.menu__btn:hover {
+ transform: scale(1.1);
+}
+
+.menu__btn > span,
+.menu__btn > span::before,
+.menu__btn > span::after {
+ display: block;
+ position: absolute;
+ width: 100%;
+ height: 2px;
+ background-color: #616161;
+ transition-duration: .25s;
+}
+.menu__btn > span::before {
+ content: '';
+ top: -8px;
+}
+.menu__btn > span::after {
+ content: '';
+ top: 8px;
+}
+.menu__box {
+ display: block;
+ position: fixed;
+ top: 0;
+ left: -100%;
+ width: 300px;
+ height: 100%;
+ margin: 0;
+ padding: 80px 0;
+ list-style: none;
+ background-color: #171942;
+ box-shadow: 2px 2px 6px rgba(0, 0, 0, .4);
+ transition-duration: .25s;
+}
+
+.menu__item {
+ display: block;
+ padding: 12px 24px;
+ color: white;
+ font-family: 'Roboto', sans-serif;
+ font-size: 20px;
+ font-weight: 600;
+ text-decoration: none;
+ transition-duration: .25s;
+}
+.menu__item:hover {
+ background-color: #CFD8DC;
+}
+
+#nav-logo {
+ width: 80px;
+ height: 80px;
+ margin-top: -50px;
+ margin-left: 10px;
+}
+

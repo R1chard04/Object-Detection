@@ -124,7 +124,7 @@ opacity: 1;
 visibility: visible;
 }
 
-#shoe-frame-button.is_active .success svg{
+#show-frame-button.is_active .success svg{
 margin-top: 50%;
 transform: translateY(-50%) rotate(720deg) scale(1);
 }

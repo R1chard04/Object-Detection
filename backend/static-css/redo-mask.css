@@ -1,0 +1,611 @@
+.header {
+ background-color: #171942;
+ color: silver;
+ padding: 50px;
+ border-radius: 10px;
+}
+
+.page-heading {
+ vertical-align: middle;
+ margin-left: 100px;
+ font-family: 'Montserrat', sans-serif;
+ font-size: 50px;
+ line-height: 2;
+ word-spacing: 5px;
+ color: #333;
+ background-image: linear-gradient(
+  -225deg,
+  #231557 0%,
+  #44107a 29%,
+  #ff1361 67%,
+  yellow 100%
+ );
+ background-size: auto auto;
+ background-clip: border-box;
+ background-size: 200% auto;
+ color: #fff;
+ background-clip: text;
+ -webkit-text-fill-color: transparent;
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ animation: textclip 2s linear infinite;
+ display: inline-block;
+}
+
+#logo {
+ width: 200px;
+ height: 200px;
+ border-radius: 50%;
+ vertical-align: middle;
+ object-fit: contain;
+ margin-left: 1rem;
+ background-color: transparent;
+ cursor: pointer;
+ transition: all 0.3s ease-in-out;
+}
+
+#logo:hover {
+ transform: scale(1.1);
+}
+
+@keyframes textclip {
+ to {
+  background-position: 200% center;
+ }
+}
+
+/* Styling the navbar */
+#menu__toggle {
+ opacity: 0;
+}
+#menu__toggle:checked + .menu__btn > span {
+ transform: rotate(45deg);
+}
+#menu__toggle:checked + .menu__btn > span::before {
+ top: 0;
+ transform: rotate(0deg);
+}
+#menu__toggle:checked + .menu__btn > span::after {
+ top: 0;
+ transform: rotate(90deg);
+}
+#menu__toggle:checked ~ .menu__box {
+ left: 0 !important;
+}
+
+.menu__btn {
+ position: fixed;
+ top: 350px;
+ left: 20px;
+ width: 26px;
+ height: 26px;
+ cursor: pointer;
+ z-index: 1;
+ transition: all 0.3s ease-in-out;
+}
+
+.menu__btn:hover {
+ transform: scale(1.1);
+}
+
+.menu__btn > span,
+.menu__btn > span::before,
+.menu__btn > span::after {
+ display: block;
+ position: absolute;
+ width: 100%;
+ height: 2px;
+ background-color: #616161;
+ transition-duration: .25s;
+}
+.menu__btn > span::before {
+ content: '';
+ top: -8px;
+}
+.menu__btn > span::after {
+ content: '';
+ top: 8px;
+}
+.menu__box {
+ display: block;
+ position: fixed;
+ top: 0;
+ left: -100%;
+ width: 300px;
+ height: 100%;
+ margin: 0;
+ padding: 80px 0;
+ list-style: none;
+ background-color: #171942;
+ box-shadow: 2px 2px 6px rgba(0, 0, 0, .4);
+ transition-duration: .25s;
+}
+
+.menu__item {
+ display: block;
+ padding: 12px 24px;
+ color: white;
+ font-family: 'Roboto', sans-serif;
+ font-size: 20px;
+ font-weight: 600;
+ text-decoration: none;
+ transition-duration: .25s;
+}
+.menu__item:hover {
+ background-color: #CFD8DC;
+}
+
+#nav-logo {
+ width: 80px;
+ height: 80px;
+ margin-top: -50px;
+ margin-left: 10px;
+}
+
+.redo-mask-box {
+ text-align: center;
+}
+
+.redo-mask-box h2 {
+ margin-bottom: 3rem;
+ font-size: 40px;
+ font-weight: bold;
+}
+
+#form-redo-mask {
+ margin: auto;
+ height: 100vh;
+ border: 5px solid black;
+ align-content: center;
+ text-align: center;
+ width: 90rem;
+ border-radius: 10px;
+ padding: 10px;
+ transition: opacity 0.5s ease-in-out;
+ margin-bottom: 10px;
+ box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+ animation-name: fade-in;
+ animation-duration: 1s;
+ animation-fill-mode: forwards;
+}
+
+#form-redo-mask p {
+ font-size: 30px;
+ font-weight: bold;
+}
+
+/* Style Loading */
+.sand-hourglass {
+ width: 0;
+ height: 0;
+ margin-left: auto;
+ margin-right: auto;
+ margin-top: 10rem;
+ border-left: 20px solid transparent;
+ border-right: 20px solid transparent;
+ border-top: 40px solid #ccc;
+ position: relative;
+ animation: flip 3s ease-in-out infinite;
+}
+
+.sand-hourglass::before {
+ content: "";
+ display: block;
+ position: absolute;
+ top: -20px;
+ left: -20px;
+ width: 0;
+ height: 0;
+ border-left: 20px solid transparent;
+ border-right: 20px solid transparent;
+ border-bottom: 40px solid #ccc;
+}
+
+.sand-hourglass::after {
+ content: "";
+ display: block;
+ position: absolute;
+ bottom: -20px;
+ left: -20px;
+ width: 0;
+ height: 0;
+ border-left: 20px solid transparent;
+ border-right: 20px solid transparent;
+ border-top: 40px solid #ccc;
+}
+
+@keyframes flip {
+ 0% {
+   transform: rotateX(0deg);
+ }
+ 50% {
+   transform: rotateX(180deg);
+   border-top: 40px solid transparent;
+   border-bottom: 40px solid #ccc;
+ }
+ 100% {
+   transform: rotateX(360deg);
+   border-top: 40px solid #ccc;
+   border-bottom: 40px solid transparent;
+ }
+}
+
+/* Hide default select box styles */
+select {
+ appearance: none;
+ -webkit-appearance: none;
+ -moz-appearance: none;
+ background: none;
+ border: none;
+ font-size: 16px;
+ padding: 10px;
+ margin: 0;
+ width: 200px;
+ cursor: pointer;
+}
+
+/* Style the custom select box */
+select#mask-option {
+ background-color: #f2f2f2;
+ color: #444;
+ border: 1px solid #ccc;
+ border-radius: 5px;
+ padding: 10px 20px;
+ margin-top: 20px;
+ position: relative;
+ transition: all 0.5s ease;
+}
+
+/* Add a custom arrow icon */
+select#mask-option:after {
+ content: "\25BC";
+ font-size: 16px;
+ color: #999;
+ position: absolute;
+ right: 10px;
+ top: 50%;
+ transform: translateY(-50%);
+ pointer-events: none;
+}
+
+/* Add hover and focus styles */
+select#mask-option:hover,
+select#mask-option:focus {
+ background-color: #ddd;
+}
+
+/* Add active styles */
+select#mask-option:active {
+ background-color: #ccc;
+}
+
+/* Style the selected option */
+select#mask-option option[selected] {
+ font-weight: bold;
+ background-color: #fff;
+}
+
+/* Start Button styling */
+#show-frame-button {
+ font-family: 'Ubuntu', sans-serif;
+ position: absolute;
+ top: auto;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ 
+ width: 100px;
+ height: 40px;
+ line-height: 1;
+ font-size: 18px;
+ font-weight: bold;
+ letter-spacing: 1px;
+ border: 3px solid #8C82FC;
+ background: #fff;
+ color: #8C82FC;
+ border-radius: 40px;
+ cursor: pointer;
+ overflow: hidden;
+ transition: all .35s;
+}
+
+#show-frame-button:hover{
+  background: #8C82FC;
+  color: #fff;
+}
+ 
+#show-frame-button span{
+  opacity: 1;
+  visibility: visible;
+  transition: all .35s;
+}
+ 
+.success{
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: #fff;
+border-radius: 50%;
+z-index: 1;
+opacity: 0;
+visibility: hidden;
+transition: all .35s;
+}
+
+.success svg{
+width: 20px;
+height: 20px;
+fill: yellowgreen;
+transform-origin: 50% 50%;
+transform: translateY(-50%) rotate(0deg) scale(0);
+transition: all .35s;
+}
+
+#show-frame-button.is_active{
+width: 40px;
+height: 40px;
+}
+
+#show-frame-button.is_active .success{
+opacity: 1;
+visibility: visible;
+}
+
+#show-frame-button.is_active .success svg{
+margin-top: 50%;
+transform: translateY(-50%) rotate(720deg) scale(1);
+}
+
+#show-frame-button.is_active span{
+opacity: 0;
+visibility: hidden;
+}
+
+/* Finish Loading Button styling */
+#form-redo-mask .button {
+ font-family: 'Ubuntu', sans-serif;
+ position: absolute;
+ top: auto;
+ left: 50%;
+ transform: translate(-50%, -50%);
+ 
+ width: 200px;
+ height: 40px;
+ line-height: 1;
+ font-size: 18px;
+ font-weight: bold;
+ letter-spacing: 1px;
+ border: 3px solid #8C82FC;
+ background: #fff;
+ color: #8C82FC;
+ border-radius: 40px;
+ cursor: pointer;
+ overflow: hidden;
+ transition: all .35s;
+}
+
+#form-redo-mask .button:hover{
+  background: #8C82FC;
+  color: #fff;
+}
+ 
+#form-redo-mask .button span{
+  opacity: 1;
+  visibility: visible;
+  transition: all .35s;
+}
+ 
+.success{
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: #fff;
+border-radius: 50%;
+z-index: 1;
+opacity: 0;
+visibility: hidden;
+transition: all .35s;
+}
+
+.success svg{
+width: 20px;
+height: 20px;
+fill: yellowgreen;
+transform-origin: 50% 50%;
+transform: translateY(-50%) rotate(0deg) scale(0);
+transition: all .35s;
+}
+
+#form-redo-mask .button.is_active{
+width: 40px;
+height: 40px;
+}
+
+#form-redo-mask .button.is_active .success{
+opacity: 1;
+visibility: visible;
+}
+
+#form-redo-mask .button.is_active .success svg{
+margin-top: 50%;
+transform: translateY(-50%) rotate(720deg) scale(1);
+}
+
+#form-redo-mask .button.is_active span{
+opacity: 0;
+visibility: hidden;
+}
+
+.under-main-section h2 {
+ margin-top: 5rem;
+}
+
+/* return button styling */
+#return-button {
+ font-family: 'Ubuntu', sans-serif;
+ position: absolute;
+ top: auto;
+ left: 51%;
+ transform: translate(-50%, -50%);
+ 
+ width: 300px;
+ height: 40px;
+ line-height: 1;
+ font-size: 18px;
+ font-weight: bold;
+ letter-spacing: 1px;
+ border: 3px solid #8C82FC;
+ background: #fff;
+ color: #8C82FC;
+ border-radius: 40px;
+ cursor: pointer;
+ overflow: hidden;
+ transition: all .35s;
+}
+
+#return-button:hover{
+  background: #8C82FC;
+  color: #fff;
+}
+ 
+#return-button span{
+  opacity: 1;
+  visibility: visible;
+  transition: all .35s;
+}
+ 
+.success{
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: #fff;
+border-radius: 50%;
+z-index: 1;
+opacity: 0;
+visibility: hidden;
+transition: all .35s;
+}
+
+.success svg{
+width: 20px;
+height: 20px;
+fill: yellowgreen;
+transform-origin: 50% 50%;
+transform: translateY(-50%) rotate(0deg) scale(0);
+transition: all .35s;
+}
+
+#return-button.is_active{
+width: 40px;
+height: 40px;
+}
+
+#return-button.is_active .success{
+opacity: 1;
+visibility: visible;
+}
+
+#return-button.is_active .success svg{
+margin-top: 50%;
+transform: translateY(-50%) rotate(720deg) scale(1);
+}
+
+#return-button.is_active span{
+opacity: 0;
+visibility: hidden;
+}
+
+/* Footer Styling */
+/* CSS styling for the footer */
+.footer {
+ background-color: #171942;
+ color: silver;
+ padding: 30px;
+ border-radius: 10px;
+ margin-top: 100px;
+ height: fit-content;
+}
+
+.footer p {
+font-size: 18px;
+color: white;
+text-align: center;
+}
+
+/* CSS Styling for media icons in the footer */
+.footer *{
+ margin: 0;
+ padding: 0;
+ box-sizing: border-box;
+}
+
+.footer body {
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ height: 100vh;
+ background: #000;
+}
+
+.footer ul {
+ position: relative;
+ display: flex;
+ margin-top: 1rem;
+ margin-left: 43rem;
+ gap: 30px;
+}
+
+.footer ul li {
+ position: relative;
+ list-style: none;
+ margin: 0 20px;
+ cursor: pointer;
+}
+
+.footer ul li a {
+ text-decoration: none;
+}
+
+.footer ul li a .fa-brands {
+ font-size: 6em;
+ color: #222;
+}
+
+.footer ul li a::before {
+ font-family: "FontAwesome";
+ position: absolute;
+ top: 0;
+ left: 0;
+ font-size: 6em;
+ height: 0;
+ overflow: hidden;
+ transition: 0.5s ease-in-out;
+}
+
+.footer ul li:nth-child(1) a::before {
+ content: "\f16d";
+ background-image: linear-gradient(45deg, 
+   #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,
+   #bc1888 100%);
+ -webkit-background-clip: text;
+ -webkit-text-fill-color: transparent;
+ border-bottom: 4px solid #dc2743;
+}
+.footer ul li:nth-child(2) a::before {
+ content: "\f232";
+ color: #25D366;
+ border-bottom: 4px solid #25D366;
+}
+.footer ul li:nth-child(3) a::before {
+ content: "\f099";
+ color: #1DA1F2;
+ border-bottom: 4px solid #1DA1F2;
+}
+.footer ul li:hover a::before {
+ height: 100%;
+}

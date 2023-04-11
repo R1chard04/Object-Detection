@@ -4,17 +4,48 @@
   <title>
    Final View
   </title>
+  <link rel="icon" type="image/x-icon" href="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}"/>
+  <link rel="stylesheet" href="{{ url_for('serve_static_css', filename = 'view.css') }}"/>
+  <script type="text/javascript" src="{{ url_for('serve_static_js', filename='view.js') }}"></script>
  </head>
  <body>
+  <header class="header">
+   <div>
+     <img id="logo" src="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}" alt="Logo" onclick="goToSettingPage()">
+     <h2 class="page-heading">Final View Page</h2>
+   </div>
+  </header>
+  <div>
+   <nav>
+     <div class="navigation-bar">
+       <div class="hamburger-menu">
+         <input id="menu__toggle" type="checkbox" />
+         <label class="menu__btn" for="menu__toggle">
+           <span></span>
+         </label>
+         <ul class="menu__box">
+         <li><img id="nav-logo" src="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}" alt="Logo"></li>
+         <li><a class="menu__item" href="{{ url_for('homepage') }}">Home</a></li>
+         <li><a class="menu__item" href="/bt1xx/contact">Contact</a></li>
+         <li><a class="menu__item" href="/bt1xx/about">About</a></li>
+         </ul>
+       </div>
+     </div>  
+   </nav>
+ </div>
   <h1>
    Running all the connected cameras ...
   </h1>
+  <div class="subheadings">
+   <h2 id="subheadings1">
+    Camera station 100
+   </h2>
+   <h2 id="subheadings2">
+    Camera station 120
+   </h2>
+  </div>
   <div>
-   <ul>
-    <li>
-     <a href="{{ url_for('homepage') }}">Home</a>
-    </li>
-   </ul>
+   
   </div>
  </body>
 </html>

@@ -122,7 +122,7 @@ def insert_users() -> None:
         # put the permissions into the permission table
         give_permission(Permission, Users, users_permissions_list, admin_permissions_list, db)
 
-insert_users()
+# insert_users()
 
 # include the path to javascript files
 @app.route('/static-js/<path:filename>')
@@ -180,6 +180,13 @@ def serve_static_json(filename):
   root_dir = os.path.dirname(os.getcwd())
   return send_from_directory(os.path.join(root_dir, 'backend/'), filename)
 
+# include the path to database
+@app.route('/instances/<path:filename>')
+# add the database path 
+def serve_static_db(filename):
+  root_dir = os.path.dirname(os.getcwd())
+  return send_from_directory(os.path.join(root_dir, 'backend/instances/'), filename)
+
 ####################### HOMEPAGE ##########################
 # define the list of permissions to visit this homepage
 # render the homepage
@@ -190,6 +197,7 @@ def homepage():
   token = request.cookies.get('token')
   name = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['name']
   return render_template('home.html', user_name=name)
+
  
 ####################### STATION DETAILS #####################
 # render the station details depends on the click event 
@@ -432,23 +440,28 @@ def create_mask(station_number):
   except:
     print(f"Error connecting to the device!")
     return redirect(url_for('station_detail', station_number=station_number))
-
-part = ['--select--']
+  
+part100 = ['--select--']
+part120 = ['--select--']
 # read in params.json file for the parts
 with open('params.json', 'r') as f:
   partList = json.load(f)
+
+params100 = partList['station100']['parts'] # get the part list for station 100
+params120 = partList['station120']['parts'] # get the part list for station 120
+
+for i in params100:
+  part100.append(i)
+
+for j in params120:
+  part120.append(j)
 
 ################ REDO MASK URL ################
 # this function will render the redo mask url
 @app.route('/bt1xx/redo-mask/<int:station_number>')
 @validate_token('redo_mask')
 def redo_mask(station_number):
-  params = partList['station' + str(station_number)]
-  # append the part list
-  for i in params['parts']:
-    part.append(i)
-
-  return render_template('redo-mask.html', station_number=station_number, errors={}, mask_options=part)
+  return render_template('redo-mask.html', station_number=station_number, errors={}, mask_options_100=part100, mask_options_120=part120)
 
 ############### HANDLE REDO MASK REQUEST ###########
 # this function will handle the post request to redo the mask
@@ -467,14 +480,21 @@ def handle_redo_mask(station_number):
     # validate the form input
     if (part_chosen == '--select--'):
       errors['mask_options_id'] = f'You have to choose the part you want to redo the mask!'
-      return render_template('redo-mask.html', station_number = station_number, errors=errors, mask_options=part)
+      return render_template('redo-mask.html', station_number = station_number, errors=errors, mask_options_100=part100, mask_options_120=part120)
 
     # get the index of the chosen part
-    for i in range(len(part)):
-      if(part_chosen == part[i]):
-        part_chosen_index = i
-        break
-    part_chosen_index -= 2
+    if station_number == 100:
+      for i in range(len(part100)):
+        if(part_chosen == part100[i]):
+          part_chosen_index = i
+          break
+      part_chosen_index -= 2
+    else:
+      for i in range(len(part120)):
+        if(part_chosen == part120[i]):
+          part_chosen_index = i
+          break
+      part_chosen_index -= 2
 
   try:
     pipeline = createPipeline()

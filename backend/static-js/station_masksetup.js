@@ -14,6 +14,17 @@ document.addEventListener('DOMContentLoaded', function() {
   window.location.href = 'http://127.0.0.1:5000/bt1xx/redo-mask/' + stationNumberOnly;
  })
 
+ // event for the logo
+ var logo = document.getElementById('logo');
+
+ function goToSettingPage() {
+   window.location.href = "http://127.0.0.1:5000/bt1xx/station/" + stationNumberOnly.toString();
+ }
+
+ logo.addEventListener("click", function() {
+   goToSettingPage();
+ });
+
  // get all the elements in station 100
  const station100_top_text = document.getElementById('top-part');
  const station100_top_colour_text = document.getElementById('top-part-colour');
@@ -147,17 +158,21 @@ document.addEventListener('DOMContentLoaded', function() {
  }
 
  // async function that calls the loadingTimer() function to wait for the response from the server
- async function callBack() {
+ // async function callBack() {
+ //  loadContent();
+ //  console.log('Waiting for the response from the server ...');
+ //  const waitLoading = await LoadingTimer();
+ //  console.log(waitLoading);
+
+ //  sandHourGlass.style.display = 'none'; // hide the loading effect after receiving the response from the server
+ // };
+
+ btnClick.addEventListener('click', async function() {
   loadContent();
-  console.log('Waiting for the response from the server ...');
+  console.log(`Waiting for the response from the server ....`);
   const waitLoading = await LoadingTimer();
   console.log(waitLoading);
-
   sandHourGlass.style.display = 'none'; // hide the loading effect after receiving the response from the server
- };
-
- btnClick.addEventListener('click', function() {
-  callBack();
   if (stationNumberOnly === '100'){
    station100_top_text.style.display = 'block';
    station100_top.style.display = 'block';

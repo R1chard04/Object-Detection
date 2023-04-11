@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+ // return button to mask setup page
+ const return_button = document.querySelector('#return-button');
+ return_button.addEventListener('click', event => {
+  window.location.href = 'http://127.0.0.1:5000/bt1xx/station/' + stationNumberOnly + '/masksetup';
+ })
+
  const stationElement = document.querySelector('#title');
  // cut out the station number in the url
  const stationNumber = stationElement.textContent.trim();
@@ -75,9 +82,22 @@ document.addEventListener('DOMContentLoaded', function() {
  const right120Timer = document.getElementById('right120-timer');
 
  const selection = document.querySelector('#mask-option');
+ 
+
+  // event for the logo
+  var logo = document.getElementById('logo');
+
+  function goToSettingPage() {
+    window.location.href = "http://127.0.0.1:5000/bt1xx/station/" + stationNumberOnly.toString();
+  }
+ 
+  logo.addEventListener("click", function() {
+    goToSettingPage();
+  });
+
 
  // function setting the time for generating masks
- async function Timer(mask, timer, text, button) {
+ function Timer(mask, timer, text, button) {
   let remainingTime = 60;
   mask.style.display = 'inline-block';
   const intervalId = setInterval(() => {
@@ -96,6 +116,17 @@ document.addEventListener('DOMContentLoaded', function() {
    }
   }, 1000);
  }
+
+ // function await for response from the server
+ function waitForResponse() {
+  let remainingTime = 15000; // await for 15 seconds
+  return new Promise(resolve => {
+   setTimeout(() => {
+    resolve(`Receive the response from the server successfully!`);
+   }, remainingTime);
+  })
+ }
+ waitForResponse().catch(() => {}) // attempt to swallow all the errors
 
  // function handle the click event
  function handleRedoMask() {
@@ -121,11 +152,23 @@ document.addEventListener('DOMContentLoaded', function() {
   })
  }
 
+ const sandHourGlass = document.querySelector('.sand-hourglass');
+
+ function loadContent(){
+  sandHourGlass.style.display = 'inline-block';
+  selection.style.display = 'none';
+  submit.style.display = 'none';
+  instructions.style.display = 'none';
+  text.style.display = 'none';
+  window.location.href = "http://127.0.0.1:5000/bt1xx/handle-redo-mask/" + stationNumberOnly.toString() + '/';
+ }
+
  const default_value = "--select--";
  const form = document.querySelector("#form-redo-mask");
  let option = document.getElementById('mask-option');
- let submit = document.querySelector('#submit');
+ let submit = document.querySelector('#show-frame-button');
  const text = document.querySelector('#text');
+ const instructions = document.querySelector('#redo-mask-instruction');
 
  option.value = default_value;
 
@@ -133,9 +176,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // handle station 100 options
   if(stationNumberOnly == '100'){
-   if(submit.addEventListener('click', (event) => {
-    selection.style.display = 'none';
-    submit.style.display = 'none';
+   if(submit.addEventListener('click', async function(event) {
+    loadContent();
+    console.log('Waiting for response from the server ....');
+    const response = await waitForResponse();
+    console.log(response);
+    sandHourGlass.style.display = 'none';
+    text.style.display = 'inline-block';
     // top part
     if(this.value === 'top'){
      text.innerHTML = 'Please follow the instructions to re-setup the Top mask for station 100';

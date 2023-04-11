@@ -5,23 +5,71 @@
    Errors Settings Station {{ station_number }}
   </title>
   <script type="text/javascript" src="{{ url_for('serve_static_js', filename = 'station_errors_setup.js' ) }}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="{{ url_for('serve_static_css', filename='errors_setup.css') }}"/>
   <link rel="icon" type="image/x-icon" href="{{ url_for('serve_static_photos', filename = 'tools.png') }}"/>
  </head>
  <body>
-  <div class="header">
-   <h1>
-    Welcome to station {{ station_number }} errors setup manuals!
-   </h1>
-   <h2>
-    Please follow the following instructions to set up all the errors protocols to use MSE Algorithm for this station!
-   </h2> 
+  <header class="header">
+    <div>
+     <img id="logo" src="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}" alt="Logo" onclick="goToSettingPage()">
+     <h2 class="page-heading">
+      MSE Algorithm setup station {{station_number}}
+     </h2> 
+    </div>   
+  </header>
+  <div>
+    <nav>
+      <div class="navigation-bar">
+        <div class="hamburger-menu">
+          <input id="menu__toggle" type="checkbox" />
+          <label class="menu__btn" for="menu__toggle">
+            <span></span>
+          </label>
+          <ul class="menu__box">
+          <li><img id="nav-logo" src="{{ url_for('serve_static_photos', filename = 'Martinrea-logo.png') }}" alt="Logo"></li>
+          <li><a class="menu__item" href="{{ url_for('homepage') }}">Home</a></li>
+          <li><a class="menu__item" href="{{ url_for('station_detail', station_number = station_number) }}">Station</a></li>
+          <li><a class="menu__item" href="/bt1xx/contact">Contact</a></li>
+          <li><a class="menu__item" href="/bt1xx/about">About</a></li>
+          </ul>
+        </div>
+      </div>  
+    </nav>
   </div>
   <div class="body">
     <button id="show-frame-button" onclick="loadContent()">Start Errors Setup</button>
   </div>
   <div id="instructions-box" style="display:none;">
-    <p id="errors-setup">Please wait for the camera to adjust itself and setting up the errors algorithm ...</p>
+    <h1 id="errors-setup">Please wait for the camera to adjust itself and setting up the errors algorithm for station {{station_number}}.....</h1>
+    <div class="sand-hourglass" style="display:none;">
+      <div class="top"></div>
+      <div class="bottom"></div>
+    </div>
   </div>
+  <footer class="footer">
+    <div class="container">
+     <p>
+      © 2023 Martinrea Hydroform Solutions. All rights reserved.
+     </p>
+     <ul>
+       <li>
+         <a href="#">
+           <i class="fa-brands fa-instagram instagram"></i>
+         </a>
+       </li>
+       <li>
+         <a href="#">
+           <i class="fa-brands fa-whatsapp whatsapp"></i>
+         </a>
+       </li>
+       <li>
+         <a href="#">
+           <i class="fa-brands fa-twitter twitter"></i>
+         </a>
+       </li>
+     </ul>
+    </div>
+  </footer>
  </body>
 </html>

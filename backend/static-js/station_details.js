@@ -7,6 +7,15 @@ document.addEventListener('DOMContentLoaded', function() {
  const matches = stationNumber.match(numberPattern);
  const stationNumberOnly = matches ? matches[0] : null;
 
+ // if the user click the logout button on the profile panel, they will be logged out
+ const logOutButton = document.querySelector('#logout-button');
+ const logOutURL = 'http://127.0.0.1:5000/bt1xx/logout/';
+
+ logOutButton.addEventListener('click', event => {
+  window.location.href = logOutURL;
+ })
+
+
  // read in the params.json file using Fetch API
  const json_url = 'http://127.0.0.1:5000/params.json';
  console.log(json_url);
