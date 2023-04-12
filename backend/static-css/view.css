@@ -1,3 +1,6 @@
+body {
+ height: 200vh;
+}
 .header {
  background-color: #171942;
  color: silver;
@@ -142,3 +145,152 @@
  margin-left: 10px;
 }
 
+.Headings {
+ text-align: center;
+}
+
+/* Style the subheadings elements */
+.subheadings p {
+ font-size: 25px;
+ font-weight: bold;
+ margin-left: 10rem;
+}
+
+#station_120 {
+ margin-top: 5rem;
+ display: flex;
+ align-items: center;
+}
+
+.subheadings #station_120_viewPort {
+ border-radius: 10px;
+ border: 5px solid black;
+ margin-left: 10rem;
+ width: 55rem;
+ height: 60vh;
+}
+
+#station_100 {
+ margin-top: 5rem;
+ display: flex;
+ align-items: center;
+}
+
+.subheadings #station_100_viewPort {
+ border-radius: 10px;
+ border: 5px solid black;
+ margin-left: 10rem;
+ width: 55rem;
+ height: 40vh;
+}
+
+/* Style Loading */
+.sand-hourglass {
+ width: 0;
+ height: 0;
+ margin-left: 20rem;
+ margin-top: 10rem;
+ border-left: 20px solid transparent;
+ border-right: 20px solid transparent;
+ border-top: 40px solid #ccc;
+ position: relative;
+ animation: flip 3s ease-in-out infinite;
+}
+
+.sand-hourglass::before {
+ content: "";
+ display: block;
+ position: absolute;
+ top: -20px;
+ left: -20px;
+ width: 0;
+ height: 0;
+ border-left: 20px solid transparent;
+ border-right: 20px solid transparent;
+ border-bottom: 40px solid #ccc;
+}
+
+.sand-hourglass::after {
+ content: "";
+ display: block;
+ position: absolute;
+ bottom: -20px;
+ left: -20px;
+ width: 0;
+ height: 0;
+ border-left: 20px solid transparent;
+ border-right: 20px solid transparent;
+ border-top: 40px solid #ccc;
+}
+
+@keyframes flip {
+ 0% {
+   transform: rotateX(0deg);
+ }
+ 50% {
+   transform: rotateX(180deg);
+   border-top: 40px solid transparent;
+   border-bottom: 40px solid #ccc;
+ }
+ 100% {
+   transform: rotateX(360deg);
+   border-top: 40px solid #ccc;
+   border-bottom: 40px solid transparent;
+ }
+}
+
+/* Style Loading */
+.sand-hourglass-2 {
+ width: 0;
+ height: 0;
+ margin-left: auto;
+ margin-right: auto;
+ margin-top: 23rem;
+ border-left: 20px solid transparent;
+ border-right: 20px solid transparent;
+ border-top: 40px solid #ccc;
+ position: relative;
+ animation: flip 3s ease-in-out infinite;
+}
+
+.sand-hourglass-2::before {
+ content: "";
+ display: block;
+ position: absolute;
+ top: -20px;
+ left: -20px;
+ width: 0;
+ height: 0;
+ border-left: 20px solid transparent;
+ border-right: 20px solid transparent;
+ border-bottom: 40px solid #ccc;
+}
+
+.sand-hourglass-2::after {
+ content: "";
+ display: block;
+ position: absolute;
+ bottom: -20px;
+ left: -20px;
+ width: 0;
+ height: 0;
+ border-left: 20px solid transparent;
+ border-right: 20px solid transparent;
+ border-top: 40px solid #ccc;
+}
+
+@keyframes flip {
+ 0% {
+   transform: rotateX(0deg);
+ }
+ 50% {
+   transform: rotateX(180deg);
+   border-top: 40px solid transparent;
+   border-bottom: 40px solid #ccc;
+ }
+ 100% {
+   transform: rotateX(360deg);
+   border-top: 40px solid #ccc;
+   border-bottom: 40px solid transparent;
+ }
+}

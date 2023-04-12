@@ -8,17 +8,13 @@ from PLCUpdate import writePLC
 from imageTimingClasses import timeLog
 from PLCUpdate import writePLC, readPLC, transferToPLC
 import time
+import json
+import requests
 from passref import create_pass_ref
 
 #Establishing conection to the camera
 camera = Recalibration("station120")
 device_info = dai.DeviceInfo(camera.IP)
-
-
-#Creatin ghte array of pass values (pass ref)
-create_pass_ref(camera=camera, device_info=device_info)
-input("here: ")
-time.sleep(10)
 
 #After establishing the connection, enter the main program
 with dai.Device(createPipeline(), device_info) as device:
@@ -44,13 +40,34 @@ with dai.Device(createPipeline(), device_info) as device:
         recorded = timeObject.log(result, clampClosed) #takes the result and finds the time it takes for each part to appear
 
         # write PLC value to the HMI
-        writePLC("Camera_Output.5", result)
+        # writePLC("Camera_Output.5", result)
 
-        # print(arr)
-        # print(final)
+        # # print(arr)
+        # # print(final)
 
-        transferToPLC("OP100", result) #sending results to PLC
+        # transferToPLC("OP100", result) #sending results to PLC
         cv.waitKey(1)
+
+        # send the POST request contains the errors, result and the timing to the server
+        url = 'http://127.0.0.1:5000/bt1xx/post-result/120/'
+
+        request_headers = {
+            'Content-Type' : 'application/json'
+        }
+
+        request_body = {
+            'message' : 'Sending error, pass/fail rates and timing to the server!',
+            'station_number' : '120',
+            'passref' : camera.passref,
+            'error' : error,
+            'result' : result,
+            'timing' : recorded
+        }
+
+        request_json = json.dumps(request_body)
+
+        response = requests.post(url, headers=request_headers, data=request_json)
+
         frame = cv.pyrDown(frame)
         cv.imshow(camera.IP, frame)
 

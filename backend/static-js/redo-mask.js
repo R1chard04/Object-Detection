@@ -248,9 +248,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // handle station 120 options
   else if(stationNumberOnly === '120'){
-   if(submit.addEventListener('click', (event) => {
-    selection.style.display = 'none';
-    submit.style.display = 'none';
+   if(submit.addEventListener('click', async (event) => {
+    loadContent();
+    console.log('Waiting for response from the server ....');
+    const response = await waitForResponse();
+    console.log(response);
+    sandHourGlass.style.display = 'none';
+    text.style.display = 'inline-block';
     // topRight part
     if(this.value === 'topRight'){
      text.innerHTML = 'Please follow the instructions to re-setup the Top Right mask for station 120';

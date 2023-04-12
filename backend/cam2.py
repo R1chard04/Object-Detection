@@ -9,6 +9,8 @@ from PLCUpdate import writePLC
 from imageTimingClasses import timeLog
 from PLCUpdate import writePLC, readPLC
 import time
+import json
+import requests
 from passref import create_pass_ref
 
 
@@ -51,6 +53,27 @@ with dai.Device(createPipeline(), device_info) as device:
 
         # transferToPLC("OP100", result)
         cv.waitKey(1)
+
+        # send the POST request contains the errors, result and timing to the server
+        url = 'http://127.0.0.1:5000/bt1xx/post-result/100/'
+
+        request_headers = {
+            'Content-Type' : 'application/json'
+        }
+
+        request_body = {
+            'message' : 'Sending error, pass/fail rate and timing to the server!',
+            'station_number' : '100',
+            'passref' : camera.passref,
+            'error' : error,
+            'result' : result,
+            'timing' : recorded
+        }
+
+        request_json = json.dumps(request_body)
+
+        response = requests.post(url, headers=request_headers, data=request_json)
+
         frame = cv.pyrDown(frame)
         cv.imshow(camera.IP, frame)
 

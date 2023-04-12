@@ -15,6 +15,7 @@ import json
 from datetime import datetime, timedelta
 import pytz
 import pdb
+import requests
 
 # import files
 from database_model.models import db, Station, Users, Permission
@@ -31,6 +32,7 @@ with open(r'params.json') as f:
 app = Flask(__name__)
 api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instances/martinrea.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 engine = create_engine('sqlite:///instances/martinrea.db')
 app.config['SERVER_NAME'] = '127.0.0.1:5000'
 app.config['APPLICATION_ROOT'] = '/'
@@ -625,12 +627,122 @@ def logout():
   return response
   
 ############################## RUNNING ALL THE PROGRAMS ##############################
-@app.route('/bt1xx/startallprograms/', methods=['GET'])
+data = None
+# a server to handle the GET request to get all the numbers of the cameras that are running
+@app.route('/bt1xx/post-all-cameras/', methods=['POST'])
+def post_all_cameras():
+  if request.method == 'POST':
+    # get the data from the request body
+    try:
+      global data
+      data = request.get_json()
+      print(data)
+      return jsonify({
+        'message' : 'The number of cameras that are running has been received successfully!',
+        'data' : data
+      }), 200
+    # try to catch if there is any error with the server
+    except Exception as error:
+      print(error)
+      return jsonify(response_data  = ({
+        'message' : f'There is an internal server error while getting the data from the POST request: {error}'
+      })), 500
+
+@app.route('/bt1xx/get-all-cameras/', methods=['GET'])
+def get_all_cameras():
+  if request.method == 'GET':
+    try:
+      global data
+      return jsonify({
+        'cameras' : data
+      }), 200
+    except Exception as error:
+      # try to catch all the errors
+      return jsonify({
+        'message' : f'There is an internal server error while getting the number of cameras: {error}'
+      }), 500
+
+@app.route('/bt1xx/startallprograms/', methods=['POST','GET'])
 @validate_token('run_cameras')
 def startPrograms():
+  try:
+    # finish the GET request before running all the cameras
+    post_all_cameras_url = 'http://127.0.0.1:5000/bt1xx/post-all-cameras/'
+
+    # send a GET request to the server to send the number of cameras are running
+    request_headers = {
+      'Content-Type' : 'application/json'
+    }
+
+    request_data = {
+      "cameras" : 2,
+      "station_cam" : {
+        '1' : '120',
+        '2' : '100',
+      }
+    }
+
+    request_json = json.dumps(request_data)
+
+    response = requests.post(url=post_all_cameras_url, headers=request_headers, data=request_json)
+    print(response.status_code)
+
+    if response.status_code == 200:
+      print(f'Request has been sent to the server successfully')
+    
+    else:
+      raise ValueError
+    
+  # catch the error
+  except ValueError as error:
+    response_data = ({
+      'message' : f'There is an error with running all the cameras: {error}',
+      'status_code' : 500
+    })
+    # send the request along with the data to the server
+    response = requests.post(url=post_all_cameras_url, data=response_data)
+    return response
+  
   # run all the cameras files
   run_all_cameras()
   return render_template('view.html')
+
+
+result_data = None
+######################### APIs to handle POST and GET request of the data when running the cameras #########################
+@app.route('/bt1xx/post-result/<int:station_number>/', methods=['POST'])
+def post_result(station_number):
+  if request.method == 'POST': # handle the POST request
+    try:
+      global result_data
+      # get the result data
+      result_data = request.get_json()
+      print(result_data)
+      return jsonify({
+        'message' : 'Successfully receive the data from the POST request!',
+        'result_data' : result_data
+      }), 200
+    except Exception as error: # get the error and display
+      print(error)
+      return jsonify({
+        'message' : f'There is an internal server error when handling the POST request: {error}'
+      }), 500
+    
+@app.route('/bt1xx/get-result/<int:station_number>/', methods=['GET'])
+def get_result(station_number):
+  if request.method == 'GET': # handle the GET request
+    try:
+      global result_data
+      return jsonify({
+        'get_data' : result_data
+      }), 200
+    except Exception as error:
+      # get and display the error
+      print(error)
+      return jsonify({
+        'message' : f'Catch an error while handling the GET request: {error}'
+      }), 500 
+
 
 if __name__ == '__main__':
  # connect to the websocket server to listening for events sent from localhost:5000
