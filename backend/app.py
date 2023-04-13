@@ -124,7 +124,7 @@ def insert_users() -> None:
         # put the permissions into the permission table
         give_permission(Permission, Users, users_permissions_list, admin_permissions_list, db)
 
-# insert_users()
+insert_users()
 
 # include the path to javascript files
 @app.route('/static-js/<path:filename>')
