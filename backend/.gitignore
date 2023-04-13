@@ -1,9 +1,4 @@
-Logos/
-instances/martinrea.db
-backend/Photos/Col
 backend/myenv
-backend/users.json
-backend/permissions.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
