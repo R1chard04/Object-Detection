@@ -109,9 +109,9 @@ class timeLog:
                 wb.save(r"stationsExcel.xlsx")
                 wb.close()
 
-                return True
+                return True, self.record
 
-            return False
+            return False, self.record
 
 
         

@@ -32,5 +32,12 @@
  "username" : "random@martinrea.com",
  "password" : "Randompersonhehe@123",
  "is_admin" : false
+ },
+
+ "user5" : {
+  "name" : "Admin",
+  "username" : "admin@martinrea.com",
+  "password" : "Adminadmin@123",
+  "is_admin" : true
  }
 }

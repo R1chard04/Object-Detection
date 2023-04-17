@@ -4,6 +4,7 @@ from flask_cors import CORS
 from sqlalchemy import create_engine
 from sqlalchemy.engine.reflection import Inspector
 from flask_restful import Api
+from flask_pymongo import pymongo
 import bcrypt
 import jwt
 from pyignite import Client
@@ -28,7 +29,7 @@ from imageCalibrationClass import Recalibration, createPipeline
 with open(r'params.json') as f:
   partList = json.load(f)
 
-# connect flask to the database
+# connect flask to the sqlite database
 app = Flask(__name__)
 api = Api(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instances/martinrea.db'
@@ -49,11 +50,8 @@ inspector = Inspector.from_engine(engine)
 app.secret_key = secrets.token_hex(16)
 migrate = Migrate(app, db)
 
-# This is the helper function to asynchronously render the template while connecting to the devices
-async def render_template_async(template_name, **kwargs):
-  with app.app_context():
-    template_string = render_template(template_name, **kwargs)
-  return template_string
+from dotenv import load_dotenv
+load_dotenv()
 
 # Create SQLALCHEMY database object
 def create_tables():
@@ -81,7 +79,7 @@ def insert_users() -> None:
     is_admin = []
 
     # get the list of usernames and passwords
-    for i in range(5):
+    for i in range(6):
       names.append(user[f'user{i}']['name'])
       usernames.append(user[f'user{i}']['username'])
       passwords.append(user[f'user{i}']['password'])
