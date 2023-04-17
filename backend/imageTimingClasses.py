@@ -50,8 +50,6 @@ class timeLog:
             
             #More database stuff
             if 0 not in self.record:
-                new_partLists100 = ['TopPart', 'LeftPart', 'BottomPart', 'RightPart', 'ClampState']
-                new_partLists120 = ['TopRightPart', 'TopLeftPart', 'LeftPart', 'BottomLeftPart', 'BottomRightPart', 'RightPart', 'ClampState']
                 
                 # create an instance to put it in the database
                 if self.station == 'station100':

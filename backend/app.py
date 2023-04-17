@@ -23,6 +23,7 @@ from database_model.models import db, Station, Users, Permission
 from helper_functions.validate_users import validate_username, validate_password, give_permission
 from helper_functions.middleware_function import validate_token
 from helper_functions.run_all_cameras import run_all_cameras
+from helper_functions.insert_users import mongo_db # mongodb connection
 from imageCalibrationClass import Recalibration, createPipeline
 
 # read in the params.json file
@@ -50,8 +51,6 @@ inspector = Inspector.from_engine(engine)
 app.secret_key = secrets.token_hex(16)
 migrate = Migrate(app, db)
 
-from dotenv import load_dotenv
-load_dotenv()
 
 # Create SQLALCHEMY database object
 def create_tables():

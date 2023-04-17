@@ -50,24 +50,24 @@ with dai.Device(createPipeline(), device_info) as device:
         cv.waitKey(1)
 
         # send the POST request contains the errors, result and the timing to the server
-        # url = 'http://127.0.0.1:5000/bt1xx/post-result/120/'
+        url = 'http://127.0.0.1:5000/bt1xx/post-result/120/'
 
-        # request_headers = {
-        #     'Content-Type' : 'application/json'
-        # }
+        request_headers = {
+            'Content-Type' : 'application/json'
+        }
 
-        # request_body = {
-        #     'message' : 'Sending error, pass/fail rates and timing to the server!',
-        #     'station_number' : '120',
-        #     'passref' : camera.passref,
-        #     'error' : error,
-        #     'result' : result,
-        #     'timing' : record
-        # }
+        request_body = {
+            'message' : 'Sending error, pass/fail rates and timing to the server!',
+            'station_number' : '120',
+            'passref' : camera.passref,
+            'error' : error,
+            'result' : result,
+            'timing' : record
+        }
 
-        # request_json = json.dumps(request_body)
+        request_json = json.dumps(request_body)
 
-        # response = requests.post(url, headers=request_headers, data=request_json)
+        response = requests.post(url, headers=request_headers, data=request_json)
 
         frame = cv.pyrDown(frame)
         cv.imshow(camera.IP, frame)
