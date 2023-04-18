@@ -7,7 +7,6 @@ from flask_restful import Api
 from flask_pymongo import pymongo
 import bcrypt
 import jwt
-from pyignite import Client
 import os
 from flask_migrate import Migrate
 import secrets

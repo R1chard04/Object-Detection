@@ -61,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // when the promise is resolved then do the following
   promiseResponse.then(data => renderCameraMonitorViewPort(num_cameras=data['cameras']['cameras'], station_cam=data['cameras']['station_cam']));
 
-
   // get the element where the child should be appended to
   const subheadings = document.querySelector('.subheadings');
 
