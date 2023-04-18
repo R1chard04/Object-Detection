@@ -1,5 +1,6 @@
 {
  "user0" : {
+ "id" : "",
  "name" : "Kent Tran",
  "username" : "kent.tran@martinrea.com",
  "password" : "Kenttran2302$",
@@ -58,11 +59,15 @@
    },
    "permission17" : {
     "permission_name" : "run_cameras"
+   },
+   "permission18" : {
+    "permission_name" : "can_insert_users"
    }
   }
  },
  
  "user1" : {
+ "id" : "",
  "name" : "Leo You",
  "username" : "leo.you@martinrea.com",
  "password" : "Leoyou1234$",
@@ -121,11 +126,15 @@
    },
    "permission17" : {
     "permission_name" : "run_cameras"
+   },
+   "permission18" : {
+    "permission_name" : "can_insert_users"
    }
   }
  },
  
  "user2" : {
+  "id" : "",
  "name" : "Jamie Yen",
  "username" : "jamie.yen@martinrea.com",
  "password" : "Jamieyen12345$",
@@ -184,11 +193,15 @@
    },
    "permission17" : {
     "permission_name" : "run_cameras"
+   },
+   "permission18" : {
+    "permission_name" : "can_insert_users"
    }
   }
  },
  
  "user3" : {
+  "id" : "",
  "name" : "Shubham Savani",
  "username" : "shubham.savani@martinrea.com",
  "password" : "ShubhameMartinrea@123",
@@ -247,26 +260,15 @@
     },
     "permission17" : {
      "permission_name" : "run_cameras"
+    },
+    "permission18" : {
+     "permission_name" : "can_insert_users"
     }
    }
   },
-  
-  "user4" : {
-  "name" : "Random Person",
-  "username" : "random@martinrea.com",
-  "password" : "Randompersonhehe@123",
-  "is_admin" : false,
-  "permissions" : {
-   "permission0" : {
-    "permission_name" : "homepage_access"
-   },
-   "permission1" : {
-    "permission_name" : "run_cameras"
-   }
-  }
- },
 
- "user5" : {
+ "user4" : {
+  "id" : "",
   "name" : "Admin",
   "username" : "admin@martinrea.com",
   "password" : "Adminadmin@123",
@@ -324,6 +326,25 @@
     "permission_name" : "finish_setup"
    },
    "permission17" : {
+    "permission_name" : "run_cameras"
+   },
+   "permission18" : {
+    "permission_name" : "can_insert_users"
+   }
+  }
+ },
+
+ "user5" : {
+  "id" : "",
+  "name" : "Random Person",
+  "username" : "random@martinrea.com",
+  "password" : "Randompersonhehe@123",
+  "is_admin" : false,
+  "permissions" : {
+   "permission0" : {
+    "permission_name" : "homepage_access"
+   },
+   "permission1" : {
     "permission_name" : "run_cameras"
    }
   }

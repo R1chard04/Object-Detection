@@ -62,6 +62,9 @@
   },
   "permission17" : {
    "permission_name" : "run_cameras"
+  },
+  "permission18" : {
+   "permission_name" : "can_insert_users"
   }
  }
 }
