@@ -30,11 +30,12 @@ def validate_password(username, password, users_table) -> str:
   # check if the password already in the database
   if password_taken:
     print(f'Sorry! This password already exist!')
-    return 
+    raise ValueError
   else:
     return decoded_salt, hashed_password
  else:
   print(f"Sorry! But this password doesn't meet the requirements")
+  raise ValueError
 
 # this is a helper function that create a list of permissions for the users
 def give_permission(permission_table, user_table, all_users_permission_name, admin_permission_name, db):

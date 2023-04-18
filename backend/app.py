@@ -1,10 +1,13 @@
 # import required libraries
 from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, make_response, jsonify, Response
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.engine.reflection import Inspector
 from flask_restful import Api
 from flask_pymongo import pymongo
+from http import HTTPStatus
+from bson import json_util
 import bcrypt
 import jwt
 import os
@@ -16,14 +19,16 @@ from datetime import datetime, timedelta
 import pytz
 import pdb
 import requests
+import uuid
 
 # import files
 from database_model.models import db, Station, Users, Permission
 from helper_functions.validate_users import validate_username, validate_password, give_permission
 from helper_functions.middleware_function import validate_token
 from helper_functions.run_all_cameras import run_all_cameras
-from helper_functions.insert_users import mongo_db # mongodb connection
+from helper_functions.insert_users import mongo_db, users_collection # mongodb connection
 from imageCalibrationClass import Recalibration, createPipeline
+from getenv import mysql_username, mysql_password
 
 # read in the params.json file
 with open(r'params.json') as f:
@@ -32,9 +37,9 @@ with open(r'params.json') as f:
 # connect flask to the sqlite database
 app = Flask(__name__)
 api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instances/martinrea.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instances/martinrea.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-engine = create_engine('sqlite:///instances/martinrea.db')
+# engine = create_engine('sqlite:///instances/martinrea.db')
 app.config['SERVER_NAME'] = '127.0.0.1:5000'
 app.config['APPLICATION_ROOT'] = '/'
 app.config['PREFERRED_URL_SCHEME'] = 'http'
@@ -42,6 +47,9 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 # secret key
 app.config['SECRET_KEY'] = secrets.token_hex(16)
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{mysql_username}:{mysql_password}@localhost/'
+db = SQLAlchemy(app)
+ 
 CORS(app)
 
 inspector = Inspector.from_engine(engine)
@@ -64,7 +72,8 @@ def create_tables():
 create_tables()
 
 # insert into users table
-def insert_users() -> None:
+@app.route('/bt1xx/insert-admin-users/', methods=['GET'])
+def insert_admin_users():
   with app.app_context():
     # create a list of non-encoded username and passwords
     # read in the users.json file
@@ -76,51 +85,65 @@ def insert_users() -> None:
     passwords = []
     is_admin = []
 
-    # get the list of usernames and passwords
-    for i in range(6):
-      names.append(user[f'user{i}']['name'])
-      usernames.append(user[f'user{i}']['username'])
-      passwords.append(user[f'user{i}']['password'])
-      is_admin.append(user[f'user{i}']['is_admin'])
+    try:
+      # get the list of usernames and passwords
+      for i in range(5):
+        names.append(user[f'user{i}']['name'])
+        usernames.append(user[f'user{i}']['username'])
+        passwords.append(user[f'user{i}']['password'])
+        is_admin.append(user[f'user{i}']['is_admin'])
 
-    # validate the username and password constraints before hashing it and put it into the database
-    for i in range(len(usernames)):
-      if validate_username(usernames[i]):
-        decoded_salt, hashed_password = validate_password(usernames[i], passwords[i], Users)
+      # validate the username and password constraints before hashing it and put it into the database
+      for i in range(len(usernames)):
+        if validate_username(usernames[i]):
+          decoded_salt, hashed_password = validate_password(usernames[i], passwords[i], Users)
 
-        # create an instance to insert rows into user table
-        new_users = [
-          Users(id=i+1, name=names[i], username=usernames[i], password=hashed_password, password_salt=decoded_salt, is_admin=is_admin[i])
-        ]
+          # create an instance to insert rows into user table
+          new_users = [
+            Users(id=i+1, name=names[i], username=usernames[i], password=hashed_password, password_salt=decoded_salt, is_admin=is_admin[i])
+          ]
 
-        for user in new_users:
-          # insert the new user into the session
-          try:
-            db.session.add(user)
-            # commit the changes to the database
-            db.session.commit()
-            print(f"User {user.username} added successfully!")
-          except:
-            db.session.rollback()
-            print(f"User {user.username} already exists in the database!")
-        
-        # read in permissions.json
-        with open('permissions.json', 'r') as f:
-          permissions = json.load(f)
+          for user in new_users:
+            # insert the new user into the session
+            try:
+              db.session.add(user)
+              # commit the changes to the database
+              db.session.commit()
+              print(f"User {user.username} added successfully!")
+            except:
+              db.session.rollback()
+              print(f"User {user.username} already exists in the database!")
+              pass
+          
+          # read in permissions.json
+          with open('permissions.json', 'r') as f:
+            permissions = json.load(f)
 
-        users_permissions_list = []
-        admin_permissions_list = []
-        # get the 2 lists of permissions
-        for i in range(2):
-          users_permissions_list.append(permissions['all_users_permissions'][f'permission{i}']['permission_name'])
-        
-        for i in range(18):
-          admin_permissions_list.append(permissions['admin_permissions'][f'permission{i}']['permission_name'])
+          users_permissions_list = []
+          admin_permissions_list = []
+          # get the 2 lists of permissions
+          for i in range(2):
+            users_permissions_list.append(permissions['all_users_permissions'][f'permission{i}']['permission_name'])
+          
+          for i in range(19):
+            admin_permissions_list.append(permissions['admin_permissions'][f'permission{i}']['permission_name'])
 
-        # put the permissions into the permission table
-        give_permission(Permission, Users, users_permissions_list, admin_permissions_list, db)
+          # put the permissions into the permission table
+          give_permission(Permission, Users, users_permissions_list, admin_permissions_list, db)
+          response_data = ({
+            'message' : "Successfully insert admin users and permissions!"
+          })
+          response_json = json.dumps(response_data)
+          response = Response(response_json, status=HTTPStatus.CREATED, mimetype='application/json')
+          return response
 
-insert_users()
+    except Exception as error:
+      response_data = ({
+        'message' : f'There is an internal server error while inserting admin users into the database: {error}'
+      })
+      response_json = json.dumps(response_data)
+      response = Response(response_json, status=HTTPStatus.CREATED, mimetype='application/json')
+      return response
 
 # include the path to javascript files
 @app.route('/static-js/<path:filename>')
@@ -737,8 +760,128 @@ def get_result(station_number):
       print(error)
       return jsonify({
         'message' : f'Catch an error while handling the GET request: {error}'
-      }), 500 
+      }), 500
 
+@validate_token(permission='can_insert_user') # only admin users can access this API
+@app.route('/bt1xx/insert-users/', methods=['GET'])
+def insert_new_users():
+  # read in the users.json
+  with open('users.json', 'r') as f:
+    users = json.load(f)
+
+  try:
+    for i in range(6):
+      user_uuid = uuid.uuid4()
+      users[f"user{i}"]["id"] = str(user_uuid) # change the id to UUID
+      # validate the user's password to see if it meets the requirements
+      if users[f"user{i}"]["password"] == users[f"user{i}"]["username"] and len(users[f"user{i}"]["password"]) < 8 and not any(char.isupper() for char in users[f"user{i}"]["password"]) and not any(char in '!@#$%^&*' for char in users[f"users{i}"]["password"]):
+        return jsonify({
+          'message' : "Password does not meet the requirements!"
+        }), 400
+      
+      # query mongodb database to see if the username or password already existed
+      f_query = {
+        "name" : users[f"user{i}"]["name"],
+        "username" : users[f"user{i}"]["username"]
+      }
+
+      f_user = mongo_db.Users.find(f_query)
+
+      # if either the username nor the password has existed in the database yet
+      if f_user.count()==0:
+        if validate_username(username=users[f"user{i}"]["username"]):
+          salt = bcrypt.gensalt()
+          # hash the password using bcrypt hashing algorithm
+          hashed_password = bcrypt.hashpw(users[f"user{i}"]["password"].encode('utf-8'), salt)
+          users[f"user{i}"]["password"] = hashed_password # hashed the password
+        else:
+          raise ValueError
+        mongo_db.Users.insert_one((users[f"user{i}"])) # insert the user into mongodb
+      else:
+        return jsonify({
+          'message' : "This username or password already existed in the database!",
+          "found_user" : json_util.dumps(list(f_user)) # if found the users with the same username or password
+        }), 409
+
+    # if all the data has been inserted successfully
+    response_data = ({
+      'message' : "All users have been inserted successfully"
+    })
+    response_json = json.dumps(response_data)
+    response = Response(response_json, status=HTTPStatus.CREATED, mimetype='application/json')
+    return response
+  
+  except Exception or ValueError as error:
+    response_data = ({
+      'message' : f'There is an internal server error while inserting user into the database: {error}'
+    })
+    print(error)
+    response_json = json.dumps(response_data)
+    response = Response(response_json, status=500, mimetype="application/json")
+    return response
+  
+# a route for users to change their password
+@validate_token('can_insert_user')
+@app.route('/bt1xx/users/change-password/', methods=['GET'])
+def update_password_form():
+  if request.method == 'GET':
+    return render_template('change_password_user.html')
+
+@validate_token('can_insert_user')
+@app.route('/bt1xx/users/handle-change-password/', methods=['POST'])
+def handle_update_password():
+  if request.method == 'POST':
+    try:
+      username = request.form['username']
+      new_password = request.form['new-password']
+      new_password_confirmation = request.form["new-password-confirmation"]
+
+      # create an errors dictionary
+      errors = {}
+
+    
+      # find the user with the username in the database
+      f_username_query = {
+        'username' : username
+      }
+
+      f_username = mongo_db.Users.find(f_username_query)
+
+      if f_username.count() == 0: # no username found in the database
+        errors['username'] = 'No username found!'
+        return render_template('change_password_user.html', erorrs=errors)
+
+      # new_password and new_password_confirmation
+      if new_password == username and len(new_password) < 8 and not any(char.isupper() for char in new_password) and not any(char in '!@#$%^&*' for char in new_password):
+        errors['new-password'] = "New password does not meet our requirements!"
+        return render_template('change_password_user.html', erorrs=errors)
+      
+      if new_password != new_password_confirmation:
+        errors['new-password-confirmation'] = "New password confirmation and new password does not match each other!"
+        return render_template('change_password_user.html', erorrs=errors)
+
+      # hashed the new password
+
+      
+      # run a migration to MongoDB to update the new password for the username
+      migration = mongo_db.Users.update_one(
+        f_username_query,
+        {
+          "$set" : {
+            "password" : new_password
+          }
+        }
+      )
+      
+      print(migration.modified_count, f"user with username: {username} is updated")
+      return jsonify({
+        'message' : 'Successfully update the user password'
+      }), 201
+    
+    except Exception as error: # catch any server-side error
+      return jsonify({
+        'message' : f"There is an internal server error while updating user's password: {error}"
+      }), 500
 
 if __name__ == '__main__':
  # connect to the websocket server to listening for events sent from localhost:5000

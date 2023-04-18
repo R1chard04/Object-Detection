@@ -1,5 +1,5 @@
-myenv
-Object_Detection
+backend/admin_users.json
+backend/permissions.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

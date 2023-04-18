@@ -3,41 +3,344 @@
  "name" : "Kent Tran",
  "username" : "kent.tran@martinrea.com",
  "password" : "Kenttran2302$",
- "is_admin" : true
+ "is_admin" : true,
+ "permissions" : {
+  "permission0" : {
+   "permission_name" : "homepage_access"
+  },
+  "permission1" : {
+   "permission_name" : "users_login_tracking"
+  },
+  "permission2" : {
+   "permission_name" : "station_detail"
+  },
+  "permission3" : {
+   "permission_name" : "station_settings"
+  },
+  "permission4" : {
+   "permission_name" : "update_event"
+  },
+  "permission5" : {
+   "permission_name" : "get_key"
+  },
+  "permission6" : {
+   "permission_name" : "show_frame_params"
+  },
+  "permission7" : {
+   "permission_name" : "change_settings"
+  },
+  "permission8" : {
+   "permission_name" : "handle_click"
+  },
+  "permission9" : {
+   "permission_name" : "get_click"
+  },
+  "permission10" : {
+   "permission_name" : "station_mask_setup"
+  },
+  "permission11" : {
+   "permission_name" : "create_mask"
+  },
+  "permission12" : {
+   "permission_name" : "redo_mask"
+  },
+  "permission13" : {
+   "permission_name" : "handle_redo_mask"
+  },
+  "permission14" : {
+   "permission_name" : "station_errors_setup"
+  },
+  "permission15" : {
+   "permission_name" : "create_errors"
+  },
+  "permission16" : {
+   "permission_name" : "finish_setup"
+  },
+  "permission17" : {
+   "permission_name" : "run_cameras"
+  },
+  "permission18" : {
+   "permission_name" : "can_insert_users"
+  }
+ }
  },
  
  "user1" : {
  "name" : "Leo You",
  "username" : "leo.you@martinrea.com",
  "password" : "Leoyou1234$",
- "is_admin" : true
+ "is_admin" : true,
+ "permissions" : {
+  "permission0" : {
+   "permission_name" : "homepage_access"
+  },
+  "permission1" : {
+   "permission_name" : "users_login_tracking"
+  },
+  "permission2" : {
+   "permission_name" : "station_detail"
+  },
+  "permission3" : {
+   "permission_name" : "station_settings"
+  },
+  "permission4" : {
+   "permission_name" : "update_event"
+  },
+  "permission5" : {
+   "permission_name" : "get_key"
+  },
+  "permission6" : {
+   "permission_name" : "show_frame_params"
+  },
+  "permission7" : {
+   "permission_name" : "change_settings"
+  },
+  "permission8" : {
+   "permission_name" : "handle_click"
+  },
+  "permission9" : {
+   "permission_name" : "get_click"
+  },
+  "permission10" : {
+   "permission_name" : "station_mask_setup"
+  },
+  "permission11" : {
+   "permission_name" : "create_mask"
+  },
+  "permission12" : {
+   "permission_name" : "redo_mask"
+  },
+  "permission13" : {
+   "permission_name" : "handle_redo_mask"
+  },
+  "permission14" : {
+   "permission_name" : "station_errors_setup"
+  },
+  "permission15" : {
+   "permission_name" : "create_errors"
+  },
+  "permission16" : {
+   "permission_name" : "finish_setup"
+  },
+  "permission17" : {
+   "permission_name" : "run_cameras"
+  },
+  "permission18" : {
+   "permission_name" : "can_insert_users"
+  }
+ }
  },
  
  "user2" : {
  "name" : "Jamie Yen",
  "username" : "jamie.yen@martinrea.com",
  "password" : "Jamieyen12345$",
- "is_admin" : true
+ "is_admin" : true,
+ "permissions" : {
+  "permission0" : {
+   "permission_name" : "homepage_access"
+  },
+  "permission1" : {
+   "permission_name" : "users_login_tracking"
+  },
+  "permission2" : {
+   "permission_name" : "station_detail"
+  },
+  "permission3" : {
+   "permission_name" : "station_settings"
+  },
+  "permission4" : {
+   "permission_name" : "update_event"
+  },
+  "permission5" : {
+   "permission_name" : "get_key"
+  },
+  "permission6" : {
+   "permission_name" : "show_frame_params"
+  },
+  "permission7" : {
+   "permission_name" : "change_settings"
+  },
+  "permission8" : {
+   "permission_name" : "handle_click"
+  },
+  "permission9" : {
+   "permission_name" : "get_click"
+  },
+  "permission10" : {
+   "permission_name" : "station_mask_setup"
+  },
+  "permission11" : {
+   "permission_name" : "create_mask"
+  },
+  "permission12" : {
+   "permission_name" : "redo_mask"
+  },
+  "permission13" : {
+   "permission_name" : "handle_redo_mask"
+  },
+  "permission14" : {
+   "permission_name" : "station_errors_setup"
+  },
+  "permission15" : {
+   "permission_name" : "create_errors"
+  },
+  "permission16" : {
+   "permission_name" : "finish_setup"
+  },
+  "permission17" : {
+   "permission_name" : "run_cameras"
+  },
+  "permission18" : {
+   "permission_name" : "can_insert_users"
+  }
+ }
  },
  
  "user3" : {
  "name" : "Shubham Savani",
  "username" : "shubham.savani@martinrea.com",
  "password" : "ShubhameMartinrea@123",
- "is_admin" : true
+ "is_admin" : true,
+ "permissions" : {
+  "permission0" : {
+   "permission_name" : "homepage_access"
+  },
+  "permission1" : {
+   "permission_name" : "users_login_tracking"
+  },
+  "permission2" : {
+   "permission_name" : "station_detail"
+  },
+  "permission3" : {
+   "permission_name" : "station_settings"
+  },
+  "permission4" : {
+   "permission_name" : "update_event"
+  },
+  "permission5" : {
+   "permission_name" : "get_key"
+  },
+  "permission6" : {
+   "permission_name" : "show_frame_params"
+  },
+  "permission7" : {
+   "permission_name" : "change_settings"
+  },
+  "permission8" : {
+   "permission_name" : "handle_click"
+  },
+  "permission9" : {
+   "permission_name" : "get_click"
+  },
+  "permission10" : {
+   "permission_name" : "station_mask_setup"
+  },
+  "permission11" : {
+   "permission_name" : "create_mask"
+  },
+  "permission12" : {
+   "permission_name" : "redo_mask"
+  },
+  "permission13" : {
+   "permission_name" : "handle_redo_mask"
+  },
+  "permission14" : {
+   "permission_name" : "station_errors_setup"
+  },
+  "permission15" : {
+   "permission_name" : "create_errors"
+  },
+  "permission16" : {
+   "permission_name" : "finish_setup"
+  },
+  "permission17" : {
+   "permission_name" : "run_cameras"
+  },
+  "permission18" : {
+   "permission_name" : "can_insert_users"
+  }
+ }
  },
  
  "user4" : {
  "name" : "Random Person",
  "username" : "random@martinrea.com",
  "password" : "Randompersonhehe@123",
- "is_admin" : false
+ "is_admin" : false,
+ "permissions" : {
+  "permission0" : {
+   "permission_name" : "homepage_access"
+  },
+  "permission1" : {
+   "permission_name" : "run_cameras"
+  }
+ }
  },
 
  "user5" : {
   "name" : "Admin",
   "username" : "admin@martinrea.com",
   "password" : "Adminadmin@123",
-  "is_admin" : true
+  "is_admin" : true,
+  "permissions" : {
+   "permission0" : {
+    "permission_name" : "homepage_access"
+   },
+   "permission1" : {
+    "permission_name" : "users_login_tracking"
+   },
+   "permission2" : {
+    "permission_name" : "station_detail"
+   },
+   "permission3" : {
+    "permission_name" : "station_settings"
+   },
+   "permission4" : {
+    "permission_name" : "update_event"
+   },
+   "permission5" : {
+    "permission_name" : "get_key"
+   },
+   "permission6" : {
+    "permission_name" : "show_frame_params"
+   },
+   "permission7" : {
+    "permission_name" : "change_settings"
+   },
+   "permission8" : {
+    "permission_name" : "handle_click"
+   },
+   "permission9" : {
+    "permission_name" : "get_click"
+   },
+   "permission10" : {
+    "permission_name" : "station_mask_setup"
+   },
+   "permission11" : {
+    "permission_name" : "create_mask"
+   },
+   "permission12" : {
+    "permission_name" : "redo_mask"
+   },
+   "permission13" : {
+    "permission_name" : "handle_redo_mask"
+   },
+   "permission14" : {
+    "permission_name" : "station_errors_setup"
+   },
+   "permission15" : {
+    "permission_name" : "create_errors"
+   },
+   "permission16" : {
+    "permission_name" : "finish_setup"
+   },
+   "permission17" : {
+    "permission_name" : "run_cameras"
+   },
+   "permission18" : {
+    "permission_name" : "can_insert_users"
+   }
+  }
  }
 }
