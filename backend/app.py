@@ -64,63 +64,63 @@ def create_tables():
 create_tables()
 
 # insert into users table
-def insert_users() -> None:
-  with app.app_context():
-    # create a list of non-encoded username and passwords
-    # read in the users.json file
-    with open('users.json', 'r') as f:
-      user = json.load(f)
+# def insert_users() -> None:
+#   with app.app_context():
+#     # create a list of non-encoded username and passwords
+#     # read in the users.json file
+#     with open('users.json', 'r') as f:
+#       user = json.load(f)
     
-    names = []
-    usernames = []
-    passwords = []
-    is_admin = []
+#     names = []
+#     usernames = []
+#     passwords = []
+#     is_admin = []
 
-    # get the list of usernames and passwords
-    for i in range(6):
-      names.append(user[f'user{i}']['name'])
-      usernames.append(user[f'user{i}']['username'])
-      passwords.append(user[f'user{i}']['password'])
-      is_admin.append(user[f'user{i}']['is_admin'])
+#     # get the list of usernames and passwords
+#     for i in range(6):
+#       names.append(user[f'user{i}']['name'])
+#       usernames.append(user[f'user{i}']['username'])
+#       passwords.append(user[f'user{i}']['password'])
+#       is_admin.append(user[f'user{i}']['is_admin'])
 
-    # validate the username and password constraints before hashing it and put it into the database
-    for i in range(len(usernames)):
-      if validate_username(usernames[i]):
-        decoded_salt, hashed_password = validate_password(usernames[i], passwords[i], Users)
+#     # validate the username and password constraints before hashing it and put it into the database
+#     for i in range(len(usernames)):
+#       if validate_username(usernames[i]):
+#         decoded_salt, hashed_password = validate_password(usernames[i], passwords[i], Users)
 
-        # create an instance to insert rows into user table
-        new_users = [
-          Users(id=i+1, name=names[i], username=usernames[i], password=hashed_password, password_salt=decoded_salt, is_admin=is_admin[i])
-        ]
+#         # create an instance to insert rows into user table
+#         new_users = [
+#           Users(id=i+1, name=names[i], username=usernames[i], password=hashed_password, password_salt=decoded_salt, is_admin=is_admin[i])
+#         ]
 
-        for user in new_users:
-          # insert the new user into the session
-          try:
-            db.session.add(user)
-            # commit the changes to the database
-            db.session.commit()
-            print(f"User {user.username} added successfully!")
-          except:
-            db.session.rollback()
-            print(f"User {user.username} already exists in the database!")
+#         for user in new_users:
+#           # insert the new user into the session
+#           try:
+#             db.session.add(user)
+#             # commit the changes to the database
+#             db.session.commit()
+#             print(f"User {user.username} added successfully!")
+#           except:
+#             db.session.rollback()
+#             print(f"User {user.username} already exists in the database!")
         
-        # read in permissions.json
-        with open('permissions.json', 'r') as f:
-          permissions = json.load(f)
+#         # read in permissions.json
+#         with open('permissions.json', 'r') as f:
+#           permissions = json.load(f)
 
-        users_permissions_list = []
-        admin_permissions_list = []
-        # get the 2 lists of permissions
-        for i in range(2):
-          users_permissions_list.append(permissions['all_users_permissions'][f'permission{i}']['permission_name'])
+#         users_permissions_list = []
+#         admin_permissions_list = []
+#         # get the 2 lists of permissions
+#         for i in range(2):
+#           users_permissions_list.append(permissions['all_users_permissions'][f'permission{i}']['permission_name'])
         
-        for i in range(18):
-          admin_permissions_list.append(permissions['admin_permissions'][f'permission{i}']['permission_name'])
+#         for i in range(18):
+#           admin_permissions_list.append(permissions['admin_permissions'][f'permission{i}']['permission_name'])
 
-        # put the permissions into the permission table
-        give_permission(Permission, Users, users_permissions_list, admin_permissions_list, db)
+#         # put the permissions into the permission table
+#         give_permission(Permission, Users, users_permissions_list, admin_permissions_list, db)
 
-insert_users()
+# insert_users()
 
 # include the path to javascript files
 @app.route('/static-js/<path:filename>')
@@ -737,7 +737,9 @@ def get_result(station_number):
       print(error)
       return jsonify({
         'message' : f'Catch an error while handling the GET request: {error}'
-      }), 500 
+      }), 500
+
+@app.route('/bt1xx/insert-user/', methods=['GET'])
 
 
 if __name__ == '__main__':
