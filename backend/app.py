@@ -2,10 +2,9 @@
 from flask import Flask, jsonify, render_template, redirect, url_for, request, send_from_directory, make_response, jsonify, Response
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
 from sqlalchemy.engine.reflection import Inspector
 from flask_restful import Api
-from flask_pymongo import pymongo
+from sqlalchemy import create_engine, MetaData, inspect
 from http import HTTPStatus
 from bson import json_util
 import bcrypt
@@ -22,13 +21,13 @@ import requests
 import uuid
 
 # import files
-from database_model.models import db, Station, Users, Permission
+from database_model.models import db, Station, Users, Permission, TimingStation100, TimingStation120
 from helper_functions.validate_users import validate_username, validate_password, give_permission
 from helper_functions.middleware_function import validate_token
 from helper_functions.run_all_cameras import run_all_cameras
 from helper_functions.insert_users import mongo_db, users_collection # mongodb connection
 from imageCalibrationClass import Recalibration, createPipeline
-from getenv import mysql_username, mysql_password
+from getenv import mysql_username, mysql_password, mysql_host, mysql_port, mysql_db_name
 
 # read in the params.json file
 with open(r'params.json') as f:
@@ -37,9 +36,13 @@ with open(r'params.json') as f:
 # connect flask to the sqlite database
 app = Flask(__name__)
 api = Api(app)
+
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instances/martinrea.db'
+# database configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{mysql_username}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 # engine = create_engine('sqlite:///instances/martinrea.db')
+engine = create_engine(f'mysql://{mysql_username}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_db_name}')
 app.config['SERVER_NAME'] = '127.0.0.1:5000'
 app.config['APPLICATION_ROOT'] = '/'
 app.config['PREFERRED_URL_SCHEME'] = 'http'
@@ -47,8 +50,8 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 # secret key
 app.config['SECRET_KEY'] = secrets.token_hex(16)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://{mysql_username}:{mysql_password}@localhost/'
-db = SQLAlchemy(app)
+
+db.init_app(app)
  
 CORS(app)
 
@@ -58,16 +61,22 @@ inspector = Inspector.from_engine(engine)
 app.secret_key = secrets.token_hex(16)
 migrate = Migrate(app, db)
 
-
+all_tables_name = ['stations_settings', 'admin_users', 'admin_permissions', 'Station100_Timing', 'Station120_Timing']
 # Create SQLALCHEMY database object
 def create_tables():
   with app.app_context():
-    db.init_app(app)
-    # create all the tables based on the models if they didn't exist yet
-    with app.app_context():
-      table_names = inspector.get_table_names()
-      if 'station' not in table_names and 'users' not in table_names and 'permission' not in table_names:
-        db.create_all()
+    try:
+      db.metadata.bind = engine
+      tables_names = inspector.get_table_names()
+      for i in all_tables_name:
+        if i in tables_names:
+          return
+        
+      db.create_all()
+      return
+    except Exception as error:
+      print(f"There was an error while creating tables in the database: {error}")
+      return
 
 create_tables()
 
@@ -107,13 +116,13 @@ def insert_admin_users():
             # insert the new user into the session
             try:
               db.session.add(user)
-              # commit the changes to the database
-              db.session.commit()
               print(f"User {user.username} added successfully!")
             except:
               db.session.rollback()
               print(f"User {user.username} already exists in the database!")
-              pass
+              return jsonify({
+                'message' : f'Sorry user {user.username} already existed in the database!'
+              }), 409
           
           # read in permissions.json
           with open('permissions.json', 'r') as f:
@@ -133,9 +142,13 @@ def insert_admin_users():
           response_data = ({
             'message' : "Successfully insert admin users and permissions!"
           })
-          response_json = json.dumps(response_data)
-          response = Response(response_json, status=HTTPStatus.CREATED, mimetype='application/json')
-          return response
+
+      # commit the changes to the database
+      db.session.commit()
+      # return a json response to a client
+      response_json = json.dumps(response_data)
+      response = Response(response_json, status=HTTPStatus.CREATED, mimetype='application/json')
+      return response
 
     except Exception as error:
       response_data = ({
@@ -584,7 +597,7 @@ def setUpSuccessful(station_number):
   return render_template('successful.html', station_number=station_number)
 
 ################################# LOG IN PAGE #############################
-# render the login page
+# render the login page for non-admin users
 @app.route('/bt1xx/login/')
 def login():
   return render_template('login.html')
@@ -608,26 +621,50 @@ def authentication():
         errors['password'] = f"Please enter your password!"
 
       # query the user record from the database
-      user = Users.query.filter_by(username=username).first()
+      query = {
+        "username" : username
+      }
+
+      user = mongo_db.Users.find_one(query)
       # validate the user credentials
-      if user:
-        # if the username and password are found in the database
-        if bcrypt.checkpw(password.encode('utf-8'), user.password):
-          # User credentials are valid
-          # Generate JWT token and store it in cookies
-          # query the permissions list in the user table with the user id
-          permissions = [permission.name for permission in user.permissions]
-          token = jwt.encode({'id' : user.id, 'name' : user.name,  'username' : user.username, 'exp': datetime.now(pytz.timezone('EST')) + timedelta(minutes=60), 'permissions' : permissions}, app.config['SECRET_KEY'], algorithm='HS256')
+      if user is not None:
+        # user = json_util.dumps(user)
+        # user = json_util.loads(user)
+        # if the user is admin -> query mysql database to get the admin information
+        admin_user = Users.query.filter_by(username=user['username']).first()
+        # if the username and password are found in the database and is admin
+        if admin_user:
+          if bcrypt.checkpw(password.encode('utf-8'), admin_user.password.encode('utf-8')):
+            # User credentials are valid
+            # Generate JWT token and store it in cookies
+            # query the permissions list in the user table with the user id
+            permissions = [permission.name for permission in admin_user.permissions]
+            token = jwt.encode({'id' : admin_user.id, 'name' : admin_user.name,  'username' : admin_user.username, 'exp': datetime.now(pytz.timezone('EST')) + timedelta(minutes=60), 'permissions' : permissions}, app.config['SECRET_KEY'], algorithm='HS256')
 
-          # Store the token in a cookie
-          response = make_response(redirect(url_for('homepage')))
-          response.set_cookie('token', value=token, expires=datetime.now(pytz.timezone('EST')) + timedelta(minutes=60), httponly=True)
+            # Store the token in a cookie
+            response = make_response(redirect(url_for('homepage')))
+            response.set_cookie('token', value=token, expires=datetime.now(pytz.timezone('EST')) + timedelta(minutes=60), httponly=True)
 
-          # Redirect the user to the homepage and some restricted resources
-          return response
-        else:
-          errors['password'] = f"Wrong password!"
-          raise ValueError
+            # Redirect the user to the homepage and some restricted resources
+            return response
+          
+        else: # if the user is not admin
+          if bcrypt.checkpw(password.encode('utf-8'), user['password']):
+            # User credentials are valid
+            # Generate JWT token and store it in cookies
+            # query the permissions list in the user table with the user id
+            permissions = []
+            for i in range(len(user['permissions'])):
+              permissions.append(user['permissions'][f'permission{i}']['permission_name'])
+            token = jwt.encode({'id' : user['id'], 'name' : user['name'],  'username' : user['username'], 'exp': datetime.now(pytz.timezone('EST')) + timedelta(minutes=60), 'permissions' : permissions}, app.config['SECRET_KEY'], algorithm='HS256')
+
+            # Store the token in a cookie
+            response = make_response(redirect(url_for('homepage')))
+            response.set_cookie('token', value=token, expires=datetime.now(pytz.timezone('EST')) + timedelta(minutes=60), httponly=True)
+
+            # Redirect the user to the homepage and some restricted resources
+            return response
+            
       else:
         errors['username'] = f"Sorry! You are not authorized for this program!"
         raise ValueError

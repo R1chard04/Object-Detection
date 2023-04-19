@@ -10,7 +10,7 @@ db = SQLAlchemy()
 
 # Define a station model for station table
 class Station(db.Model):
-  __tablename__ = 'station'
+  __tablename__ = 'stations_settings'
 
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   name = db.Column(db.String(100), nullable=False)
@@ -33,7 +33,7 @@ class Station(db.Model):
 
 # Define a users model for users table
 class Users(db.Model):
-  __tablename__ = 'users'
+  __tablename__ = 'admin_users'
 
   id = db.Column(db.Integer, primary_key=True, autoincrement=True)
   name = db.Column(db.String(50), nullable=False, unique=True)
@@ -59,11 +59,11 @@ class Users(db.Model):
   
 # Define a permission table to have one-to-many relationship to the user table
 class Permission(db.Model):
-  __tablename__ = 'permission'
+  __tablename__ = 'admin_permissions'
 
   id = db.Column(db.Integer, primary_key=True, autoincrement=True, unique=True)
   name = db.Column(db.String(1000), nullable=False)
-  user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+  user_id = db.Column(db.Integer, db.ForeignKey('admin_users.id'), nullable=False)
 
   def __repr__(self) -> str:
     return '<Permission %r>' % self.id % self.name

@@ -262,23 +262,8 @@
   }
  }
  },
- 
- "user4" : {
- "name" : "Random Person",
- "username" : "random@martinrea.com",
- "password" : "Randompersonhehe@123",
- "is_admin" : false,
- "permissions" : {
-  "permission0" : {
-   "permission_name" : "homepage_access"
-  },
-  "permission1" : {
-   "permission_name" : "run_cameras"
-  }
- }
- },
 
- "user5" : {
+ "user4" : {
   "name" : "Admin",
   "username" : "admin@martinrea.com",
   "password" : "Adminadmin@123",
@@ -340,6 +325,21 @@
    },
    "permission18" : {
     "permission_name" : "can_insert_users"
+   }
+  }
+ },
+
+ "user5" : {
+  "name" : "Random Person",
+  "username" : "random@martinrea.com",
+  "password" : "Randompersonhehe@123",
+  "is_admin" : false,
+  "permissions" : {
+   "permission0" : {
+    "permission_name" : "homepage_access"
+   },
+   "permission1" : {
+    "permission_name" : "run_cameras"
    }
   }
  }

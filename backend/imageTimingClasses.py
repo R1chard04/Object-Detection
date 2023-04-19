@@ -12,14 +12,6 @@ db.init_app(time_app)
 
 time_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instances/martinrea.db'
 
-def create_table():
-    with time_app.app_context():
-        inspector = inspect(db.engine)
-        if not inspector.has_table('Station100_Timing') and not inspector.has_table('Station120_Timing'):
-            db.create_all()
-
-create_table()
-
 #Class for timing
 class timeLog:
 
