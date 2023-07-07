@@ -49,6 +49,8 @@ Here are a few demo images of what we have so far:
 - [Python Flask (2.2.3)](https://pypi.org/project/Flask/) installation
 - [DepthAI](https://docs.luxonis.com/projects/api/en/latest/install/) installation.
 - [NodeJS 16](https://nodejs.org/en/download/) is required.
+- [MongoDB 6.0.6](https://www.mongodb.com/try/download/community) username and password configuration.
+- [MySQL 8.0](https://www.mysql.com/downloads/) username, password, host, port and database name configuration.
 - Other dependencies are covered in requirements.txt files.
 
 ### Local Development:
@@ -57,13 +59,12 @@ Here are a few demo images of what we have so far:
 # Clone the repo
 $ git clone https://github.com/Kenttrann2302/Object-Detection/
 
-# Move into directories 
-$ cd <directory-name>
+# Move into directory
+$ cd Object-Detection
 
 # Install the requirements to run the program
 $ cd backend
-$ cd txt_files
-$ pip install -r requirements1.txt
+$ pip install -r requirements.txt
 
 # Start the program on bash and have fun!!!
 $ python cam1.py & cam2.py (assume 2 cameras are installed)
@@ -77,19 +78,18 @@ $ python3 -m venv env
 # Window:
 > py -m venv env
 
-# Activating the a virtual environment
+# Activating the virtual environment
 # Unix/MacOS:
 $ cd backend
-$ source myenv/bin/activate
+$ source env/bin/activate
 
 # Windows:
 > cd backend
-> .\myenv\Scripts\activate
+> .\env\Scripts\activate
 
 # Installing the packages in virtual environment
 # For both Windows and Unix/MacOS
-$ cd txt_files
-$ pip install -r requirements1.txt
+$ pip install -r requirements.txt
 
 # Start the server that listening on port 5000
 # change directory back to the root directory
