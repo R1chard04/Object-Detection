@@ -78,7 +78,7 @@ def create_tables():
       print(f"There was an error while creating tables in the database: {error}")
       return
 
-create_tables()
+# create_tables() #FIXME: richard just commented this out for testing
 
 # insert into users table
 @app.route('/bt1xx/insert-admin-users/', methods=['GET'])
@@ -96,12 +96,12 @@ def insert_admin_users():
 
     try:
       # get the list of usernames and passwords
-      for i in range(5):
+      for i in range(7):
         names.append(user[f'user{i}']['name'])
         usernames.append(user[f'user{i}']['username'])
         passwords.append(user[f'user{i}']['password'])
         is_admin.append(user[f'user{i}']['is_admin'])
-
+      
       # validate the username and password constraints before hashing it and put it into the database
       for i in range(len(usernames)):
         if validate_username(usernames[i]):
@@ -111,7 +111,7 @@ def insert_admin_users():
           new_users = [
             Users(id=i+1, name=names[i], username=usernames[i], password=hashed_password, password_salt=decoded_salt, is_admin=is_admin[i])
           ]
-
+          
           for user in new_users:
             # insert the new user into the session
             try:
@@ -123,7 +123,7 @@ def insert_admin_users():
               return jsonify({
                 'message' : f'Sorry user {user.username} already existed in the database!'
               }), 409
-          
+                      
           # read in permissions.json
           with open('permissions.json', 'r') as f:
             permissions = json.load(f)
@@ -201,7 +201,7 @@ def serve_static_ref_100(filename):
   return send_from_directory(os.path.join(root_dir, 'backend/Photos/Refs/station100'), filename)
 
 # include the path to the photo folder to get the files in the station 120 ref folder
-@app.route('/Photots/Refs/station120/<path:filename>')
+@app.route('/Photos/Refs/station120/<path:filename>')
 # add the photo files path towards the html
 def serve_static_ref_120(filename):
   root_dir = os.path.dirname(os.getcwd())
@@ -330,7 +330,6 @@ def show_frame_params(station_number):
   
   try:
     pipeline = createPipeline()
-    print("here")
     device_info = dai.DeviceInfo(IP)
     device_info.state = dai.XLinkDeviceState.X_LINK_BOOTLOADER
     device_info.protocol = dai.XLinkProtocol.X_LINK_TCP_IP
@@ -592,7 +591,7 @@ def create_errors(station_number):
 
 ################ SUCCESSFUL PAGE AFTER SETTING UP #################
 @app.route('/bt1xx/station_settings/<int:station_number>/successful/')
-@validate_token('finish_setup')
+# @validate_token('finish_setup')
 def setUpSuccessful(station_number):
   return render_template('successful.html', station_number=station_number)
 
@@ -607,6 +606,7 @@ def login():
 def authentication():
   # if the user is not in session then abort the users to not authorized url
   if request.method == 'POST':
+    
     try:
       username = request.form['username']
       password = request.form['password']
@@ -626,12 +626,13 @@ def authentication():
       }
 
       user = mongo_db.Users.find_one(query)
-      # validate the user credentials
+
       if user is not None:
         # user = json_util.dumps(user)
         # user = json_util.loads(user)
         # if the user is admin -> query mysql database to get the admin information
         admin_user = Users.query.filter_by(username=user['username']).first()
+
         # if the username and password are found in the database and is admin
         if admin_user:
           if bcrypt.checkpw(password.encode('utf-8'), admin_user.password.encode('utf-8')):

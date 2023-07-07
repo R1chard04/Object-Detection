@@ -15,7 +15,9 @@ from passref import create_pass_ref
 
 
 camera = Recalibration("station100")
-device_info = dai.DeviceInfo(camera.IP)
+device_info = dai.DeviceInfo(camera.name)
+
+print(device_info)
 
 # create_pass_ref(camera=camera, device_info=device_info)
 with dai.Device(createPipeline(), device_info) as device:
@@ -32,9 +34,9 @@ with dai.Device(createPipeline(), device_info) as device:
         frame = processingObject.displayResultPosition()     
         prediction = MSEStabilization(error, camera.passref, len(camera.parts)) 
 
-        print(error)
+        print("error is", error)
         result = prediction.result()
-        print(result)
+        print("result is", result)
         
         clampClosed = False
         # clampClosed = readPLC("Program:Sta100.Station.Cycle.Step.Bit[10]")
@@ -71,7 +73,7 @@ with dai.Device(createPipeline(), device_info) as device:
         response = requests.post(url, headers=request_headers, data=request_json)
 
         frame = cv.pyrDown(frame)
-        cv.imshow(camera.IP, frame)
+        cv.imshow(camera.name, frame)
 
         # if recorded is True:
         #     while readPLC("Sta100_OK_To_Enter") is False:
