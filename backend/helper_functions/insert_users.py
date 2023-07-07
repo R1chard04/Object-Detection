@@ -6,8 +6,7 @@ from flask_pymongo import pymongo
 # import other files
 from getenv import mongodb_username, mongodb_password
 
-# CONNECTION_STRING = f'mongodb+srv://{mongodb_username}:{mongodb_password}@cluster0.cyuaazi.mongodb.net/?retryWrites=true&w=majority'
-CONNECTION_STRING = "mongodb+srv://admin:FHlt4Yyl9n1ybEmK@martinreahfs.lgbfiq1.mongodb.net/?retryWrites=true&w=majority"
+CONNECTION_STRING = f"mongodb+srv://{mongodb_username}:{mongodb_password}@martinreahfs.lgbfiq1.mongodb.net/?retryWrites=true&w=majority"
 
 # create a mongodb client
 client = pymongo.MongoClient(CONNECTION_STRING)

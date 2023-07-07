@@ -15,3 +15,5 @@ mysql_password = os.getenv('MYSQL_DB_PASSWORD', "mysql password does not exist")
 mysql_host = os.getenv('MYSQL_DB_HOST', "mysql host does not exist")
 mysql_port = os.getenv('MYSQL_DB_PORT', "mysql port does not exist")
 mysql_db_name = os.getenv('MYSQL_DB_NAME', "mysql database name does not exist")
+
+print('done getting environment variables, MONGO_DB_USERNAME is', mongodb_username, 'and MONGO_DB_PASSWORD is', mongodb_password)
